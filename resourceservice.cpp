@@ -1,15 +1,23 @@
 #include "resourceservice.h"
 #include <json/json.h>
 #include <fstream>
+#include <cassert>
 #include "itemloader.h"
+ResourceService *sInstance = 0;
+
 ResourceService::ResourceService() :
-	mItemStash(ItemLoader(this))
-{
+	mItemStash(ItemLoader(this)) {
+	assert(sInstance == 0);
+	sInstance = this;
 }
 
-ResourceService::~ResourceService()
-{
+ResourceService::~ResourceService() {
+	sInstance = 0;
+}
 
+ResourceService *ResourceService::instance() {
+	assert(sInstance);
+	return sInstance;
 }
 
 Json::Value ResourceService::requestJsonResource(const std::string &path) const {

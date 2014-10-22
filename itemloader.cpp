@@ -12,7 +12,7 @@ ItemLoader::~ItemLoader() {
 Resource<Item> *ItemLoader::operator()(const std::string &filePath) {
 	Json::Value base = mResourceService->requestJsonResource(filePath);
 	if (!base.isObject()) return 0;
-	std::unique_ptr<Resource<Item> > res(new Resource<Item>());
+	std::unique_ptr<Resource<Item> > res(new Resource<Item>(filePath));
 	Item &item = res->resource();
 	bool valid =
 			JsonChecker(base, filePath)
@@ -22,21 +22,24 @@ Resource<Item> *ItemLoader::operator()(const std::string &filePath) {
 				.hasNumberElement("y", true)
 				.hasNumberElement("z", true)
 				.moveBack()
-
-			;
+			.hasNumberElement("weight", true)
+			.hasObjectElement("traits", true);
 	if (!valid) {
-
+		return 0;
 	}
 	const Json::Value &v = base["base"];
-	if (v.isString()) {
+	if (!v.isNull()) {
 		RHandle<Item> b = mResourceService->item(v.asString());
 		if (b.isNull()) return 0;
-		item.initFromBase();
+		item.initFromBase(b);
 	}
-
 	const Json::Value &size = base["size"];
-	if (!checkIsObject(size)) return 0;
-	item.setWidth();
+	if (!size.isNull()) {
+		item.setSizeX(size.get("x", item.sizeX()));
+		item.setSizeY(size.get("y", item.sizeY()));
+		item.setSizeZ(size.get("z", item.sizeZ()));
+	}
+	item.setWeight(base.get("weight", item.weight()));
 	return res.release();
 }
 

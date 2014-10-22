@@ -1,10 +1,12 @@
 #ifndef WEAPON_H
 #define WEAPON_H
-
-class Weapon : public ItemTrait
-{
+#include "itemtrait.h"
+class WeaponTrait : public ItemTrait {
 	public:
-		Weapon();
+		WeaponTrait();
+		~WeaponTrait();
+
+		Type type() const { return Weapon; }
 };
 
 #endif // WEAPON_H

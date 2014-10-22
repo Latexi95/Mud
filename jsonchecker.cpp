@@ -52,7 +52,7 @@ JsonChecker &JsonChecker::hasNumberElement(const char *obj, bool optional) {
 		mIsValid = false;
 		return *this;
 	}
-	if (num.isNumeric()) {
+	if (!num.isNumeric()) {
 		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not a number";
 		mIsValid = false;
 		return *this;
@@ -70,7 +70,7 @@ JsonChecker &JsonChecker::hasStringElement(const char *obj, bool optional) {
 		mIsValid = false;
 		return *this;
 	}
-	if (string.isString()) {
+	if (!string.isString()) {
 		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not a string";
 		mIsValid = false;
 		return *this;
@@ -88,7 +88,7 @@ JsonChecker &JsonChecker::hasBooleanElement(const char *obj, bool optional) {
 		mIsValid = false;
 		return *this;
 	}
-	if (num.isBool()) {
+	if (!num.isBool()) {
 		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not a boolean";
 		mIsValid = false;
 		return *this;
@@ -106,11 +106,35 @@ JsonChecker &JsonChecker::hasObjectElement(const char *obj, bool optional) {
 		mIsValid = false;
 		return *this;
 	}
-	if (num.isObject()) {
+	if (!num.isObject()) {
 		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not an object";
 		mIsValid = false;
 		return *this;
 	}
+	return *this;
+}
+
+JsonChecker &JsonChecker::hasStringListElement(const char *obj, bool optional) {
+	if (!mIsValid) return *this;
+	const Json::Value &num = current()[obj];
+	if (num.isNull()) {
+		if (optional)
+			return *this;
+		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Can't find key \"" + joinJsonPath() + obj + "\"";
+		mIsValid = false;
+		return *this;
+	}
+	if (!num.isArray()) {
+		mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not an array";
+		mIsValid = false;
+		return *this;
+	}
+	for (Json::Value::const_iterator i = num.begin(); i != num.end(); i++) {
+		if (!i->isString()) {
+			mErrorMessage = "Failed to load file \"" + std::string(mPath) + "\" : Value of the key \"" + joinJsonPath() + obj + "\" is not a string array";
+		}
+	}
+
 	return *this;
 }
 

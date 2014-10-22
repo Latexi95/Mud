@@ -1,5 +1,10 @@
 #include "landmarktrait.h"
 
-LandmarkTrait::LandmarkTrait()
+LandmarkTrait::LandmarkTrait() :
+	ItemTrait()
 {
+}
+
+LandmarkTrait::~LandmarkTrait() {
+
 }

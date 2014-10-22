@@ -4,6 +4,7 @@
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <unordered_map>
+#include <boost/atomic/fences.hpp>
 
 template<typename T>
 class RHandle;
@@ -12,15 +13,19 @@ class Player;
 template<typename T>
 class Resource {
 		friend class RHandle<T>;
+		template <typename T>
+		friend RHandle<T> createStaticResource();
 	public:
-		Resource() : mRefCount(0) {}
-		Resource(const T &r) : mResource(r), mRefCount(0) {}
+		Resource(const std::string &path) : mPath(path), mRefCount(0) {}
+		Resource(const std::string &path, const T &r) : mResource(r), mPath(path), mRefCount(0) {}
 		T &resource() { return mResource; }
 		const T &resource() const { return mResource; }
 		bool canBeDeleted() const {
 			return mRefCount.load(boost::memory_order_consume);
 		}
+		const std::string &path() const { return mPath; }
 	private:
+		Resource() : mRefCount(0) {}
 		void increaseRefCount() {
 			mRefCount.fetch_add(1, boost::memory_order_relaxed);
 		}
@@ -29,17 +34,25 @@ class Resource {
 		}
 
 		T mResource;
+		const std::string mPath;
 		boost::atomic_int64_t mRefCount;
 };
 
 template<typename T>
 class RHandle {
 	public:
+		RHandle() : mResource(0) {}
+		RHandle(Resource<T> *r) : mResource(r) {
+			if (mResource) mResource->increaseRefCount();
+		}
 		RHandle(const RHandle<T> &handle) : mResource(handle.mResource){
 			if (mResource) mResource->increaseRefCount();
 		}
 		~RHandle() {
-			if (mResource) mResource->decreaseRefCount();
+			if (mResource && mResource->decreaseRefCount() && mResource->path().empty()) {
+				boost::atomic_thread_fence(boost::memory_order_acquire);
+				delete mResource;
+			}
 		}
 
 		bool isNull() const { return mResource == 0; }
@@ -51,13 +64,18 @@ class RHandle {
 			assert(mResource);
 			return mResource->resource();
 		}
-	private:
-		RHandle() : mResource(0) {}
-		RHandle(Resource<T> *r) : mResource(r) {
-			if (mResource) mResource->increaseRefCount();
+		const std::string &path() const {
+			assert(mResource);
+			return mResource->path();
 		}
+	private:
 		Resource *mResource;
 };
+template <typename T>
+RHandle<T> createStaticResource() {
+	Resource<T> *resource = new Resource<T>();
+	return RHandle<T>(resource);
+}
 
 template<typename T, typename Loader >
 class ResourceStash {

@@ -14,6 +14,7 @@ class JsonChecker {
 		JsonChecker &hasStringElement(const char *obj, bool optional = false);
 		JsonChecker &hasBooleanElement(const char *obj, bool optional = false);
 		JsonChecker &hasObjectElement(const char *obj, bool optional = false);
+		JsonChecker &hasStringListElement(const char *obj, bool optional = false);
 		const std::string &errorMessage() const { return mErrorMessage; }
 	private:
 		const Json::Value *current() const;

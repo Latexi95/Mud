@@ -1,5 +1,10 @@
-#include "weapon.h"
+#include "weapontrait.h"
 
-Weapon::Weapon()
+WeaponTrait::WeaponTrait() :
+	ItemTrait()
 {
+}
+
+WeaponTrait::~WeaponTrait() {
+
 }

@@ -1,5 +1,6 @@
 #include "lockedtrait.h"
 
-LockedTrait::LockedTrait()
+LockedTrait::LockedTrait() :
+	ItemTrait()
 {
 }
