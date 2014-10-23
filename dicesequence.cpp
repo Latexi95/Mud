@@ -32,25 +32,44 @@ DiceSequence DiceSequence::fromText(const std::string &input) {
 			if (!n) return DiceSequence();
 			num.clear();
 			if (timesD) {
-				sequence.add(minus ? -timesD : timesD, n);
+				assert(!minus && "Negative dice rolls are not supported");
+				sequence.add(timesD, n);
+				timesD = 0;
 			}
 			else {
-				total += n;
+				total += minus ? -n : n;
 			}
 			continue;
 		}
 		if (c == '-') {
-			minus = !minus;
+			if (num.empty()) {
+				minus = !minus;
+			}
+			else {
+				int n = std::stoi(num);
+				if (!n) return DiceSequence();
+				num.clear();
+				if (timesD) {
+					assert(!minus && "Negative dice rolls are not supported");
+					sequence.add(timesD, n);
+					timesD = 0;
+				}
+				else {
+					total += minus ? -n : n;
+				}
+				minus = true;
+			}
 			continue;
 		}
 	}
 	int n = std::stoi(num);
 	if (!n) return DiceSequence();
 	if (timesD) {
-		sequence.add(minus ? -timesD : timesD, n);
+		assert(!minus && "Negative dice rolls are not supported");
+		sequence.add(timesD, n);
 	}
 	else {
-		total += n;
+		total += minus ? -n : n;
 	}
 	sequence.setConstantPart(total);
 	return sequence;
@@ -58,7 +77,6 @@ DiceSequence DiceSequence::fromText(const std::string &input) {
 
 void DiceSequence::add(int times, int d) {
 	mParts[d] += times;
-	if (mParts[d] == 0) mParts.erase(d);
 }
 
 void DiceSequence::add(int c) {
@@ -112,14 +130,4 @@ std::string DiceSequence::toText() {
 		}
 	}
 	return text;
-}
-
-bool DiceSequence::deserialize(const Json::Value &val) {
-	std::string s = val.asString();
-	if (s.empty()) return DiceSequence();
-	*this = fromText(s);
-}
-
-Json::Value DiceSequence::serialize() const {
-	return Json::Value(toText());
 }
