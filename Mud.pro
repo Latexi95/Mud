@@ -27,12 +27,10 @@ debug {
 SOURCES += main.cpp \
     commandevent.cpp \
     item.cpp \
-    room.cpp \
     character.cpp \
     dicerandom.cpp \
     dicesequence.cpp \
     skillcheck.cpp \
-    gridroom.cpp \
     event.cpp \
     gameeventloop.cpp \
     commandservice.cpp \
@@ -56,17 +54,19 @@ SOURCES += main.cpp \
     traits/weapontrait.cpp \
     traits/containertrait.cpp \
     traits/lockedtrait.cpp \
-    traits/landmarktrait.cpp
+    traits/landmarktrait.cpp \
+    level.cpp \
+    sparsegridlevel.cpp \
+    room.cpp \
+    name.cpp
 
 HEADERS += \
     commandevent.h \
     item.h \
-    room.h \
     character.h \
     dicerandom.h \
     dicesequence.h \
     skillcheck.h \
-    gridroom.h \
     event.h \
     gameeventloop.h \
     commandservice.h \
@@ -97,4 +97,9 @@ HEADERS += \
     traits/weapontrait.h \
     traits/containertrait.h \
     traits/lockedtrait.h \
-    traits/landmarktrait.h
+    traits/landmarktrait.h \
+    level.h \
+    sparsegridlevel.h \
+    room.h \
+    name.h \
+    stringbuilder.h

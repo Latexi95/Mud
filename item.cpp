@@ -1,14 +1,13 @@
 #include "item.h"
 #include "traits/itemtrait.h"
-
+#include "resourceservice.h"
 
 Item::Item() :
 	mName(),
 	mWeight(0),
 	mSizeX(0),
 	mSizeY(0),
-	mSizeZ(0),
-	mRoom(0) {
+	mSizeZ(0){
 
 }
 
@@ -17,8 +16,7 @@ Item::Item(const std::string &name) :
 	mWeight(0),
 	mSizeX(0),
 	mSizeY(0),
-	mSizeZ(0),
-	mRoom(0) {
+	mSizeZ(0){
 
 }
 
@@ -34,7 +32,7 @@ void Item::initFromBase(const RHandle<Item> &b) {
 	mSizeY = b->sizeY();
 	mSizeZ = b->sizeZ();
 	for (const std::pair<const std::string, ItemTrait *> &t : b->mTraits) {
-		mTraits[t.second->traitName()] = t.second->clone();
+		mTraits[t.first] = t.second->clone();
 	}
 }
 
@@ -60,6 +58,7 @@ Json::Value Item::serialize() const {
 		}
 	}
 	else {
+		ret["base"] = mBase.path();
 		if (mName != mBase->name()) ret["name"] = mName;
 		if (mWeight != mBase->weight()) ret["weight"] = mWeight;
 		if (sizeX() != mBase->sizeX() || sizeY() != mBase->sizeY() || sizeZ() != mBase->sizeZ())  {
@@ -70,19 +69,24 @@ Json::Value Item::serialize() const {
 			if (sizeY() != mBase->sizeY()) {
 				size["y"] = mSizeY;
 			}
-			if (sizeX() != mBase->sizeX()) {
-				size["x"] = mSizeX;
+			if (sizeZ() != mBase->sizeZ()) {
+				size["z"] = mSizeZ;
 			}
+
+			ret["size"] = size;
 		}
-
-
-		size["y"] = mSizeY;
-		size["z"] = mSizeZ;
-		ret["size"] = size;
 		if (!mTraits.empty()) {
 			Json::Value traits(Json::objectValue);
-			for (const std::pair<const std::string, ItemTrait *> &t : b->mTraits) {
-				traits[t.second->traitName()] = t.second->serialize();
+			for (const std::pair<const std::string, ItemTrait *> &t : mBase->mTraits) {
+				Json::Value s = t.second->serialize();
+				if (mTraits.find(t.first) == mTraits.end()) {
+					traits[t.first] = Json::Value();
+				} else{
+					Json::Value s2 = mTraits[t.first]->serialize();
+					if (s != s2) {
+						traits[t.first] = s2;
+					}
+				}
 			}
 		}
 	}
@@ -90,5 +94,54 @@ Json::Value Item::serialize() const {
 }
 
 bool Item::deserialize(const Json::Value &val) {
+	const Json::Value &base = val["base"];
+	if (base.isString()) {
+		 RHandle<Item> b = ResourceService::instance()->item(base.asString());
+		 if (b.isNull()) return false;
+		 initFromBase(b);
+	}
+	const Json::Value &size = base["size"];
+	if (!size.isNull()) {
+		setSizeX(size.get("x", item.sizeX()));
+		setSizeY(size.get("y", item.sizeY()));
+		setSizeZ(size.get("z", item.sizeZ()));
+	}
+	setWeight(base.get("weight", item.weight()));
 
+	const Json::Value &traits = val["traits"];
+	for (Json::Value::const_iterator i = traits.begin(); traits.end(); ++i) {
+		if (mTraits.find(i.memberName()) != mTraits.end()) {
+			if (i->isNull()) {
+				delete mTraits[i.memberName()];
+				mTraits.erase(i.memberName());
+			}
+			else {
+				ItemTrait *trait = ItemTrait::createItemTraitByName(i.memberName());
+				assert(trait);
+				if (trait->deserialize(*i)) {
+					delete mTraits[i.memberName()];
+					mTraits[i.memberName()] = trait;
+				}
+				else {
+					std::cerr << "Failed to deserialize trait \"" << i.memberName() << "\"" << std::endl;
+					delete trait;
+				}
+			}
+		}
+		else {
+			ItemTrait *trait = ItemTrait::createItemTraitByName(i.memberName());
+			if (!trait) {
+				std::cerr << "Invalid trait name \"" << i.memberName() << "\"" << std::endl;
+				continue;
+			}
+			if (trait->deserialize(*i)) {
+				mTraits[i.memberName()] = trait;
+			}
+			else {
+				std::cerr << "Failed to deserialize trait \"" << i.memberName() << "\"" << std::endl;
+				delete trait;
+			}
+		}
+	}
+	return true;
 }

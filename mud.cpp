@@ -7,7 +7,7 @@ Mud::Mud() :
 }
 
 Mud::~Mud() {
-	for (Room *r : mRooms) {
+	for (Level *r : mRooms) {
 		delete r;
 	}
 }

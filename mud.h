@@ -16,7 +16,7 @@ class Mud {
 		boost::thread *mEventLoopThread;
 		GameEventLoop mEventLoop;
 		CommandService mCommandService;
-		std::vector<Room*> mRooms;
+		std::vector<Level*> mRooms;
 };
 
 #endif // MUD_H

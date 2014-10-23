@@ -43,8 +43,3 @@ Resource<Item> *ItemLoader::operator()(const std::string &filePath) {
 	return res.release();
 }
 
-bool ItemLoader::checkIsObject(const Json::Value &val, const char *name, const std::string &filePath) const {
-	if (val.isObject()) return true;
-	std::cerr << "Failed to load " << filePath << " : Json element \"" << name << "\" isn't an object\n";
-	return false;
-}

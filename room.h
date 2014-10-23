@@ -1,23 +1,20 @@
 #ifndef ROOM_H
 #define ROOM_H
-#include <vector>
-#include <string>
-class Item;
+#include "item.h"
+#include "resource.h"
+class Level;
 class Room {
 	public:
-		Room(const std::string &name);
+		Room(Level *level);
 		virtual ~Room();
-
-		std::string name() const;
-		void setName(const std::string &value);
-		std::vector<Item*> items() const { return mItems; }
-
-		virtual bool isMovableLocation(int x, int y) const = 0;
-		virtual std::vector<Item*> itemsInLocation(int x, int y) const = 0;
+		virtual std::vector<RHandle<Item>> items() const = 0;
+		int x() const;
+		int y() const;
+		Level *level() const { return mLevel; }
 	protected:
-		std::string mName;
-		std::vector<Item*> mItems;
-
+		Level *mLevel;
+		int mX;
+		int mY;
 };
 
 #endif // ROOM_H

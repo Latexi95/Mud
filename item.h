@@ -4,7 +4,6 @@
 #include <vector>
 #include "jsonserializable.h"
 #include "resource.h"
-class Room;
 class ItemTrait;
 class Item : public JsonSerializable {
 	public:
@@ -21,8 +20,6 @@ class Item : public JsonSerializable {
 		void setSizeY(double h) { mSizeY = h; }
 		double sizeZ() const { return mSizeZ; }
 		void setSizeZ(double d) { mSizeZ = d; }
-		Room *room() const { return mRoom; }
-		void setRoom(Room *room) { mRoom = room; }
 		const std::vector<ItemTrait*> &traits() const { return mTraits; }
 
 		Json::Value serialize() const;
@@ -34,7 +31,6 @@ class Item : public JsonSerializable {
 		double mSizeX;
 		double mSizeY;
 		double mSizeZ;
-		Room *mRoom;
 		std::unordered_map<std::string, ItemTrait*> mTraits;
 };
 
