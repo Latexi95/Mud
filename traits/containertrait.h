@@ -22,7 +22,8 @@ class ContainerTrait : public ItemTrait  {
 
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
-		bool hasToBeSerialized(const ItemTrait *inheritedVersion) const;
+		bool hasToBeSerialized(const ItemTrait *base) const;
+
 
 	private:
 		std::vector<RHandle<Item> > mContainedItems;

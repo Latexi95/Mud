@@ -4,14 +4,17 @@
 #include <vector>
 #include "jsonserializable.h"
 #include "resource.h"
+#include "name.h"
 class ItemTrait;
 class Item : public JsonSerializable {
 	public:
 		Item();
-		Item(const std::string &name);
+		Item(const Name &name);
 		virtual ~Item();
 		void initFromBase(const RHandle<Item> &b);
-		const std::string &name() const;
+		const Name &name() const;
+		void setName(const Name &n);
+
 		double weight() const { return mWeight; }
 		void setWeight(double t) { mWeight = t; }
 		double sizeX() const { return mSizeX; }
@@ -26,7 +29,7 @@ class Item : public JsonSerializable {
 		bool deserialize(const Json::Value &val);
 	protected:
 		RHandle<Item> mBase;
-		std::string mName;
+		Name mName;
 		double mWeight;
 		double mSizeX;
 		double mSizeY;

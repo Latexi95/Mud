@@ -1,11 +1,18 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 #include "item.h"
+#include "jsonserializable.h"
 #include <map>
-class Character : public Item {
+class Character : public JsonSerializable {
 	public:
 		Character(const std::string &name);
 		~Character();
+
+		double height() const { return mHeight; }
+		void setHeight(double h) { mHeight = h; }
+		double width() const { return mWidth; }
+		void setWidth(double w) { mWidth = w; }
+
 		int strength() const { return mStrength; }
 		void setStrength(int str) { mStrength = str; }
 		int dexterity() const { return mDexterity; }
@@ -28,7 +35,13 @@ class Character : public Item {
 
 		void setSkillLevel(std::string skillName, int level);
 		int skillLevel(std::string skillName);
+
+		virtual Json::Value serialize() const;
+		virtual bool deserialize(const Json::Value &val);
 	protected:
+		double mHeight;
+		double mWidth;
+
 		int mStrength;
 		int mDexterity;
 		int mConstitution;
@@ -36,8 +49,8 @@ class Character : public Item {
 		int mWisdom;
 		int mCharisma;
 
-
 		std::map<std::string, int> mSkillLevels;
+		std::map<std::string, std::vector<RHandle<Item> > > mEquipment;
 };
 
 #endif // CHARACTER_H

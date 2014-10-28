@@ -48,7 +48,6 @@ SOURCES += main.cpp \
     jsoncpp/src/lib_json/json_writer.cpp \
     jsonserializable.cpp \
     resourceservice.cpp \
-    itemloader.cpp \
     jsonchecker.cpp \
     traits/itemtrait.cpp \
     traits/weapontrait.cpp \
@@ -58,7 +57,9 @@ SOURCES += main.cpp \
     level.cpp \
     sparsegridlevel.cpp \
     room.cpp \
-    name.cpp
+    name.cpp \
+    equipmentslots.cpp \
+    jsonserializableloader.cpp
 
 HEADERS += \
     commandevent.h \
@@ -91,7 +92,6 @@ HEADERS += \
     jsonserializable.h \
     resourceservice.h \
     resource.h \
-    itemloader.h \
     jsonchecker.h \
     traits/itemtrait.h \
     traits/weapontrait.h \
@@ -102,4 +102,6 @@ HEADERS += \
     sparsegridlevel.h \
     room.h \
     name.h \
-    stringbuilder.h
+    stringbuilder.h \
+    equipmentslots.h \
+    jsonserializableloader.h

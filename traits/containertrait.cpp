@@ -39,6 +39,14 @@ Json::Value ContainerTrait::serialize() const {
 	return ret;
 }
 
+
+Json::Value ContainerTrait::serialize(const ItemTrait *base) const {
+	Json::Value obj(Json::objectValue);
+
+	return true;
+	if (mContainerType)
+}
+
 bool ContainerTrait::deserialize(const Json::Value &val) {
 	if (!val.isObject()) return false;
 	const Json::Value &type = ret["type"];
@@ -61,7 +69,7 @@ bool ContainerTrait::deserialize(const Json::Value &val) {
 			if (item.isNull()) return false;
 			mContainedItems.push_back(item);
 		} else if (i->isObject()) {
-			RHandle<Item> item = createStaticResource<Item>();
+			RHandle<Item> item = createDynamicResource<Item>();
 			if (!item->deserialize(*i)) return false;
 			mContainedItems.push_back(item);
 		} else {
@@ -70,10 +78,9 @@ bool ContainerTrait::deserialize(const Json::Value &val) {
 	}
 }
 
-bool ContainerTrait::hasToBeSerialized(const ItemTrait *inheritedVersion) const {
-	assert(inheritedVersion->type() == Container);
-	ContainerTrait *p = static_cast<ItemTrait>(inheritedVersion);
+bool ContainerTrait::hasToBeSerialized(const ItemTrait *base) const {
+	assert(base->type() == Container);
+	ContainerTrait *p = static_cast<ItemTrait>(base);
 	if (p->containedItems().empty() && this->containedItems().empty() && this->containerType() == p->containerType()) return false;
 	return true;
-
 }

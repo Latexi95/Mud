@@ -14,7 +14,7 @@ class ItemTrait : public JsonSerializable {
 		virtual ~ItemTrait();
 		virtual ItemTrait *clone() const = 0;
 		virtual Type type() const = 0;
-		virtual bool hasToBeSerialized(const ItemTrait *inheritedVersion) = 0;
+		virtual bool hasToBeSerialized(const ItemTrait *base) const = 0;
 		const char *traitName() const = 0;
 
 		static ItemTrait *createItemTraitByName(const std::string &name);

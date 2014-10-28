@@ -1,7 +1,5 @@
 #ifndef STRINGBUILDER_H
 #define STRINGBUILDER_H
-#ifndef STRINGBUILDER_H
-#define STRINGBUILDER_H
 #include <string>
 #include <cstring>
 #include <cmath>
@@ -233,8 +231,5 @@ StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilde
 operator%(const A &a, const B &b) {
 	return StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>(a, b);
 }
-
-
-#endif // STRINGBUILDER_H
 
 #endif // STRINGBUILDER_H

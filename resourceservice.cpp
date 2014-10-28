@@ -2,11 +2,15 @@
 #include <json/json.h>
 #include <fstream>
 #include <cassert>
-#include "itemloader.h"
+#include "item.h"
+#include "character.h"
+#include "jsonserializableloader.h"
+
 ResourceService *sInstance = 0;
 
 ResourceService::ResourceService() :
-	mItemStash(ItemLoader(this)) {
+	mItemStash(JsonSerializableLoader<Item>()),
+	mCharacterStash(JsonSerializableLoader<Character>()){
 	assert(sInstance == 0);
 	sInstance = this;
 }
@@ -39,4 +43,8 @@ Json::Value ResourceService::requestJsonResource(const std::string &path) const 
 
 RHandle<Item> ResourceService::item(const std::string &path) {
 	return mItemStash.get(path);
+}
+
+RHandle<Character> ResourceService::character(const std::string &path) {
+
 }

@@ -14,18 +14,20 @@ template<typename T>
 class Resource {
 		friend class RHandle<T>;
 		template <typename T>
-		friend RHandle<T> createStaticResource();
+		friend RHandle<T> createDynamicResource();
 	public:
-		Resource(const std::string &path) : mPath(path), mRefCount(0) {}
-		Resource(const std::string &path, const T &r) : mResource(r), mPath(path), mRefCount(0) {}
-		T &resource() { return mResource; }
-		const T &resource() const { return mResource; }
+		Resource(const std::string &path) : mPath(path), mResource(new T()), mRefCount(0) {}
+		Resource(const std::string &path, T *r) : mResource(r), mPath(path), mRefCount(0) {}
+		~Resource() { delete mResource; }
+
+		T &resource() { return *mResource; }
+		const T &resource() const { return *mResource; }
 		bool canBeDeleted() const {
 			return mRefCount.load(boost::memory_order_consume);
 		}
 		const std::string &path() const { return mPath; }
 	private:
-		Resource() : mRefCount(0) {}
+		Resource() : mResource(new T()), mRefCount(0) {}
 		void increaseRefCount() {
 			mRefCount.fetch_add(1, boost::memory_order_relaxed);
 		}
@@ -33,7 +35,7 @@ class Resource {
 			return mRefCount.fetch_add(-1, boost::memory_order_relaxed) == 1;
 		}
 
-		T mResource;
+		T *mResource;
 		const std::string mPath;
 		boost::atomic_int64_t mRefCount;
 };
@@ -56,6 +58,7 @@ class RHandle {
 		}
 
 		bool isNull() const { return mResource == 0; }
+		bool isDynamicResource() const { return mResource->path().empty(); }
 		T *operator ->() const {
 			assert(mResource);
 			return &mResource->resource();
@@ -69,10 +72,10 @@ class RHandle {
 			return mResource->path();
 		}
 	private:
-		Resource *mResource;
+		Resource<T> *mResource;
 };
 template <typename T>
-RHandle<T> createStaticResource() {
+RHandle<T> createDynamicResource() {
 	Resource<T> *resource = new Resource<T>();
 	return RHandle<T>(resource);
 }

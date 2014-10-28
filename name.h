@@ -6,8 +6,10 @@ class Name : public JsonSerializable{
 	public:
 		const static int UnspesifiedItemQuantity = -1;
 		enum Flags {
+			NoFlags = 0,
 			UseArticleAn = 1,
-			ProperNoun = 2
+			ProperNoun = 2,
+			MaskFlag = 3
 		};
 
 		Name(const std::string &base, int flags = 0);
@@ -26,6 +28,8 @@ class Name : public JsonSerializable{
 
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
+
+		bool operator==(const Name &n) const;
 	private:
 		std::string mBase;
 		std::string mPluralForm;

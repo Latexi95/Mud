@@ -11,7 +11,7 @@ Item::Item() :
 
 }
 
-Item::Item(const std::string &name) :
+Item::Item(const Name &name) :
 	mName(name),
 	mWeight(0),
 	mSizeX(0),
@@ -36,14 +36,18 @@ void Item::initFromBase(const RHandle<Item> &b) {
 	}
 }
 
-const std::string &Item::name() const {
+const Name &Item::name() const {
 	return mName;
+}
+
+void Item::setName(const Name &n) {
+	mName = n;
 }
 
 Json::Value Item::serialize() const {
 	Json::Value ret(Json::objectValue);
 	if (mBase.isNull()) {
-		ret["name"] = mName;
+		ret["name"] = mName.serialize();
 		ret["weight"] = mWeight;
 		Json::Value size(Json::objectValue);
 		size["x"] = mSizeX;
@@ -78,13 +82,13 @@ Json::Value Item::serialize() const {
 		if (!mTraits.empty()) {
 			Json::Value traits(Json::objectValue);
 			for (const std::pair<const std::string, ItemTrait *> &t : mBase->mTraits) {
-				Json::Value s = t.second->serialize();
 				if (mTraits.find(t.first) == mTraits.end()) {
 					traits[t.first] = Json::Value();
 				} else{
-					Json::Value s2 = mTraits[t.first]->serialize();
-					if (s != s2) {
-						traits[t.first] = s2;
+					ItemTrait *baseTrait = t.second;
+					ItemTrait *trait = mTraits[t.first];
+					if (trait->hasToBeSerialized(baseTrait)) {
+						traits[t.first] = trait->serialize();
 					}
 				}
 			}
@@ -100,6 +104,8 @@ bool Item::deserialize(const Json::Value &val) {
 		 if (b.isNull()) return false;
 		 initFromBase(b);
 	}
+	if (!mName.deserialize(base["name"])) return false;
+
 	const Json::Value &size = base["size"];
 	if (!size.isNull()) {
 		setSizeX(size.get("x", item.sizeX()));
