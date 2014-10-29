@@ -3,7 +3,7 @@
 #include "level.h"
 class SparseGridLevel : public Level {
 	public:
-		SparseGridLevel();
+		SparseGridLevel(const std::string &name);
 };
 
 #endif // SPARSEGRIDLEVEL_H

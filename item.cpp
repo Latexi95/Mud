@@ -21,7 +21,7 @@ Item::Item(const Name &name) :
 }
 
 Item::~Item() {
-	for (ItemTrait *trait : mTraits) delete trait;
+	for (const std::pair<const std::string, ItemTrait *> trait : mTraits) delete trait.second;
 }
 
 void Item::initFromBase(const RHandle<Item> &b) {
@@ -56,14 +56,14 @@ Json::Value Item::serialize() const {
 		ret["size"] = size;
 		if (!mTraits.empty()) {
 			Json::Value traits(Json::objectValue);
-			for (const std::pair<const std::string, ItemTrait *> &t : b->mTraits) {
+			for (const std::pair<const std::string, ItemTrait *> &t : mTraits) {
 				traits[t.second->traitName()] = t.second->serialize();
 			}
 		}
 	}
 	else {
 		ret["base"] = mBase.path();
-		if (mName != mBase->name()) ret["name"] = mName;
+		if (mName != mBase->name()) ret["name"] = mName.serialize();
 		if (mWeight != mBase->weight()) ret["weight"] = mWeight;
 		if (sizeX() != mBase->sizeX() || sizeY() != mBase->sizeY() || sizeZ() != mBase->sizeZ())  {
 			Json::Value size(Json::objectValue);
@@ -86,7 +86,7 @@ Json::Value Item::serialize() const {
 					traits[t.first] = Json::Value();
 				} else{
 					ItemTrait *baseTrait = t.second;
-					ItemTrait *trait = mTraits[t.first];
+					ItemTrait *trait = mTraits.at(t.first);
 					if (trait->hasToBeSerialized(baseTrait)) {
 						traits[t.first] = trait->serialize();
 					}
@@ -108,14 +108,14 @@ bool Item::deserialize(const Json::Value &val) {
 
 	const Json::Value &size = base["size"];
 	if (!size.isNull()) {
-		setSizeX(size.get("x", item.sizeX()));
-		setSizeY(size.get("y", item.sizeY()));
-		setSizeZ(size.get("z", item.sizeZ()));
+		setSizeX(size.get("x", sizeX()).asDouble());
+		setSizeY(size.get("y", sizeY()).asDouble());
+		setSizeZ(size.get("z", sizeZ()).asDouble());
 	}
-	setWeight(base.get("weight", item.weight()));
+	setWeight(base.get("weight", weight()).asDouble());
 
 	const Json::Value &traits = val["traits"];
-	for (Json::Value::const_iterator i = traits.begin(); traits.end(); ++i) {
+	for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
 		if (mTraits.find(i.memberName()) != mTraits.end()) {
 			if (i->isNull()) {
 				delete mTraits[i.memberName()];
@@ -150,4 +150,18 @@ bool Item::deserialize(const Json::Value &val) {
 		}
 	}
 	return true;
+}
+
+RHandle<Item> Item::clone() const {
+	RHandle<Item> copy = createDynamicResource<Item>();
+	copy->mBase = mBase;
+	copy->mName = name();
+	copy->mWeight = weight();
+	copy->mSizeX = sizeX();
+	copy->mSizeY = sizeY();
+	copy->mSizeZ = sizeZ();
+	for (const std::pair<const std::string, ItemTrait *> &t : mTraits) {
+		copy->mTraits[t.first] = t.second->clone();
+	}
+	return copy;
 }

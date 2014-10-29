@@ -5,6 +5,7 @@
 #include <map>
 class Character : public JsonSerializable {
 	public:
+		Character();
 		Character(const std::string &name);
 		~Character();
 
@@ -34,11 +35,12 @@ class Character : public JsonSerializable {
 		int CHA() const { return (mCharisma - 10) / 2; }
 
 		void setSkillLevel(std::string skillName, int level);
-		int skillLevel(std::string skillName);
+		int skillLevel(std::string skillName) const;
 
 		virtual Json::Value serialize() const;
 		virtual bool deserialize(const Json::Value &val);
 	protected:
+		std::string mName;
 		double mHeight;
 		double mWidth;
 

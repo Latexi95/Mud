@@ -5,5 +5,5 @@ PlayerService::PlayerService() {
 }
 
 Player *PlayerService::findPlayerByName(const std::string &name) {
-	ResourceService::instance()->
+
 }

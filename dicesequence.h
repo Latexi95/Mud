@@ -19,7 +19,7 @@ class DiceSequence : public JsonSerializable {
 		int maxValue() const;
 		bool isNull();
 
-		std::string toText();
+		std::string toText(bool tight = false) const;
 
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);

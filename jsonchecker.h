@@ -20,7 +20,7 @@ class JsonChecker {
 		const Json::Value *current() const;
 		std::string joinJsonPath() const;
 		std::stack<const Json::Value *> mValueStack;
-		std::stack<std::string> mJsonPath;
+		std::vector<std::string> mJsonPath;
 		const char *mPath;
 		std::string mErrorMessage;
 		bool mIsValid;

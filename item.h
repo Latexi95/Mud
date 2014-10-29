@@ -23,10 +23,11 @@ class Item : public JsonSerializable {
 		void setSizeY(double h) { mSizeY = h; }
 		double sizeZ() const { return mSizeZ; }
 		void setSizeZ(double d) { mSizeZ = d; }
-		const std::vector<ItemTrait*> &traits() const { return mTraits; }
 
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
+
+		RHandle<Item> clone() const;
 	protected:
 		RHandle<Item> mBase;
 		Name mName;

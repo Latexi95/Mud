@@ -7,6 +7,11 @@ static std::string sArticleA("a");
 static std::string sArticleAn("an");
 static std::string sArticleThe("the");
 
+Name::Name() :
+	mFlags(0) {
+
+}
+
 Name::Name(const std::string &base, int flags) :
 	mBase(base),
 	mFlags(flags) {
@@ -17,6 +22,10 @@ Name::Name(const std::string &base, const std::string &pluralForm, int flags) :
 	mBase(base),
 	mPluralForm(pluralForm),
 	mFlags(flags) {
+
+}
+
+Name::~Name() {
 
 }
 
@@ -116,8 +125,8 @@ bool Name::deserialize(const Json::Value &val) {
 			mPluralForm = base.asString();
 		}
 		if (flags.isInt()) {
-			int flags = flags.asInt();
-			mFlags = flags & MaskFlag;
+			int flagsInt = flags.asInt();
+			mFlags = flagsInt & MaskFlag;
 		}
 		if (mBase.empty()) return false;
 		return true;
@@ -125,6 +134,14 @@ bool Name::deserialize(const Json::Value &val) {
 	return false;
 }
 
+bool Name::isNull() const {
+	return mBase.empty();
+}
+
 bool Name::operator==(const Name &n) const {
 	return this->mBase == n.mBase && this->mPluralForm == n.mPluralForm && this->mFlags == n.mFlags;
+}
+
+bool Name::operator!=(const Name &n) const {
+	return this->mBase != n.mBase || this->mPluralForm != n.mPluralForm || this->mFlags != n.mFlags;
 }

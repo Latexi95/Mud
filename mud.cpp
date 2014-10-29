@@ -1,5 +1,5 @@
 #include "mud.h"
-
+#include "level.h"
 Mud::Mud() :
 	mEventLoopThread(0) {
 	mEventLoop.addHandler(&mCommandService);

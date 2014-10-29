@@ -20,11 +20,12 @@ class ContainerTrait : public ItemTrait  {
 		void setContainerType(ContainerType t) { mContainerType = t; }
 		const std::vector<RHandle<Item> > containedItems() const { return mContainedItems; }
 
+		ItemTrait *clone() const;
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
 		bool hasToBeSerialized(const ItemTrait *base) const;
 
-
+		const char *traitName() const { return "container"; }
 	private:
 		std::vector<RHandle<Item> > mContainedItems;
 		ContainerType mContainerType;

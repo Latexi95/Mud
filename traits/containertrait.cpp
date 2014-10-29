@@ -13,6 +13,15 @@ ContainerTrait::~ContainerTrait()
 
 }
 
+ItemTrait *ContainerTrait::clone() const {
+	ContainerTrait *trait = new ContainerTrait();
+	for (const RHandle<Item> &items : mContainedItems) {
+		trait->mContainedItems.push_back(items->clone());
+	}
+	trait->mContainerType = this->mContainerType;
+	return trait;
+}
+
 Json::Value ContainerTrait::serialize() const {
 	Json::Value ret;
 	switch (mContainerType) {
@@ -39,17 +48,9 @@ Json::Value ContainerTrait::serialize() const {
 	return ret;
 }
 
-
-Json::Value ContainerTrait::serialize(const ItemTrait *base) const {
-	Json::Value obj(Json::objectValue);
-
-	return true;
-	if (mContainerType)
-}
-
 bool ContainerTrait::deserialize(const Json::Value &val) {
 	if (!val.isObject()) return false;
-	const Json::Value &type = ret["type"];
+	const Json::Value &type = val["type"];
 	if (!type.isString()) return false;
 	std::string typeStr = type.asString();
 	if (typeStr == "open") {
@@ -61,7 +62,7 @@ bool ContainerTrait::deserialize(const Json::Value &val) {
 	} else {
 		return false;
 	}
-	const Json::Value &items = ret["items"];
+	const Json::Value &items = val["items"];
 	if (!items.isArray()) return false;
 	for (Json::Value::const_iterator i = items.begin(); i != items.end(); i++) {
 		if (i->isString()) {
@@ -76,11 +77,12 @@ bool ContainerTrait::deserialize(const Json::Value &val) {
 			return false;
 		}
 	}
+	return true;
 }
 
 bool ContainerTrait::hasToBeSerialized(const ItemTrait *base) const {
 	assert(base->type() == Container);
-	ContainerTrait *p = static_cast<ItemTrait>(base);
+	const ContainerTrait *p = static_cast<const ContainerTrait*>(base);
 	if (p->containedItems().empty() && this->containedItems().empty() && this->containerType() == p->containerType()) return false;
 	return true;
 }

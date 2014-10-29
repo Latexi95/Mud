@@ -4,3 +4,7 @@ Room::Room(Level *level) :
 	mLevel(level)
 {
 }
+
+Room::~Room() {
+
+}

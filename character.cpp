@@ -2,8 +2,12 @@
 #include <algorithm>
 #include "resourceservice.h"
 
+Character::Character() {
+
+}
+
 Character::Character(const std::string &name) :
-	Item(name)
+	mName(name)
 {
 }
 
@@ -16,7 +20,7 @@ void Character::setSkillLevel(std::string skillName, int level) {
 	mSkillLevels[skillName] = level;
 }
 
-int Character::skillLevel(const std::string &skillName) {
+int Character::skillLevel(std::string skillName) const {
 	std::transform(skillName.begin(), skillName.end(), skillName.begin(), ::tolower);
 	std::map<std::string, int>::const_iterator i = mSkillLevels.find(skillName);
 	if (i != mSkillLevels.end()) {
@@ -40,7 +44,7 @@ Json::Value Character::serialize() const {
 	for (const std::pair<std::string, int> &p : mSkillLevels) {
 		skills[p.first] = p.second;
 	}
-	obj["skills"] = p;
+	obj["skills"] = skills;
 	Json::Value equipment(Json::objectValue);
 	for (const std::pair<std::string, std::vector<RHandle<Item> > > &equipmentSlot : mEquipment) {
 		Json::Value items(Json::arrayValue);
@@ -97,7 +101,7 @@ bool Character::deserialize(const Json::Value &val) {
 			}
 			else if (equipmentSlot->isObject()) {
 				RHandle<Item> item = createDynamicResource<Item>();
-				if (!item->deserialize(equipmentSlot)) {
+				if (!item->deserialize(*equipmentSlot)) {
 					continue;
 				}
 				mEquipment[equipmentSlot.memberName()].push_back(item);
@@ -112,7 +116,7 @@ bool Character::deserialize(const Json::Value &val) {
 					}
 					else if (equipmentSlot->isObject()) {
 						RHandle<Item> item = createDynamicResource<Item>();
-						if (!item->deserialize(i2)) {
+						if (!item->deserialize(*i2)) {
 							continue;
 						}
 						items.push_back(item);

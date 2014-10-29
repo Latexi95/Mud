@@ -5,16 +5,19 @@
 #include <boost/thread/condition_variable.hpp>
 #include <unordered_map>
 #include <boost/atomic/fences.hpp>
-
+#include <boost/atomic.hpp>
 template<typename T>
 class RHandle;
+
+template <typename T>
+RHandle<T> createDynamicResource();
+
 
 class Player;
 template<typename T>
 class Resource {
 		friend class RHandle<T>;
-		template <typename T>
-		friend RHandle<T> createDynamicResource();
+		friend RHandle<T> createDynamicResource<>();
 	public:
 		Resource(const std::string &path) : mPath(path), mResource(new T()), mRefCount(0) {}
 		Resource(const std::string &path, T *r) : mResource(r), mPath(path), mRefCount(0) {}
@@ -37,7 +40,7 @@ class Resource {
 
 		T *mResource;
 		const std::string mPath;
-		boost::atomic_int64_t mRefCount;
+		boost::atomic_int mRefCount;
 };
 
 template<typename T>
@@ -80,22 +83,58 @@ RHandle<T> createDynamicResource() {
 	return RHandle<T>(resource);
 }
 
-template<typename T, typename Loader >
+template<typename T>
 class ResourceStash {
 	public:
-		ResourceStash(Loader loader) : mLoader(loader) {
+		ResourceStash() {
 		}
 		~ResourceStash() {
-			boost::lock_guard lock(&mMutex);
-			for (std::unordered_map<std::string, Resource<T> *>::const_iterator i = mStash.begin(); i != mStash.end(); i++) {
+			boost::lock_guard<boost::mutex> lock(mMutex);
+			for (typename std::unordered_map<std::string, Resource<T> *>::const_iterator i = mStash.begin(); i != mStash.end(); i++) {
 				delete i->second;
 			}
 		}
 
-		RHandle get(const std::string &path);
+		template <typename Loader>
+		RHandle<T> get(const std::string &path, Loader loader) {
+			{
+				boost::lock_guard<boost::mutex> lock(mMutex);
+				auto i = mStash.find(path);
+				if (i != mStash.end() && i->second != 0) {
+					return RHandle<T>(i->second);
+				}
+			}
+			{
+				boost::unique_lock<boost::mutex> lock(mMutex);
+				auto i = mStash.find(path);
+				if (i != mStash.end()) {
+					while (i->second == 0) {
+						mCondition.wait(lock);
+						i = mStash.find(path);
+						if (i == mStash.end()) {
+							return RHandle<T>();
+						}
+					}
+					return RHandle<T>(i->second);
+				}
+				mStash[path] = 0;
+			}
+			Resource<T> *resource = loader(path);
+			{
+				boost::lock_guard<boost::mutex> lock(mMutex);
+				if (resource) {
+					mStash[path] = resource;
+				}
+				else {
+					mStash.erase(path);
+					return RHandle<T>();
+				}
+			}
+			mCondition.notify_all();
+			return RHandle<T>(resource);
+		}
 
 	private:
-		Loader mLoader;
 		boost::mutex mMutex;
 		std::unordered_map<std::string, Resource<T> *> mStash;
 		boost::condition_variable mCondition;
@@ -103,42 +142,3 @@ class ResourceStash {
 
 #endif // RESOURCE_H
 
-
-template<typename T, typename Loader >
-RHandle ResourceStash::get(const std::string &path) {
-	{
-		boost::lock_guard lock(&mMutex);
-		auto i = mStash.find(path);
-		if (i != mStash.end() && i->second() != 0) {
-			return RHandle<T>(i->second());
-		}
-	}
-	{
-		boost::unique_lock<boost::mutex> lock(&mMutex);
-		auto i = mStash.find(path);
-		if (i != mStash.end()) {
-			while (i->second() == 0) {
-				mCondition.wait(lock);
-				i = mStash.find(path);
-				if (i == mStash.end()) {
-					return RHandle<T>();
-				}
-			}
-			return RHandle<T>(i->second());
-		}
-		mStash[path] = 0;
-	}
-	Resource<T> *resource = mLoader(path);
-	{
-		boost::lock_guard lock(&mMutex);
-		if (resource) {
-			mStash[path] = resource;
-		}
-		else {
-			mStash.erase(path);
-			return RHandle<T>();
-		}
-	}
-	mCondition.notify_all();
-	return RHandle<T>(resource);
-}

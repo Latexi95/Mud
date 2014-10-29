@@ -111,23 +111,42 @@ bool DiceSequence::isNull() {
 	return !mConstantPart && mParts.empty();
 }
 
-std::string DiceSequence::toText() {
+std::string DiceSequence::toText(bool tight) const {
 	std::string text;
 	std::map<DiceT, TimesT>::const_iterator i = mParts.begin();
 	while(i != mParts.end()) {
 		if (!text.empty()) {
-			text += " + ";
+			text += tight ? "+" : " + ";
 		}
 		text += std::to_string(i->second) + 'd' +  std::to_string(i->first);
 		i++;
 	}
 	if (mConstantPart) {
 		if (mConstantPart < 0) {
-			text += " - " +  std::to_string(-mConstantPart);
+			text += tight ? "-" : " - " +  std::to_string(-mConstantPart);
 		}
 		else {
-			text += " + " +  std::to_string(mConstantPart);
+			text += tight ? "+" :" + " +  std::to_string(mConstantPart);
 		}
 	}
 	return text;
+}
+
+Json::Value DiceSequence::serialize() const {
+	return toText(true);
+}
+
+bool DiceSequence::deserialize(const Json::Value &val) {
+	if (val.isString()) {
+		*this = fromText(val.asString());
+		return true;
+	}
+	else if (val.isInt()) {
+		mParts.clear();
+		mConstantPart = val.asInt();
+		return true;
+	}
+	else {
+		return false;
+	}
 }

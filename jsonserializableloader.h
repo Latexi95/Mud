@@ -10,14 +10,15 @@ class JsonSerializableLoader {
 		Resource<T> *operator()(const std::string &path) const;
 };
 
-Resource<T> *JsonSerializableLoader::operator()(const std::string &path) const {
-	Json::Value v = ResourceService::requestJsonResource(path);
+template <typename T>
+inline Resource<T> *JsonSerializableLoader<T>::operator()(const std::string &path) const {
+	Json::Value v = ResourceService::instance()->requestJsonResource(path);
 	if (v.isNull()) return 0;
 	std::unique_ptr<T> t = boost::make_unique<T>();
 	if (!t->deserialize(v)) {
 		return 0;
 	}
-	return t.release();
+	return new Resource<T>(path, t.release());
 }
 
 #endif // JSONSERIALIZABLELOADER_H

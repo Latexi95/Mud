@@ -1,5 +1,6 @@
 #include "sparsegridlevel.h"
 
-SparseGridLevel::SparseGridLevel()
+SparseGridLevel::SparseGridLevel(const std::string &name) :
+	Level(name)
 {
 }

@@ -12,6 +12,7 @@ class Name : public JsonSerializable{
 			MaskFlag = 3
 		};
 
+		Name();
 		Name(const std::string &base, int flags = 0);
 		Name(const std::string &base, const std::string &pluralForm, int flags = 0);
 
@@ -29,10 +30,13 @@ class Name : public JsonSerializable{
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
 
+		bool isNull() const;
+
 		bool operator==(const Name &n) const;
+		bool operator!=(const Name &n) const;
 	private:
 		std::string mBase;
-		std::string mPluralForm;
+		mutable std::string mPluralForm;
 		int mFlags;
 };
 

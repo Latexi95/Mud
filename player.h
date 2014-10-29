@@ -2,7 +2,7 @@
 #define PLAYER_H
 #include <string>
 #include "jsonserializable.h"
-#include ""
+#include "character.h"
 class Player : public JsonSerializable {
 	public:
 		Player(const std::string &name);
@@ -13,9 +13,9 @@ class Player : public JsonSerializable {
 		Json::Value serialize() const;
 		bool deserialize(const Json::Value &val);
 	private:
-		std::string hashPassword(const std::string &password);
+		std::string hashPassword(const std::string &password) const;
 		std::string mPasswordHash;
 		std::string mName;
-		RHandle<
+		RHandle<Character> mCharacter;
 };
 #endif // PLAYER_H

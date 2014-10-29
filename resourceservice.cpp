@@ -9,8 +9,8 @@
 ResourceService *sInstance = 0;
 
 ResourceService::ResourceService() :
-	mItemStash(JsonSerializableLoader<Item>()),
-	mCharacterStash(JsonSerializableLoader<Character>()){
+	mItemStash(),
+	mCharacterStash(){
 	assert(sInstance == 0);
 	sInstance = this;
 }
@@ -27,10 +27,7 @@ ResourceService *ResourceService::instance() {
 Json::Value ResourceService::requestJsonResource(const std::string &path) const {
 	Json::Value ret;
 	std::ifstream file;
-	if (!file.open(path)) {
-		std::cerr << "Can't open file " << path << std::endl;
-		return ret;
-	}
+	file.open(path);
 	Json::Reader reader;
 
 	if (!reader.parse(file, ret, false)) {
@@ -42,9 +39,9 @@ Json::Value ResourceService::requestJsonResource(const std::string &path) const 
 }
 
 RHandle<Item> ResourceService::item(const std::string &path) {
-	return mItemStash.get(path);
+	return mItemStash.get(path, JsonSerializableLoader<Item>());
 }
 
 RHandle<Character> ResourceService::character(const std::string &path) {
-
+	return mCharacterStash.get(path, JsonSerializableLoader<Character>());
 }

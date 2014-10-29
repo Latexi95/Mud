@@ -27,7 +27,7 @@ class Level {
 		int64_t mGlobalX;
 		int64_t mGlobalY;
 		std::string mName;
-		std::vector<Item*> mItems;
+		std::vector<RHandle<Item> > mItems;
 };
 
 #endif // LEVEL_H
