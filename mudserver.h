@@ -3,9 +3,18 @@
 #include "tcpserver.h"
 #include <unordered_map>
 #include <boost/make_shared.hpp>
-class Client {
-
+#include "client.h"
+class MudClient : public Client {
+	public:
+		MudClient(const boost::shared_ptr<MessageHandler> &msgHandler, TcpConnection::pointer con) :
+			Client(msgHandler),
+			mConnection(con) {}
+		~MudClient() {}
+		void sendMessage(const std::string &message);
+	private:
+		TcpConnection::pointer mConnection;
 };
+
 class Mud;
 class MudServer {
 	public:
@@ -19,7 +28,8 @@ class MudServer {
 	private:
 		Mud *mMud;
 		std::unique_ptr<TcpServer> mTcpServer;
-		std::map<TcpConnection::pointer, boost::shared_ptr<Client> > mClients;
+		std::map<TcpConnection::pointer, boost::shared_ptr<MudClient> > mClients;
+		boost::shared_ptr<MessageHandler> mJoinHandler;
 };
 
 #endif // MUDSERVER_H

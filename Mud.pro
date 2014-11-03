@@ -60,7 +60,10 @@ SOURCES += main.cpp \
     room.cpp \
     name.cpp \
     equipmentslots.cpp \
-    jsonserializableloader.cpp
+    jsonserializableloader.cpp \
+    messagehandler.cpp \
+    client.cpp \
+    joinmessagehandler.cpp
 
 HEADERS += \
     commandevent.h \
@@ -105,4 +108,7 @@ HEADERS += \
     name.h \
     stringbuilder.h \
     equipmentslots.h \
-    jsonserializableloader.h
+    jsonserializableloader.h \
+    messagehandler.h \
+    client.h \
+    joinmessagehandler.h

@@ -4,6 +4,6 @@
 PlayerService::PlayerService() {
 }
 
-Player *PlayerService::findPlayerByName(const std::string &name) {
+RHandle<Player> PlayerService::findPlayerByName(const std::string &name) {
 
 }

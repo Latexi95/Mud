@@ -4,7 +4,7 @@
 class PlayerService {
 	public:
 		PlayerService();
-		Player *findPlayerByName(const std::string &name);
+		RHandle<Player> findPlayerByName(const std::string &name);
 	private:
 
 };
