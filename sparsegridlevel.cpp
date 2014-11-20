@@ -4,3 +4,7 @@ SparseGridLevel::SparseGridLevel(const std::string &name) :
 	Level(name)
 {
 }
+
+SparseGridLevel::~SparseGridLevel() {
+
+}

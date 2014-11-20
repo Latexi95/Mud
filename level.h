@@ -17,8 +17,7 @@ class Level {
 		void setName(const std::string &value);
 		std::vector<RHandle<Item> > items() const { return mItems; }
 		std::vector<Character*> character();
-		virtual const Room *room(int localX, int localY) const = 0;
-		virtual Room *room(int localX, int localY) = 0;
+		virtual Room &room(int localX, int localY) = 0;
 		std::vector<RHandle<Item>> itemsInRoom(int localX, int localY);
 		int64_t globalX() const { return mGlobalX; }
 		int64_t globalY() const { return mGlobalY; }

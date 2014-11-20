@@ -40,6 +40,7 @@ JsonChecker &JsonChecker::moveTo(const char *obj, bool optional) {
 JsonChecker &JsonChecker::moveBack() {
 	mValueStack.pop();
 	mJsonPath.pop_back();
+	return *this;
 }
 
 JsonChecker &JsonChecker::hasNumberElement(const char *obj, bool optional) {

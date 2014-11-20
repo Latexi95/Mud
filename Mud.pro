@@ -17,12 +17,14 @@ TEMPLATE = app
 
 INCLUDEPATH += "$$(BOOST_INCLUDE)" jsoncpp/include
 LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock
-
+#DEFINES += HAVE_ZLIB
 debug {
     LIBS += -lboost_system-mgw48-mt-d-1_56 -lboost_chrono-mgw48-mt-d-1_56 -lboost_atomic-mgw48-mt-d-1_56 -lboost_thread-mgw48-mt-d-1_56
 } else {
     LIBS += -lboost_system-mgw48-mt-1_56 -lboost_chrono-mgw48-mt-1_56 -lboost_atomic-mgw48-mt-1_56 -lboost_thread-mgw48-mt-1_56
 }
+
+LIBS += -lz
 
 
 SOURCES += main.cpp \
@@ -37,7 +39,6 @@ SOURCES += main.cpp \
     commandservice.cpp \
     eventhandler.cpp \
     mud.cpp \
-    tcpserver.cpp \
     mudserver.cpp \
     player.cpp \
     playerservice.cpp \
@@ -63,7 +64,12 @@ SOURCES += main.cpp \
     jsonserializableloader.cpp \
     messagehandler.cpp \
     client.cpp \
-    joinmessagehandler.cpp
+    joinmessagehandler.cpp \
+    libtelnet.c \
+    telnetserver.cpp \
+    gamemessagehandler.cpp \
+    gridlevel.cpp \
+    wall.cpp
 
 HEADERS += \
     commandevent.h \
@@ -77,7 +83,6 @@ HEADERS += \
     commandservice.h \
     eventhandler.h \
     mud.h \
-    tcpserver.h \
     mudserver.h \
     player.h \
     playerservice.h \
@@ -111,4 +116,9 @@ HEADERS += \
     jsonserializableloader.h \
     messagehandler.h \
     client.h \
-    joinmessagehandler.h
+    joinmessagehandler.h \
+    libtelnet.h \
+    telnetserver.h \
+    gamemessagehandler.h \
+    gridlevel.h \
+    wall.h

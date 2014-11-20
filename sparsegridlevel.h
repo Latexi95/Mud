@@ -4,6 +4,9 @@
 class SparseGridLevel : public Level {
 	public:
 		SparseGridLevel(const std::string &name);
+		~SparseGridLevel();
+	private:
+
 };
 
 #endif // SPARSEGRIDLEVEL_H

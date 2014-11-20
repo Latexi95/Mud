@@ -26,7 +26,7 @@ class Resource {
 		T &resource() { return *mResource; }
 		const T &resource() const { return *mResource; }
 		bool canBeDeleted() const {
-			return mRefCount.load(boost::memory_order_consume);
+			return mRefCount.load(boost::memory_order_consume) == 0;
 		}
 		const std::string &path() const { return mPath; }
 	private:
@@ -58,6 +58,15 @@ class RHandle {
 				boost::atomic_thread_fence(boost::memory_order_acquire);
 				delete mResource;
 			}
+		}
+
+		RHandle<T> &operator=(const RHandle<T> &o) {
+			if (mResource && mResource->decreaseRefCount() && mResource->path().empty()) {
+				boost::atomic_thread_fence(boost::memory_order_acquire);
+				delete mResource;
+			}
+			mResource = o.mResource;
+			if (mResource) mResource->increaseRefCount();
 		}
 
 		bool isNull() const { return mResource == 0; }
@@ -132,6 +141,22 @@ class ResourceStash {
 			}
 			mCondition.notify_all();
 			return RHandle<T>(resource);
+		}
+
+		RHandle<T> add(Resource<T> *resource) {
+			{
+				boost::lock_guard<boost::mutex> lock(mMutex);
+				if (resource) {
+					mStash[resource->path()] = resource;
+				}
+			}
+			mCondition.notify_all();
+			return RHandle<T>(resource);
+		}
+
+		RHandle<T> create(const std::string &path) {
+			Resource<T> *resource = new Resource<T>(path, new T());
+			return add(resource);
 		}
 
 	private:

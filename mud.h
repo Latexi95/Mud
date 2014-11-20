@@ -2,6 +2,8 @@
 #define MUD_H
 #include "gameeventloop.h"
 #include "commandservice.h"
+#include "playerservice.h"
+#include "resourceservice.h"
 #include "room.h"
 #include <boost/thread.hpp>
 class Mud {
@@ -16,7 +18,8 @@ class Mud {
 		boost::thread *mEventLoopThread;
 		GameEventLoop mEventLoop;
 		CommandService mCommandService;
-		std::vector<Level*> mRooms;
+		PlayerService mPlayerService;
+		ResourceService mResourceService;
 };
 
 #endif // MUD_H

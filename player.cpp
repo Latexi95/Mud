@@ -1,8 +1,16 @@
 #include "player.h"
 
+Player::Player() {
+
+}
+
 Player::Player(const std::string &name) :
 	mName(name)
 {
+}
+
+void Player::setName(const std::string &name) {
+	mName = name;
 }
 
 bool Player::passwordMatch(const std::string &password) const {
@@ -32,6 +40,14 @@ bool Player::deserialize(const Json::Value &val) {
 	else
 		return false;
 	return true;
+}
+
+bool Player::isLoggedIn() const {
+	return mLoggedIn;
+}
+
+void Player::setLoggedIn(bool loggedIn) {
+	return mLoggedIn;
 }
 
 std::string Player::hashPassword(const std::string &password) const {

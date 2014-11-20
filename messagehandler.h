@@ -6,7 +6,7 @@ class MessageHandler {
 	public:
 		MessageHandler();
 		virtual ~MessageHandler();
-		virtual void handle(Client *client, const std::string &message) const = 0;
+		virtual void handle(Client *client, const std::string &message) = 0;
 };
 
 #endif // MESSAGEHANDLER_H

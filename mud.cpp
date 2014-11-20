@@ -1,15 +1,13 @@
 #include "mud.h"
 #include "level.h"
 Mud::Mud() :
-	mEventLoopThread(0) {
+	mEventLoopThread(0),
+	mPlayerService(this) {
 	mEventLoop.addHandler(&mCommandService);
 
 }
 
 Mud::~Mud() {
-	for (Level *r : mRooms) {
-		delete r;
-	}
 }
 
 void Mud::start() {
