@@ -4,32 +4,30 @@
 #include <cassert>
 #include "item.h"
 #include "character.h"
-#include "jsonserializableloader.h"
 #include "player.h"
 
-static ResourceService *sInstance = 0;
 
-ResourceService::ResourceService() :
-	mItemStash(),
-	mCharacterStash(){
-	assert(sInstance == 0);
-	sInstance = this;
+ResourceService *RS = 0;
+
+ResourceService::ResourceService() {
+	assert(RS == 0);
+	RS = this;
 }
 
 ResourceService::~ResourceService() {
-	sInstance = 0;
+	RS = 0;
 }
 
 ResourceService *ResourceService::instance() {
-	assert(sInstance);
-	return sInstance;
+	assert(RS);
+	return RS;
 }
 
-Json::Value ResourceService::requestJsonResource(const std::string &path) const {
+Json::Value ResourceService::readJsonFile(const std::string &path) const {
 	Json::Value ret;
-	std::ifstream file;
-	file.open(path);
-	if (!file.is_open()) {
+	std::ifstream file(path);
+	if (!file) {
+		std::cerr << "Failed to open file " << path << std::endl;
 		return Json::Value();
 	}
 	Json::Reader reader;
@@ -42,27 +40,37 @@ Json::Value ResourceService::requestJsonResource(const std::string &path) const 
 	return ret;
 }
 
-RHandle<Item> ResourceService::item(const std::string &path) {
-	return mItemStash.get("data/" + path + ".json", JsonSerializableLoader<Item>());
-}
+bool ResourceService::saveJsonFile(const std::string &path, const Json::Value &val) const {
+	std::ofstream file(path);
+	if (!file) {
+		std::cerr << "Failed to write file " << path << std::endl;
+		return false;
+	}
 
-RHandle<Character> ResourceService::character(const std::string &path) {
-	return mCharacterStash.get("data/" + path + ".json", JsonSerializableLoader<Character>());
-}
-
-RHandle<Player> ResourceService::player(const std::string &name) {
-	return mPlayerStash.get("data/players/" + name + ".json", JsonSerializableLoader<Player>());
-}
-
-RHandle<Player> ResourceService::createPlayer(const std::string &name) {
-	return mPlayerStash.create("data/players/" + name + ".json");
-}
-
-void ResourceService::save(RHandle<Player> player) {
-	Json::Value json = player->serialize();
 	Json::StyledStreamWriter writer;
-	std::ofstream file(player.path());
-	std::cout << "Saving a player to file " << player.path() << std::endl;
-	writer.write(file, json);
-	file.close();
+	writer.write(file, val);
+	return true;
 }
+
+std::unique_ptr<Item> ResourceService::item(const std::string &path) {
+	std::shared_ptr<Item> base = baseItem(path);
+	if (!base) return std::unique_ptr<Item>();
+
+	return base->clone();
+}
+
+std::shared_ptr<Item> ResourceService::baseItem(const std::string &path) {
+	boost::unique_lock<boost::mutex> lock(mMutex);
+	auto itemIt = mBaseItems.find(path);
+	if (itemIt != mBaseItems.end()) return itemIt->second;
+
+	Json::Value v = readJsonFile("data/" + path);
+	if (v.isNull()) return nullptr;
+
+	std::shared_ptr<Item> item = std::make_shared<Item>(path);
+	item->deserialize(v);
+	mBaseItems[path] = item;
+	return item;
+}
+
+

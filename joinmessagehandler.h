@@ -8,12 +8,14 @@ class JoinMessageHandler : public MessageHandler {
 		~JoinMessageHandler();
 		void handle(Client *client, const std::string &message);
 
+		void gotoCharacterCreation(Client *client);
 	private:
 		enum State {
 			ExpectingName,
 			ExpectingPassword,
 			ExpectingNewPassword,
-			ExpectingPasswordConfirmation
+			ExpectingPasswordConfirmation,
+			CharacterSelection
 		} mState;
 };
 

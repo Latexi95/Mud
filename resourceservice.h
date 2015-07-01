@@ -1,28 +1,32 @@
 #ifndef RESOURCESERVICE_H
 #define RESOURCESERVICE_H
 #include <json/value.h>
-#include <boost/atomic.hpp>
-#include "resource.h"
+#include <memory>
+#include <boost/thread/mutex.hpp>
+#include <unordered_map>
+#include <utility>
+#include <memory>
+
 class Item;
 class Character;
+class Player;
 class ResourceService {
 	public:
 		ResourceService();
 		~ResourceService();
 		static ResourceService *instance();
 
-		Json::Value requestJsonResource(const std::string &path) const;
-		RHandle<Item> item(const std::string &path);
-		RHandle<Character> character(const std::string &path);
-		RHandle<Player> player(const std::string &name);
-		RHandle<Player> createPlayer(const std::string &name);
+		Json::Value readJsonFile(const std::string &path) const;
+		bool saveJsonFile(const std::string &path, const Json::Value &val) const;
 
-		void save(RHandle<Player> player);
-
+		std::unique_ptr<Item> item(const std::string &path);
+		std::shared_ptr<Item> baseItem(const std::string &path);
 	private:
-		ResourceStash<Item> mItemStash;
-		ResourceStash<Character> mCharacterStash;
-		ResourceStash<Player> mPlayerStash;
+		std::vector<std::shared_ptr<Player>> mPlayer;
+		std::unordered_map<std::string, std::shared_ptr<Item> > mBaseItems;
+		boost::mutex mMutex;
 };
+
+extern ResourceService *RS;
 
 #endif // RESOURCESERVICE_H

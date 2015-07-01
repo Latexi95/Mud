@@ -13,14 +13,21 @@ class Player : public JsonSerializable {
 		void setPassword(const std::string &password);
 
 		Json::Value serialize() const;
-		bool deserialize(const Json::Value &val);
+		void deserialize(const Json::Value &val);
 		bool isLoggedIn() const;
 		void setLoggedIn(bool loggedIn);
+
+		bool isComplete() const;
+
+		const std::vector<std::string> &characterNames() const;
+		std::shared_ptr<Character> currentCharacter() const;
+
 	private:
 		std::string hashPassword(const std::string &password) const;
 		std::string mPasswordHash;
 		std::string mName;
 		bool mLoggedIn;
-		RHandle<Character> mCharacter;
+		std::vector<std::string> mCharacterNames;
+		std::shared_ptr<Character> mCurrentCharacter;
 };
 #endif // PLAYER_H

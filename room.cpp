@@ -1,7 +1,10 @@
 #include "room.h"
 
-Room::Room(Level *level) :
-	mLevel(level)
+Room::Room(int x, int y, Level *level) :
+	mLevel(level),
+	mX(x),
+	mY(y),
+	mData(0)
 {
 }
 

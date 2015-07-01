@@ -51,7 +51,7 @@ void MudServer::stop() {
 void MudServer::handleNewConnection(TelnetConnection::pointer newCon) {
 	newCon->addMessage(new std::string("Welcome to my mud server\r\n"));
 	newCon->addMessage(new std::string("What's our name adventurer?\r\n"));
-	mClients[newCon] = boost::make_shared<MudClient>(boost::shared_ptr<MessageHandler>(new JoinMessageHandler()), newCon);
+	mClients[newCon] = std::make_shared<MudClient>(std::shared_ptr<MessageHandler>(new JoinMessageHandler()), newCon);
 }
 
 void MudServer::handleMessage(TelnetConnection::pointer sender, const std::string &msg) {

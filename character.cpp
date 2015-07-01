@@ -2,12 +2,32 @@
 #include <algorithm>
 #include "resourceservice.h"
 
-Character::Character() {
+Character::Character() :
+	mGender(Male),
+	mAge(25),
+	mHeight(1.8),
+	mWidth(0.5),
+	mStrength(10),
+	mDexterity(10),
+	mConstitution(10),
+	mIntelligence(10),
+	mWisdom(10),
+	mCharisma(10)
+{
 
 }
-
-Character::Character(const std::string &name) :
-	mName(name)
+Character::Character(const std::string &name, Gender gender) :
+	mGender(gender),
+	mName(name),
+	mAge(25),
+	mHeight(1.8),
+	mWidth(0.5),
+	mStrength(10),
+	mDexterity(10),
+	mConstitution(10),
+	mIntelligence(10),
+	mWisdom(10),
+	mCharisma(10)
 {
 }
 
@@ -46,23 +66,18 @@ Json::Value Character::serialize() const {
 	}
 	obj["skills"] = skills;
 	Json::Value equipment(Json::objectValue);
-	for (const std::pair<std::string, std::vector<RHandle<Item> > > &equipmentSlot : mEquipment) {
+	for (auto it = mEquipment.begin(); it != mEquipment.end(); ++it) {
 		Json::Value items(Json::arrayValue);
-		for (const RHandle<Item> &i : equipmentSlot.second) {
-			if (i.isDynamicResource()) {
-				items.append(i->serialize());
-			}
-			else {
-				items.append(i.path());
-			}
+		for (const std::unique_ptr<Item> &i : it->second) {
+			items.append(i->serialize());
 		}
-		equipment[equipmentSlot.first] = items;
+		equipment[it->first] = items;
 	}
 	obj["equipment"] = equipment;
 	return obj;
 }
 
-bool Character::deserialize(const Json::Value &val) {
+void Character::deserialize(const Json::Value &val) {
 	const Json::Value &str = val["str"];
 	mStrength = str.isInt() ? str.asInt() : 0;
 	const Json::Value &dex = val["dex"];
@@ -94,37 +109,36 @@ bool Character::deserialize(const Json::Value &val) {
 	if (equipment.isObject()) {
 		for (Json::ValueConstIterator equipmentSlot = equipment.begin(); equipmentSlot != equipment.end(); equipmentSlot++) {
 			if (equipmentSlot->isString()) {
-				RHandle<Item> item = ResourceService::instance()->item(equipmentSlot->asString());
-				if (!item.isNull()) {
-					mEquipment[equipmentSlot.memberName()].push_back(item);
+				std::unique_ptr<Item> item = ResourceService::instance()->item(equipmentSlot->asString());
+				if (item) {
+					mEquipment[equipmentSlot.memberName()].emplace_back(std::move(item));
 				}
 			}
 			else if (equipmentSlot->isObject()) {
-				RHandle<Item> item = createDynamicResource<Item>();
-				if (!item->deserialize(*equipmentSlot)) {
-					continue;
-				}
-				mEquipment[equipmentSlot.memberName()].push_back(item);
+				std::unique_ptr<Item> item = std::unique_ptr<Item>(new Item());
+				item->deserialize(*equipmentSlot);
+				mEquipment[equipmentSlot.memberName()].emplace_back(std::move(item));
 			} else if (equipmentSlot->isArray()) {
-				std::vector<RHandle<Item>> &items = mEquipment[equipmentSlot.memberName()];
+				std::vector<std::unique_ptr<Item>> &items = mEquipment[equipmentSlot.memberName()];
 				for (Json::ValueConstIterator i2 = equipmentSlot->begin(); i2 != equipmentSlot->end(); i2++) {
 					if (i2->isString()) {
-						RHandle<Item> item = ResourceService::instance()->item(i2->asString());
-						if (!item.isNull()) {
-							items.push_back(item);
+						std::unique_ptr<Item> item = ResourceService::instance()->item(i2->asString());
+						if (item) {
+							items.emplace_back(std::move(item));
 						}
 					}
 					else if (equipmentSlot->isObject()) {
-						RHandle<Item> item = createDynamicResource<Item>();
-						if (!item->deserialize(*i2)) {
-							continue;
-						}
-						items.push_back(item);
+						std::unique_ptr<Item> item = std::unique_ptr<Item>(new Item());
+						item->deserialize(*i2);
+						items.emplace_back(std::move(item));
+					}
+					else {
+						assert("Invalid item json" && 0);
 					}
 				}
+			} else {
+				assert("Invalid item json" && 0);
 			}
 		}
 	}
-
-	return true;
 }

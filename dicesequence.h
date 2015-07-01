@@ -22,7 +22,7 @@ class DiceSequence : public JsonSerializable {
 		std::string toText(bool tight = false) const;
 
 		Json::Value serialize() const;
-		bool deserialize(const Json::Value &val);
+		void deserialize(const Json::Value &val);
 	public:
 		typedef char DiceT;
 		typedef char TimesT;

@@ -9,20 +9,16 @@ LandmarkTrait::~LandmarkTrait() {
 
 }
 
-ItemTrait *LandmarkTrait::clone() const {
-	LandmarkTrait *trait = new LandmarkTrait();
+std::unique_ptr<ItemTrait> LandmarkTrait::clone() const {
+	std::unique_ptr<LandmarkTrait> trait = std::unique_ptr<LandmarkTrait>(new LandmarkTrait());
 
-	return trait;
+	return std::move(trait);
 }
 
 Json::Value LandmarkTrait::serialize() const {
 
 }
 
-bool LandmarkTrait::deserialize(const Json::Value &val) {
+void LandmarkTrait::deserialize(const Json::Value &val) {
 
-}
-
-bool LandmarkTrait::hasToBeSerialized(const ItemTrait *base) const {
-	return true;
 }

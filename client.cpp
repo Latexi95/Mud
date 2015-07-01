@@ -1,6 +1,6 @@
 #include "client.h"
 
-Client::Client(const boost::shared_ptr<MessageHandler> &msgHandler) :
+Client::Client(const std::shared_ptr<MessageHandler> &msgHandler) :
 	mMessageHandler(msgHandler),
 	mPlayer(0)
 {
@@ -14,14 +14,14 @@ void Client::receiveMessage(const std::string &message) {
 	mMessageHandler->handle(this, message);
 }
 
-RHandle<Player> Client::player() const {
+std::shared_ptr<Player> Client::player() const {
 	return mPlayer;
 }
 
-void Client::setPlayer(RHandle<Player> player) {
+void Client::setPlayer(std::shared_ptr<Player> player) {
 	mPlayer = player;
 }
 
-void Client::setMessageHandler(const boost::shared_ptr<MessageHandler> &msgHandler) {
+void Client::setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler) {
 	mMessageHandler = msgHandler;
 }

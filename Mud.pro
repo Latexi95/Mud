@@ -18,10 +18,12 @@ TEMPLATE = app
 INCLUDEPATH += "$$(BOOST_INCLUDE)" jsoncpp/include
 LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock
 #DEFINES += HAVE_ZLIB
-debug {
-    LIBS += -lboost_system-mgw48-mt-d-1_56 -lboost_chrono-mgw48-mt-d-1_56 -lboost_atomic-mgw48-mt-d-1_56 -lboost_thread-mgw48-mt-d-1_56
-} else {
-    LIBS += -lboost_system-mgw48-mt-1_56 -lboost_chrono-mgw48-mt-1_56 -lboost_atomic-mgw48-mt-1_56 -lboost_thread-mgw48-mt-1_56
+win32 {
+	debug {
+		LIBS += -lboost_system-mgw48-mt-d-1_56 -lboost_chrono-mgw48-mt-d-1_56 -lboost_locale-mgw48-mt-d-1_56 -lboost_atomic-mgw48-mt-d-1_56 -lboost_thread-mgw48-mt-d-1_56
+	} else {
+		LIBS += -lboost_system-mgw48-mt-1_56 -lboost_chrono-mgw48-mt-1_56 -lboost_atomic-mgw48-mt-1_56 -lboost_thread-mgw48-mt-1_56
+	}
 }
 
 LIBS += -lz
@@ -61,7 +63,6 @@ SOURCES += main.cpp \
     room.cpp \
     name.cpp \
     equipmentslots.cpp \
-    jsonserializableloader.cpp \
     messagehandler.cpp \
     client.cpp \
     joinmessagehandler.cpp \
@@ -69,7 +70,13 @@ SOURCES += main.cpp \
     telnetserver.cpp \
     gamemessagehandler.cpp \
     gridlevel.cpp \
-    wall.cpp
+    wall.cpp \
+    traits/roomtrait.cpp \
+    position.cpp \
+    box.cpp \
+    charactercreationmessagehandler.cpp \
+    textgen/color.cpp \
+    textgen/textutils.cpp
 
 HEADERS += \
     commandevent.h \
@@ -100,7 +107,6 @@ HEADERS += \
     jsoncpp/include/json/writer.h \
     jsonserializable.h \
     resourceservice.h \
-    resource.h \
     jsonchecker.h \
     traits/itemtrait.h \
     traits/weapontrait.h \
@@ -113,7 +119,6 @@ HEADERS += \
     name.h \
     stringbuilder.h \
     equipmentslots.h \
-    jsonserializableloader.h \
     messagehandler.h \
     client.h \
     joinmessagehandler.h \
@@ -121,4 +126,10 @@ HEADERS += \
     telnetserver.h \
     gamemessagehandler.h \
     gridlevel.h \
-    wall.h
+    wall.h \
+    traits/roomtrait.h \
+    position.h \
+    box.h \
+    charactercreationmessagehandler.h \
+    textgen/color.h \
+    textgen/textutils.h

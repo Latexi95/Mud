@@ -5,8 +5,8 @@ LockedTrait::LockedTrait() :
 {
 }
 
-ItemTrait *LockedTrait::clone() const {
-	LockedTrait *trait = new LockedTrait();
+std::unique_ptr<ItemTrait> LockedTrait::clone() const {
+	std::unique_ptr<ItemTrait> trait = std::unique_ptr<ItemTrait>(new LockedTrait());
 
 	return trait;
 }
@@ -15,10 +15,6 @@ Json::Value LockedTrait::serialize() const {
 
 }
 
-bool LockedTrait::deserialize(const Json::Value &val) {
+void LockedTrait::deserialize(const Json::Value &val) {
 
-}
-
-bool LockedTrait::hasToBeSerialized(const ItemTrait *base) const {
-	return true;
 }

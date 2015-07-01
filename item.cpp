@@ -3,37 +3,31 @@
 #include "resourceservice.h"
 
 Item::Item() :
+	mWeight(0)
+{
+}
+
+Item::Item(const std::string &path) :
+	mPath(path),
 	mName(),
-	mWeight(0),
-	mSizeX(0),
-	mSizeY(0),
-	mSizeZ(0){
+	mWeight(0) {
 
 }
 
 Item::Item(const Name &name) :
 	mName(name),
-	mWeight(0),
-	mSizeX(0),
-	mSizeY(0),
-	mSizeZ(0){
+	mWeight(0) {
 
 }
 
 Item::~Item() {
-	for (const std::pair<const std::string, ItemTrait *> trait : mTraits) delete trait.second;
 }
 
-void Item::initFromBase(const RHandle<Item> &b) {
+void Item::initFromBase(const std::shared_ptr<Item> &b) {
 	mBase = b;
 	mName = b->name();
 	mWeight = b->weight();
-	mSizeX = b->sizeX();
-	mSizeY = b->sizeY();
-	mSizeZ = b->sizeZ();
-	for (const std::pair<const std::string, ItemTrait *> &t : b->mTraits) {
-		mTraits[t.first] = t.second->clone();
-	}
+	mSize = b->size();
 }
 
 const Name &Item::name() const {
@@ -46,122 +40,106 @@ void Item::setName(const Name &n) {
 
 Json::Value Item::serialize() const {
 	Json::Value ret(Json::objectValue);
-	if (mBase.isNull()) {
+	if (!mBase) {
 		ret["name"] = mName.serialize();
 		ret["weight"] = mWeight;
-		Json::Value size(Json::objectValue);
-		size["x"] = mSizeX;
-		size["y"] = mSizeY;
-		size["z"] = mSizeZ;
-		ret["size"] = size;
+		ret["size"] = serialize();
 		if (!mTraits.empty()) {
 			Json::Value traits(Json::objectValue);
-			for (const std::pair<const std::string, ItemTrait *> &t : mTraits) {
+			for (const std::pair<const std::string, std::unique_ptr<ItemTrait> > &t : mTraits) {
 				traits[t.second->traitName()] = t.second->serialize();
 			}
 		}
 	}
 	else {
-		ret["base"] = mBase.path();
+		ret["base"] = mBase->path();
 		if (mName != mBase->name()) ret["name"] = mName.serialize();
 		if (mWeight != mBase->weight()) ret["weight"] = mWeight;
-		if (sizeX() != mBase->sizeX() || sizeY() != mBase->sizeY() || sizeZ() != mBase->sizeZ())  {
-			Json::Value size(Json::objectValue);
-			if (sizeX() != mBase->sizeX()) {
-				size["x"] = mSizeX;
-			}
-			if (sizeY() != mBase->sizeY()) {
-				size["y"] = mSizeY;
-			}
-			if (sizeZ() != mBase->sizeZ()) {
-				size["z"] = mSizeZ;
-			}
-
-			ret["size"] = size;
+		if (size() != mBase->size())  {
+			ret["size"] = Json::serialize(size());
 		}
 		if (!mTraits.empty()) {
 			Json::Value traits(Json::objectValue);
-			for (const std::pair<const std::string, ItemTrait *> &t : mBase->mTraits) {
-				if (mTraits.find(t.first) == mTraits.end()) {
-					traits[t.first] = Json::Value();
-				} else{
-					ItemTrait *baseTrait = t.second;
-					ItemTrait *trait = mTraits.at(t.first);
-					if (trait->hasToBeSerialized(baseTrait)) {
-						traits[t.first] = trait->serialize();
-					}
+			for (const std::pair<const std::string, std::unique_ptr<ItemTrait> > &t : mBase->mTraits) {
+				if (t.second) {
+					traits[t.first] = t.second->serialize();
 				}
+				else {
+					traits[t.first] = Json::Value();
+				}
+
 			}
+			ret["traits"] = traits;
 		}
 	}
 	return ret;
 }
 
-bool Item::deserialize(const Json::Value &val) {
+void Item::deserialize(const Json::Value &val) {
 	const Json::Value &base = val["base"];
 	if (base.isString()) {
-		 RHandle<Item> b = ResourceService::instance()->item(base.asString());
-		 if (b.isNull()) return false;
+		 std::shared_ptr<Item> b = ResourceService::instance()->baseItem(base.asString());
+		 if (!b) throw SerialiazationException("Can't find base item \"" + base.asString() + "\"");
 		 initFromBase(b);
 	}
-	if (!mName.deserialize(base["name"])) return false;
+	mName.deserialize(base["name"]);
 
-	const Json::Value &size = base["size"];
-	if (!size.isNull()) {
-		setSizeX(size.get("x", sizeX()).asDouble());
-		setSizeY(size.get("y", sizeY()).asDouble());
-		setSizeZ(size.get("z", sizeZ()).asDouble());
-	}
+	Box<double> size;
+	Json::deserialize(base["size"], size);
+	setSize(size);
 	setWeight(base.get("weight", weight()).asDouble());
 
 	const Json::Value &traits = val["traits"];
 	for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
-		if (mTraits.find(i.memberName()) != mTraits.end()) {
-			if (i->isNull()) {
-				delete mTraits[i.memberName()];
-				mTraits.erase(i.memberName());
-			}
-			else {
-				ItemTrait *trait = ItemTrait::createItemTraitByName(i.memberName());
-				assert(trait);
-				if (trait->deserialize(*i)) {
-					delete mTraits[i.memberName()];
-					mTraits[i.memberName()] = trait;
-				}
-				else {
-					std::cerr << "Failed to deserialize trait \"" << i.memberName() << "\"" << std::endl;
-					delete trait;
-				}
-			}
+
+		if (i->isNull()) {
+			mTraits[i.memberName()] = std::unique_ptr<ItemTrait>();
 		}
 		else {
-			ItemTrait *trait = ItemTrait::createItemTraitByName(i.memberName());
+			std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.memberName());
 			if (!trait) {
 				std::cerr << "Invalid trait name \"" << i.memberName() << "\"" << std::endl;
 				continue;
 			}
-			if (trait->deserialize(*i)) {
-				mTraits[i.memberName()] = trait;
-			}
-			else {
-				std::cerr << "Failed to deserialize trait \"" << i.memberName() << "\"" << std::endl;
-				delete trait;
-			}
+			assert(trait);
+			trait->deserialize(*i);
+			mTraits[i.memberName()] = std::move(trait);
 		}
 	}
-	return true;
 }
 
-RHandle<Item> Item::clone() const {
-	RHandle<Item> copy = createDynamicResource<Item>();
+bool Item::hasTrait(const std::string &name) {
+	auto traitIt = mTraits.find(name);
+	if (traitIt != mTraits.end()) {
+		if (traitIt->second) return true;
+	}
+	else if (mBase) {
+		return mBase->hasTrait(name);
+	}
+	return false;
+}
+
+const ItemTrait &Item::trait(const std::string &name) {
+	auto traitIt = mTraits.find(name);
+	if (traitIt != mTraits.end()) {
+		if (traitIt->second)
+			return *traitIt->second;
+	}
+	else if (mBase) {
+		return mBase->trait(name);
+	}
+	assert("Ite doesn't have a trait with that name" && 0);
+	return mBase->trait(name);
+}
+
+std::unique_ptr<Item> Item::clone() const {
+	std::unique_ptr<Item> copy(new Item(name()));
 	copy->mBase = mBase;
 	copy->mName = name();
 	copy->mWeight = weight();
-	copy->mSizeX = sizeX();
-	copy->mSizeY = sizeY();
-	copy->mSizeZ = sizeZ();
-	for (const std::pair<const std::string, ItemTrait *> &t : mTraits) {
+	copy->mSize = size();
+	for (const std::pair<const std::string, std::unique_ptr<ItemTrait>> &t : mTraits) {
 		copy->mTraits[t.first] = t.second->clone();
 	}
-	return copy;
+	return std::move(copy);
 }

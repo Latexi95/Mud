@@ -1,0 +1,28 @@
+{
+	"red" : {
+		"alts" : "bright red",
+		"rgb" : "FF0000",
+		"description" : "bright red"
+	},
+	"blue" : {
+		"alts" : "deep blue",
+		"rgb" : "0000FF",
+		"description" : "deep blue"
+	},
+	"green" : {
+		"alts" : "bright green",
+		"rgb" : "00FF00",
+		"description" : "bright green"
+	},
+	"black" : {
+		"rgb" : "000000",
+		"description" : "black"
+	},
+	"grey" : {
+		"alts" : "gray",
+		"rgb" : "A0A0A0",
+		"description" : "grey"
+		
+	}
+	
+}

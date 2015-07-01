@@ -4,6 +4,7 @@
 #include "lockedtrait.h"
 #include "weapontrait.h"
 
+
 ItemTrait::ItemTrait() {
 }
 
@@ -11,19 +12,23 @@ ItemTrait::~ItemTrait() {
 
 }
 
-ItemTrait *ItemTrait::createItemTraitByName(const std::string &name) {
+std::unique_ptr<ItemTrait> ItemTrait::createItemTraitByName(const std::string &name) {
 	if (name == "container") {
-		return new ContainerTrait();
+		return std::unique_ptr<ItemTrait>(new ContainerTrait());
 	}
 	if (name == "landmark") {
-		return new LandmarkTrait();
+		return std::unique_ptr<ItemTrait>(new LandmarkTrait());
 	}
 	if (name == "locked") {
-		return new LockedTrait();
+		return std::unique_ptr<ItemTrait>(new LockedTrait());
 	}
 	if (name == "weapon") {
-		return new WeaponTrait();
+		return std::unique_ptr<ItemTrait>(new WeaponTrait());
 	}
-	return 0;
+	return std::unique_ptr<ItemTrait>();
+}
+
+void ItemTrait::serializeBase(Json::Value &val) const {
+	val["traitname"] = traitName();
 }
 

@@ -136,17 +136,15 @@ Json::Value DiceSequence::serialize() const {
 	return toText(true);
 }
 
-bool DiceSequence::deserialize(const Json::Value &val) {
+void DiceSequence::deserialize(const Json::Value &val) {
 	if (val.isString()) {
 		*this = fromText(val.asString());
-		return true;
 	}
 	else if (val.isInt()) {
 		mParts.clear();
 		mConstantPart = val.asInt();
-		return true;
 	}
 	else {
-		return false;
+		throw SerialiazationException("Invalid dice sequence");
 	}
 }

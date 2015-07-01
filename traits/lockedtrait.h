@@ -6,10 +6,9 @@ class LockedTrait : public ItemTrait  {
 		LockedTrait();
 
 		Type type() const { return Locked; }
-		ItemTrait *clone() const;
+		std::unique_ptr<ItemTrait> clone() const;
 		Json::Value serialize() const;
-		bool deserialize(const Json::Value &val);
-		bool hasToBeSerialized(const ItemTrait *base) const;
+		void deserialize(const Json::Value &val);
 		const char *traitName() const { return "locked"; }
 };
 

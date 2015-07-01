@@ -1,6 +1,7 @@
 #include "player.h"
 
-Player::Player() {
+Player::Player() :
+	mLoggedIn(false) {
 
 }
 
@@ -25,21 +26,14 @@ Json::Value Player::serialize() const {
 	Json::Value val(Json::objectValue);
 	val["name"] = mName;
 	val["password-hash"] = mPasswordHash;
+	val["characters"] = Json::serialize(mCharacterNames);
 	return val;
 }
 
-bool Player::deserialize(const Json::Value &val) {
-	const Json::Value &name = val["name"];
-	if (name.isString())
-		mName = name.asString();
-	else
-		return false;
-	const Json::Value &hash = val["password-hash"];
-	if (name.isString())
-		mPasswordHash = hash.asString();
-	else
-		return false;
-	return true;
+void Player::deserialize(const Json::Value &val) {
+	Json::deserialize(val["name"], mName);
+	Json::deserialize(val["password-hash"], mPasswordHash);
+	Json::deserialize(val["characters"], mCharacterNames);
 }
 
 bool Player::isLoggedIn() const {
@@ -47,7 +41,20 @@ bool Player::isLoggedIn() const {
 }
 
 void Player::setLoggedIn(bool loggedIn) {
-	return mLoggedIn;
+	mLoggedIn = loggedIn;
+}
+
+bool Player::isComplete() const
+{
+	return !mName.empty() && !mPasswordHash.empty();
+}
+
+const std::vector<std::string> &Player::characterNames() const {
+	return mCharacterNames;
+}
+
+std::shared_ptr<Character> Player::currentCharacter() const {
+	return mCurrentCharacter;
 }
 
 std::string Player::hashPassword(const std::string &password) const {

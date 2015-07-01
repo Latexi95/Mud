@@ -6,7 +6,7 @@
 #include "client.h"
 class MudClient : public Client {
 	public:
-		MudClient(const boost::shared_ptr<MessageHandler> &msgHandler, TelnetConnection::pointer con) :
+		MudClient(const std::shared_ptr<MessageHandler> &msgHandler, TelnetConnection::pointer con) :
 			Client(msgHandler),
 			mConnection(con) {}
 		~MudClient() {}
@@ -29,7 +29,7 @@ class MudServer {
 	private:
 		Mud *mMud;
 		std::unique_ptr<TelnetServer> mTcpServer;
-		std::map<TelnetConnection::pointer, boost::shared_ptr<MudClient> > mClients;
+		std::map<TelnetConnection::pointer, std::shared_ptr<MudClient> > mClients;
 };
 
 #endif // MUDSERVER_H

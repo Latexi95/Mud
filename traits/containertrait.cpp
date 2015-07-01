@@ -1,6 +1,7 @@
 #include "containertrait.h"
 #include "jsonchecker.h"
 #include "resourceservice.h"
+#include <boost/algorithm/string.hpp>
 
 ContainerTrait::ContainerTrait() :
 	ItemTrait(),
@@ -13,76 +14,47 @@ ContainerTrait::~ContainerTrait()
 
 }
 
-ItemTrait *ContainerTrait::clone() const {
-	ContainerTrait *trait = new ContainerTrait();
-	for (const RHandle<Item> &items : mContainedItems) {
+std::unique_ptr<ItemTrait> ContainerTrait::clone() const {
+	std::unique_ptr<ContainerTrait> trait = std::unique_ptr<ContainerTrait>(new ContainerTrait());
+	for (const std::unique_ptr<Item> &items : mContainedItems) {
 		trait->mContainedItems.push_back(items->clone());
 	}
 	trait->mContainerType = this->mContainerType;
-	return trait;
+	return std::move(trait);
 }
 
 Json::Value ContainerTrait::serialize() const {
 	Json::Value ret;
-	switch (mContainerType) {
-		case Open:
-			ret["type"] = "open"; break;
-		case Closed:
-			ret["type"] = "closed"; break;
-		case Opened:
-			ret["type"] = "opened"; break;
-	}
-	Json::Value items(Json::arrayValue);
-	for (RHandle<Item> item : mContainedItems) {
-		if (item.path().empty()) {
-			Json::Value iVal = item->serialize();
-			if (!iVal.isNull()) {
-				items.append(iVal);
-			}
-		}
-		else {
-			items.append(item.path());
-		}
-	}
-	ret["items"] = items;
+	serializeBase(ret);
+	ret["type"] = Json::serialize(mContainerType);
+	ret["items"] = Json::serialize(mContainedItems);
 	return ret;
 }
 
-bool ContainerTrait::deserialize(const Json::Value &val) {
-	if (!val.isObject()) return false;
-	const Json::Value &type = val["type"];
-	if (!type.isString()) return false;
-	std::string typeStr = type.asString();
-	if (typeStr == "open") {
-		mContainerType = Open;
-	} else if (typeStr == "closed") {
-		mContainerType = Closed;
-	} else if (typeStr == "opened") {
-		mContainerType = Opened;
-	} else {
-		return false;
+void ContainerTrait::deserialize(const Json::Value &val) {
+	if (!val.isObject()) {
+		throw SerialiazationException("Expecting json object ContainerTrait");
 	}
+
+	const Json::Value &type = val["type"];
+
+	Json::deserialize(type, mContainerType);
+
 	const Json::Value &items = val["items"];
-	if (!items.isArray()) return false;
+	if (!items.isArray()) {
+		throw SerialiazationException("Expecting an array of items in ContainerTrait::items");
+	}
 	for (Json::Value::const_iterator i = items.begin(); i != items.end(); i++) {
 		if (i->isString()) {
-			RHandle<Item> item = ResourceService::instance()->item(i->asString());
-			if (item.isNull()) return false;
-			mContainedItems.push_back(item);
+			std::unique_ptr<Item> item = ResourceService::instance()->item(i->asString());
+			mContainedItems.push_back(std::move(item));
 		} else if (i->isObject()) {
-			RHandle<Item> item = createDynamicResource<Item>();
-			if (!item->deserialize(*i)) return false;
-			mContainedItems.push_back(item);
+			std::unique_ptr<Item> item = std::unique_ptr<Item>(new Item());
+			item->deserialize(*i);
+			mContainedItems.push_back(std::move(item));
 		} else {
-			return false;
+			assert("Invalid item json" && 0);
 		}
 	}
-	return true;
 }
 
-bool ContainerTrait::hasToBeSerialized(const ItemTrait *base) const {
-	assert(base->type() == Container);
-	const ContainerTrait *p = static_cast<const ContainerTrait*>(base);
-	if (p->containedItems().empty() && this->containedItems().empty() && this->containerType() == p->containerType()) return false;
-	return true;
-}

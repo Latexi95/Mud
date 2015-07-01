@@ -28,7 +28,7 @@ class Name : public JsonSerializable{
 		std::string name(int itemQuantity, bool definite) const;
 
 		Json::Value serialize() const;
-		bool deserialize(const Json::Value &val);
+		void deserialize(const Json::Value &val);
 
 		bool isNull() const;
 

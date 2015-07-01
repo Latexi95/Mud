@@ -107,12 +107,12 @@ Json::Value Name::serialize() const {
 	return obj;
 }
 
-bool Name::deserialize(const Json::Value &val) {
+void Name::deserialize(const Json::Value &val) {
 	if (val.isString()) {
 		mBase = val.asString();
 		mPluralForm.clear();
 		mFlags = NoFlags;
-		return true;
+		return;
 	}
 	if (val.isObject()) {
 		const Json::Value &base = val["base"];
@@ -128,10 +128,11 @@ bool Name::deserialize(const Json::Value &val) {
 			int flagsInt = flags.asInt();
 			mFlags = flagsInt & MaskFlag;
 		}
-		if (mBase.empty()) return false;
-		return true;
+		if (mBase.empty()) {
+			throw SerialiazationException("Expecting a base name for Name");
+		}
 	}
-	return false;
+	throw SerialiazationException("Expecting a name (a string or an object)");
 }
 
 bool Name::isNull() const {

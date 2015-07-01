@@ -3,16 +3,26 @@
 #include "item.h"
 #include "jsonserializable.h"
 #include <map>
+
+
 class Character : public JsonSerializable {
 	public:
+		enum Gender {
+			Male,
+			Female
+		};
+
 		Character();
-		Character(const std::string &name);
+		Character(const std::string &name, Gender gender = Male);
 		~Character();
 
 		double height() const { return mHeight; }
 		void setHeight(double h) { mHeight = h; }
 		double width() const { return mWidth; }
 		void setWidth(double w) { mWidth = w; }
+
+		int age() const { return mAge; }
+		void setAge(int age) { mAge = age; }
 
 		int strength() const { return mStrength; }
 		void setStrength(int str) { mStrength = str; }
@@ -38,9 +48,11 @@ class Character : public JsonSerializable {
 		int skillLevel(std::string skillName) const;
 
 		virtual Json::Value serialize() const;
-		virtual bool deserialize(const Json::Value &val);
+		virtual void deserialize(const Json::Value &val);
 	protected:
 		std::string mName;
+		Gender mGender;
+		int mAge;
 		double mHeight;
 		double mWidth;
 
@@ -52,7 +64,7 @@ class Character : public JsonSerializable {
 		int mCharisma;
 
 		std::map<std::string, int> mSkillLevels;
-		std::map<std::string, std::vector<RHandle<Item> > > mEquipment;
+		std::map<std::string, std::vector<std::unique_ptr<Item> > > mEquipment;
 };
 
 #endif // CHARACTER_H
