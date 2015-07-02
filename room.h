@@ -2,9 +2,9 @@
 #define ROOM_H
 #include "wall.h"
 #include <cassert>
-
+#include "traits/roomtrait.h"
 class Level;
-class RoomTrait;
+struct RoomData;
 class Room {
 	public:
 		enum Flags {
@@ -12,12 +12,14 @@ class Room {
 		};
 
 		Room(int x, int y, Level *level);
-		virtual ~Room();
-		virtual std::vector<std::pair<Item *, Wall::Side>> items() const { assert(0); return std::vector<std::pair<Item *, Wall::Side>>(); }
-		virtual std::vector<std::shared_ptr<Character>> characters() const { assert(0); return std::vector<std::shared_ptr<Character>>(); }
-		virtual Wall wall(Wall::Side side) const { assert(0); return Wall(Wall::SideCount, 0);}
-		virtual const std::vector<std::unique_ptr<RoomTrait> > &traits() const {assert(0); return *(std::vector<std::unique_ptr<RoomTrait> >*)(0);}
-		virtual bool solid() const { assert(0); return true; }
+		~Room();
+		std::vector<std::pair<Item *, Wall::Side>> items() const;
+		std::vector<std::shared_ptr<Character>> characters() const;
+		Wall wall(Wall::Side side) const;
+		const std::vector<std::unique_ptr<RoomTrait> > &traits() const;
+		bool solid() const;
+
+		const std::unordered_map<std::string, std::string> &lookMap() const;
 
 		int x() const;
 		int y() const;
@@ -26,7 +28,16 @@ class Room {
 		Level *mLevel;
 		int mX;
 		int mY;
-		void *mData;
+		RoomData *mData;
+};
+
+struct RoomData {
+	RoomData() : mWalls(), mSolid(true), mRefCount(0) {}
+	std::array<std::list<WallData>::iterator, Wall::SideCount> mWalls;
+	std::vector<std::unique_ptr<RoomTrait>> mTraits;
+	std::unordered_map<std::string, std::string> mLooks;
+	bool mSolid;
+	unsigned mRefCount;
 };
 
 #endif // ROOM_H

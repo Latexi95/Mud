@@ -14,7 +14,7 @@
 	},
 	"latexi" : 
 	{
-		"characters" : [],
+		"characters" : [ "latexi" ],
 		"name" : "latexi",
 		"password-hash" : "123"
 	}

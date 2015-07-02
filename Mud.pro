@@ -59,7 +59,6 @@ SOURCES += main.cpp \
     traits/lockedtrait.cpp \
     traits/landmarktrait.cpp \
     level.cpp \
-    sparsegridlevel.cpp \
     room.cpp \
     name.cpp \
     equipmentslots.cpp \
@@ -69,7 +68,6 @@ SOURCES += main.cpp \
     libtelnet.c \
     telnetserver.cpp \
     gamemessagehandler.cpp \
-    gridlevel.cpp \
     wall.cpp \
     traits/roomtrait.cpp \
     position.cpp \
@@ -78,7 +76,9 @@ SOURCES += main.cpp \
     textgen/color.cpp \
     textgen/textutils.cpp \
     commandparser.cpp \
-    command.cpp
+    command.cpp \
+    levelservice.cpp \
+    characterservice.cpp
 
 HEADERS += \
     commandevent.h \
@@ -116,7 +116,6 @@ HEADERS += \
     traits/lockedtrait.h \
     traits/landmarktrait.h \
     level.h \
-    sparsegridlevel.h \
     room.h \
     name.h \
     stringbuilder.h \
@@ -127,7 +126,6 @@ HEADERS += \
     libtelnet.h \
     telnetserver.h \
     gamemessagehandler.h \
-    gridlevel.h \
     wall.h \
     traits/roomtrait.h \
     position.h \
@@ -136,4 +134,6 @@ HEADERS += \
     textgen/color.h \
     textgen/textutils.h \
     commandparser.h \
-    command.h
+    command.h \
+    levelservice.h \
+    characterservice.h

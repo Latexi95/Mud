@@ -74,17 +74,4 @@ std::shared_ptr<Item> ResourceService::baseItem(const std::string &path) {
 	return item;
 }
 
-std::shared_ptr<Character> ResourceService::playerCharacter(const std::string &name) {
-	boost::unique_lock<boost::mutex> lock(mCharacterMutex);
-	std::string foldedName = text::cleanFolded(name);
-	auto playerCharIt = mPlayerCharacters.find(foldedName);
-	if (playerCharIt != mPlayerCharacters.end()) return playerCharIt->second;
-	Json::Value root = readJsonFile("data/playercharacters/" + foldedName + ".json");
-
-	std::shared_ptr<Character> newChar = std::make_shared<Character>();
-	newChar->deserialize(root);
-	mPlayerCharacters[foldedName] = newChar;
-	return newChar;
-}
-
 

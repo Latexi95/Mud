@@ -2,6 +2,12 @@
 #include "client.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include "levelservice.h"
+#include "characterservice.h"
+#include "gamemessagehandler.h"
+#include "textgen/textutils.h"
+#include "player.h"
+#include "playerservice.h"
 
 CharacterCreationMessageHandler::CharacterCreationMessageHandler() :
 	mStatus(InitMessage),
@@ -25,7 +31,7 @@ void CharacterCreationMessageHandler::sendCharacterCreationInitMessage(Client *c
 	mStatusStack.push(NameSelection);
 	mStatusStack.push(AgeSelection);
 	mStatusStack.push(HairColorSelection);
-	mStatusStack.push(BackgroundSelection);
+	mStatusStack.push(InsertToMap);
 }
 
 void CharacterCreationMessageHandler::handle(Client *c, const std::string &message) {
@@ -50,13 +56,16 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
 			break;
 		}
 		case NameSelection: {
-			std::string name = boost::algorithm::trim_copy(message);
+			std::string name = text::cleanFolded(message);
 			if (name.empty()) {
 				c->sendMessage("What is the name of your character?");
 				return;
 			}
 
 			c->sendMessage("Your character name is \"" + message + "\"");
+
+			mName = message;
+
 
 			mStatus = mStatusStack.front(); mStatusStack.pop();
 			break;
@@ -88,8 +97,7 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
 			mStatus = mStatusStack.front(); mStatusStack.pop();
 			break;
 		}
-		case BackgroundSelection: {
-			c->sendMessage("...");
+		case InsertToMap: {
 			return;
 		}
 	}
@@ -109,8 +117,25 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
 		case HairColorSelection:
 			c->sendMessage("Hair color:");
 			break;
-		case BackgroundSelection:
-			c->sendMessage("Background stuff");
+		case InsertToMap: {
+			c->sendMessage("Inserting the character to the world");
+
+			std::shared_ptr<Level> beach = LS->level("beach");
+			std::shared_ptr<Character> character = CS->createCharacter(mName);
+			character->setGender(mGender);
+			character->setAge(mAge);
+			character->setLevel(beach);
+			character->setPos(Position( 2, 2));
+
+			CS->saveCharacter(character);
+
+			c->player()->addCharacterName(mName);
+
+			PlayerService::instance()->savePlayers();
+
+			c->setMessageHandler(std::make_shared<GameMessageHandler>(c, character));
+			break;
+		}
 	}
 
 }

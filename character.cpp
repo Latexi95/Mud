@@ -1,6 +1,8 @@
 #include "character.h"
 #include <algorithm>
 #include "resourceservice.h"
+#include "level.h"
+#include "levelservice.h"
 
 Character::Character() :
 	mGender(Male),
@@ -12,7 +14,9 @@ Character::Character() :
 	mConstitution(10),
 	mIntelligence(10),
 	mWisdom(10),
-	mCharisma(10)
+	mCharisma(10),
+	mHairColor(0),
+	mPos(0,0)
 {
 
 }
@@ -59,6 +63,11 @@ Json::Value Character::serialize() const {
 	obj["cha"] = mCharisma;
 	obj["height"] = mHeight;
 	obj["width"] = mWidth;
+	obj["name"] = mName;
+
+	obj["level"] = mLevel->id();
+	obj["posX"] = mPos.x();
+	obj["posY"] = mPos.y();
 
 	Json::Value skills(Json::objectValue);
 	for (const std::pair<std::string, int> &p : mSkillLevels) {
@@ -95,6 +104,14 @@ void Character::deserialize(const Json::Value &val) {
 	mHeight = height.isInt() ? height.asInt() : 0;
 	const Json::Value &width = val["width"];
 	mWidth = width.isInt() ? width.asInt() : 0;
+
+	mName = val["name"].asString();
+
+	std::string levelId = val["level"].asString();
+	mLevel = LS->level(levelId);
+
+	mPos.mX = val["posX"].asInt();
+	mPos.mY = val["posY"].asInt();
 
 	const Json::Value &skills = val["skills"];
 	if (skills.isObject()) {

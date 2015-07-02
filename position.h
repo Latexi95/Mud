@@ -8,7 +8,8 @@ class Position {
 		int x() const;
 		int y() const;
 		bool operator == (const Position &p) const;
-	private:
+		Position &operator=(const Position &p) = default;
+
 		int mX;
 		int mY;
 };

@@ -18,7 +18,7 @@ class CharacterCreationMessageHandler : public MessageHandler {
 			NameSelection,
 			AgeSelection,
 			HairColorSelection,
-			BackgroundSelection
+			InsertToMap
 		} mStatus;
 
 		std::queue<Status> mStatusStack;

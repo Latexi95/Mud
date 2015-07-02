@@ -53,6 +53,10 @@ const std::vector<std::string> &Player::characterNames() const {
 	return mCharacterNames;
 }
 
+void Player::addCharacterName(const std::string &name) {
+	mCharacterNames.push_back(name);
+}
+
 std::shared_ptr<Character> Player::currentCharacter() const {
 	return mCurrentCharacter;
 }

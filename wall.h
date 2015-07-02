@@ -3,6 +3,9 @@
 #include "item.h"
 #include "character.h"
 #include <cassert>
+#include <list>
+
+struct WallData;
 
 class Room;
 class Wall {
@@ -16,17 +19,23 @@ class Wall {
 			Down,
 			SideCount
 		};
-		Wall(Side side, const Room *room);
-		Wall(Side side, const Room *room, void *d);
-		virtual ~Wall();
+		Wall(Side side, const Room *room, std::list<WallData>::iterator wallData);
+		~Wall();
 		const Room *room() const;
-		virtual const std::vector<std::unique_ptr<Item> > &items() const { assert(0); return *(std::vector<std::unique_ptr<Item> >*)(0);}
-		virtual bool noWall() { assert(0); return false;}
-		virtual const std::string &looks() const { assert(0); return *(std::string*)0; }
+		const std::vector<std::unique_ptr<Item> > &items() const;
+		bool solid();
+		const std::string &looks() const;
 	protected:
 		const Room *mRoom;
 		Side mSide;
-		void *mData;
+		std::list<WallData>::iterator mData;
+};
+
+struct WallData {
+	std::string mLooks;
+	std::vector<std::unique_ptr<Item> > mItems;
+	bool mSolid;
+	unsigned mRefCount;
 };
 
 #endif // WALL_H

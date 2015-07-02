@@ -20,6 +20,7 @@ class Player : public JsonSerializable {
 		bool isComplete() const;
 
 		const std::vector<std::string> &characterNames() const;
+		void addCharacterName(const std::string &name);
 		std::shared_ptr<Character> currentCharacter() const;
 
 	private:

@@ -10,6 +10,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include "textgen/textutils.h"
 #include <algorithm>
+#include "characterservice.h"
 
 JoinMessageHandler::JoinMessageHandler() :
 	mState(ExpectingName){
@@ -114,7 +115,7 @@ void JoinMessageHandler::handle(Client *client, const std::string &message) {
 				for (const std::string &charName : cn) {
 					if (text::cleanFolded(charName) == characterName) {
 						client->sendMessage("Starting an adventure");
-						client->setMessageHandler(std::make_shared<GameMessageHandler>(client, RS->playerCharacter(characterName)));
+						client->setMessageHandler(std::make_shared<GameMessageHandler>(client, CS->character(characterName)));
 						return;
 					}
 				}

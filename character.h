@@ -3,6 +3,10 @@
 #include "item.h"
 #include "jsonserializable.h"
 #include <map>
+#include "position.h"
+#include "textgen/color.h"
+
+class Level;
 
 
 class Character : public JsonSerializable {
@@ -16,10 +20,16 @@ class Character : public JsonSerializable {
 		Character(const std::string &name, Gender gender = Male);
 		~Character();
 
+		const std::string &name() const { return mName; }
+		void setName(const std::string &name) { mName = name; }
+
 		double height() const { return mHeight; }
 		void setHeight(double h) { mHeight = h; }
 		double width() const { return mWidth; }
 		void setWidth(double w) { mWidth = w; }
+
+		Gender gender() const { return mGender; }
+		void setGender(Gender gender) { mGender = gender; }
 
 		int age() const { return mAge; }
 		void setAge(int age) { mAge = age; }
@@ -47,12 +57,21 @@ class Character : public JsonSerializable {
 		void setSkillLevel(std::string skillName, int level);
 		int skillLevel(std::string skillName) const;
 
+		std::shared_ptr<Level> level() const { return mLevel; }
+		void setLevel(const std::shared_ptr<Level> &level) { mLevel = level; }
+		const Position &pos() const { return mPos; }
+		void setPos(const Position &pos) { mPos = pos; }
+
+		text::Color *hairColor() const { return mHairColor; }
+		void setHairColor(text::Color *c) { mHairColor = c; }
+
 		virtual Json::Value serialize() const;
 		virtual void deserialize(const Json::Value &val);
 	protected:
 		std::string mName;
 		Gender mGender;
 		int mAge;
+
 		double mHeight;
 		double mWidth;
 
@@ -62,6 +81,13 @@ class Character : public JsonSerializable {
 		int mIntelligence;
 		int mWisdom;
 		int mCharisma;
+
+		text::Color *mHairColor;
+		Position mPos;
+
+		std::shared_ptr<Level> mLevel;
+
+
 
 		std::map<std::string, int> mSkillLevels;
 		std::map<std::string, std::vector<std::unique_ptr<Item> > > mEquipment;

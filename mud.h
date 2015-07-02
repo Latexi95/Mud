@@ -4,6 +4,8 @@
 #include "commandservice.h"
 #include "playerservice.h"
 #include "resourceservice.h"
+#include "characterservice.h"
+#include "levelservice.h"
 #include "room.h"
 #include <boost/thread.hpp>
 class Mud {
@@ -20,6 +22,8 @@ class Mud {
 		CommandService mCommandService;
 		PlayerService mPlayerService;
 		ResourceService mResourceService;
+		LevelService mLevelService;
+		CharacterService mCharacterService;
 };
 
 #endif // MUD_H
