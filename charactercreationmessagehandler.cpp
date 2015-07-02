@@ -20,6 +20,7 @@ void CharacterCreationMessageHandler::sendCharacterCreationInitMessage(Client *c
 	c->sendMessage("");
 	c->sendMessage("Character creation");
 	c->sendMessage("------------------");
+	c->sendMessage("Select gender: male(m), female(f)");
 	mStatus = GenderSelection;
 	mStatusStack.push(NameSelection);
 	mStatusStack.push(AgeSelection);

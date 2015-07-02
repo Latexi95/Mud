@@ -34,3 +34,4 @@ std::string text::cleanFolded(const std::string &txt) {
 	clean(ret);
 	return ret;
 }
+

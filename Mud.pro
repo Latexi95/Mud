@@ -76,7 +76,9 @@ SOURCES += main.cpp \
     box.cpp \
     charactercreationmessagehandler.cpp \
     textgen/color.cpp \
-    textgen/textutils.cpp
+    textgen/textutils.cpp \
+    commandparser.cpp \
+    command.cpp
 
 HEADERS += \
     commandevent.h \
@@ -132,4 +134,6 @@ HEADERS += \
     box.h \
     charactercreationmessagehandler.h \
     textgen/color.h \
-    textgen/textutils.h
+    textgen/textutils.h \
+    commandparser.h \
+    command.h

@@ -7,7 +7,6 @@ namespace text {
 	void clean(std::string &str);
 	std::string cleaned(const std::string &txt);
 	std::string cleanFolded(const std::string &txt);
-
 	std::string lowered(const std::string &txt);
 
 

@@ -114,7 +114,7 @@ void JoinMessageHandler::handle(Client *client, const std::string &message) {
 				for (const std::string &charName : cn) {
 					if (text::cleanFolded(charName) == characterName) {
 						client->sendMessage("Starting an adventure");
-						client->setMessageHandler(std::make_shared<GameMessageHandler>());
+						client->setMessageHandler(std::make_shared<GameMessageHandler>(client, RS->playerCharacter(characterName)));
 						return;
 					}
 				}

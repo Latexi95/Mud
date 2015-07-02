@@ -5,6 +5,7 @@
 #include "item.h"
 #include "character.h"
 #include "player.h"
+#include "textgen/textutils.h"
 
 
 ResourceService *RS = 0;
@@ -60,7 +61,7 @@ std::unique_ptr<Item> ResourceService::item(const std::string &path) {
 }
 
 std::shared_ptr<Item> ResourceService::baseItem(const std::string &path) {
-	boost::unique_lock<boost::mutex> lock(mMutex);
+	boost::unique_lock<boost::mutex> lock(mItemMutex);
 	auto itemIt = mBaseItems.find(path);
 	if (itemIt != mBaseItems.end()) return itemIt->second;
 
@@ -71,6 +72,19 @@ std::shared_ptr<Item> ResourceService::baseItem(const std::string &path) {
 	item->deserialize(v);
 	mBaseItems[path] = item;
 	return item;
+}
+
+std::shared_ptr<Character> ResourceService::playerCharacter(const std::string &name) {
+	boost::unique_lock<boost::mutex> lock(mCharacterMutex);
+	std::string foldedName = text::cleanFolded(name);
+	auto playerCharIt = mPlayerCharacters.find(foldedName);
+	if (playerCharIt != mPlayerCharacters.end()) return playerCharIt->second;
+	Json::Value root = readJsonFile("data/playercharacters/" + foldedName + ".json");
+
+	std::shared_ptr<Character> newChar = std::make_shared<Character>();
+	newChar->deserialize(root);
+	mPlayerCharacters[foldedName] = newChar;
+	return newChar;
 }
 
 
