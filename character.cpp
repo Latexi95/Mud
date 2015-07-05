@@ -3,6 +3,8 @@
 #include "resourceservice.h"
 #include "level.h"
 #include "levelservice.h"
+#include "event.h"
+#include "eventhandler.h"
 
 Character::Character() :
 	mGender(Male),
@@ -21,8 +23,8 @@ Character::Character() :
 
 }
 Character::Character(const std::string &name, Gender gender) :
-	mGender(gender),
 	mName(name),
+	mGender(gender),
 	mAge(25),
 	mHeight(1.8),
 	mWidth(0.5),
@@ -158,4 +160,15 @@ void Character::deserialize(const Json::Value &val) {
 			}
 		}
 	}
+}
+
+void Character::handleEvent(Event *e)
+{
+	for (const std::unique_ptr<EventHandler> &eventHandler : mEventHandlers) {
+		eventHandler->handleEvent(e);
+	}
+}
+
+void Character::addEventHandler(std::unique_ptr<EventHandler> &&eventHandler) {
+	mEventHandlers.emplace_back(std::move(eventHandler));
 }

@@ -8,9 +8,11 @@
 #include "jsonserializable.h"
 #include "position.h"
 #include <list>
+#include "leveleventqueue.h"
 
 class Item;
 class Character;
+class LevelEventQueue;
 class Level : public JsonSerializable {
 	public:
 		friend class Room;
@@ -35,6 +37,10 @@ class Level : public JsonSerializable {
 		void addCharacter(const std::shared_ptr<Character> &c);
 
 		void moveCharacter(const std::shared_ptr<Character> &c, const Position &pos);
+
+		std::shared_ptr<LevelEventQueue> eventQueue() const { return mEventQueue; }
+
+		void sendEventToCharacters(Event *e);
 	protected:
 		void init();
 		std::string mId;
@@ -45,6 +51,7 @@ class Level : public JsonSerializable {
 		std::list<RoomData> mUniqueRoomData;
 		std::list<WallData> mUniqueWallData;
 		std::unordered_multimap<Position, std::shared_ptr<Character> > mCharacters;
+		std::shared_ptr<LevelEventQueue> mEventQueue;
 };
 
 #endif // LEVEL_H

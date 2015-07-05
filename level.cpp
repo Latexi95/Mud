@@ -5,7 +5,8 @@
 
 Level::Level(const std::string &id) :
 	mId(id),
-	mRoomData(0)
+	mRoomData(0),
+	mEventQueue(std::make_shared<LevelEventQueue>())
 {
 }
 
@@ -213,6 +214,12 @@ void Level::moveCharacter(const std::shared_ptr<Character> &c, const Position &p
 	mCharacters.erase(c->pos());
 	mCharacters.insert(std::pair<Position, std::shared_ptr<Character> >(pos, c));
 	c->setPos(pos);
+}
+
+void Level::sendEventToCharacters(Event *e) {
+	for (const std::pair<Position, std::shared_ptr<Character> >  &posCharPair : mCharacters) {
+		posCharPair.second->handleEvent(e);
+	}
 }
 
 

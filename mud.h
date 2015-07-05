@@ -1,6 +1,6 @@
 #ifndef MUD_H
 #define MUD_H
-#include "gameeventloop.h"
+#include "maineventqueue.h"
 #include "commandservice.h"
 #include "playerservice.h"
 #include "resourceservice.h"
@@ -15,15 +15,18 @@ class Mud {
 
 		CommandService &commandService() { return mCommandService; }
 		void start();
-		void stop();
+
+		MainEventQueue &mainEventQueue() { return mEventQueue; }
 	private:
-		boost::thread *mEventLoopThread;
-		GameEventLoop mEventLoop;
 		CommandService mCommandService;
 		PlayerService mPlayerService;
 		ResourceService mResourceService;
 		LevelService mLevelService;
 		CharacterService mCharacterService;
+		MainEventQueue mEventQueue;
+		boost::chrono::system_clock::time_point mLastUpdate;
+		volatile bool mRunning;
+		time_type mTime;
 };
 
 #endif // MUD_H

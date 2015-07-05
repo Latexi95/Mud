@@ -26,7 +26,7 @@ win32 {
 	}
 }
 
-LIBS += -lz
+LIBS += -lz -liconv
 
 
 SOURCES += main.cpp \
@@ -37,7 +37,6 @@ SOURCES += main.cpp \
     dicesequence.cpp \
     skillcheck.cpp \
     event.cpp \
-    gameeventloop.cpp \
     commandservice.cpp \
     eventhandler.cpp \
     mud.cpp \
@@ -78,7 +77,12 @@ SOURCES += main.cpp \
     commandparser.cpp \
     command.cpp \
     levelservice.cpp \
-    characterservice.cpp
+    characterservice.cpp \
+    timedeventqueue.cpp \
+    maineventqueue.cpp \
+    leveleventqueue.cpp \
+    messageevent.cpp \
+    playereventhandler.cpp
 
 HEADERS += \
     commandevent.h \
@@ -88,7 +92,6 @@ HEADERS += \
     dicesequence.h \
     skillcheck.h \
     event.h \
-    gameeventloop.h \
     commandservice.h \
     eventhandler.h \
     mud.h \
@@ -136,4 +139,10 @@ HEADERS += \
     commandparser.h \
     command.h \
     levelservice.h \
-    characterservice.h
+    characterservice.h \
+    timedeventqueue.h \
+    maineventqueue.h \
+    common.h \
+    leveleventqueue.h \
+    messageevent.h \
+    playereventhandler.h

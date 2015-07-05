@@ -7,7 +7,8 @@
 #include "textgen/color.h"
 
 class Level;
-
+class Event;
+class EventHandler;
 
 class Character : public JsonSerializable {
 	public:
@@ -67,6 +68,10 @@ class Character : public JsonSerializable {
 
 		virtual Json::Value serialize() const;
 		virtual void deserialize(const Json::Value &val);
+
+		void handleEvent(Event *e);
+
+		void addEventHandler(std::unique_ptr<EventHandler> &&eventHandler);
 	protected:
 		std::string mName;
 		Gender mGender;
@@ -86,6 +91,7 @@ class Character : public JsonSerializable {
 		Position mPos;
 
 		std::shared_ptr<Level> mLevel;
+		std::vector<std::unique_ptr<EventHandler> > mEventHandlers;
 
 
 

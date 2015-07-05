@@ -1,5 +1,7 @@
 #include "levelservice.h"
 #include "resourceservice.h"
+#include "maineventqueue.h"
+#include "event.h"
 
 LevelService *LS = 0;
 
@@ -28,5 +30,10 @@ std::shared_ptr<Level> LevelService::level(const std::string &levelId) {
 	std::shared_ptr<Level> level = std::make_shared<Level>(levelId);
 	level->deserialize(levelJson);
 	mLevels[levelId] = level;
+
+	MEQ->push(makeFunctionEvent([level](Event *e) {
+				  MEQ->addLevelEventQueue(level->eventQueue());
+			  }));
+
 	return level;
 }

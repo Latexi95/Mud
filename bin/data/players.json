@@ -2,7 +2,7 @@
 {
 	"asd" : 
 	{
-		"characters" : [],
+		"characters" : [ "asd" ],
 		"name" : "asd",
 		"password-hash" : "asd"
 	},

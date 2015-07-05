@@ -4,9 +4,7 @@
 #include <boost/locale.hpp>
 #include "textgen/textutils.h"
 
-CommandParser::CommandParser(const std::shared_ptr<GameEventLoop> &global, const std::shared_ptr<GameEventLoop> &local) :
-	mGlobalEventLoop(global),
-	mLocalEventLoop(local)
+CommandParser::CommandParser()
 {
 
 }
@@ -21,9 +19,13 @@ void CommandParser::addCommand(std::unique_ptr<Command> &&command) {
 
 CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::string &base) {
 	if (mCommands.empty()) return mCommands.end();
-	CmdVector::iterator i = mCommands.begin();
-	if (std::lexicographical_compare(base.begin(), base.end(), (*i)->base().begin(), (*i)->base().end())) {
-		return i;
+
+
+	{
+		CmdVector::iterator i = mCommands.begin();
+		if (std::lexicographical_compare(base.begin(), base.end(), (*i)->base().begin(), (*i)->base().end())) {
+			return i;
+		}
 	}
 
 	if (mCommands.size() == 1) {
@@ -33,25 +35,20 @@ CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::stri
 	CmdVector::iterator rangeStart = mCommands.begin();
 	CmdVector::iterator rangeEnd = mCommands.end();
 
-	while (true) {
-		auto diff = (rangeEnd - rangeStart);
-		if (diff == 1) {
-			if (std::lexicographical_compare((*rangeStart)->base().begin(), (*rangeStart)->base().end(), base.begin(), base.end())) {
-				return rangeStart;
-			}
-			else {
-				return rangeEnd;
-			}
-		}
-		i = rangeStart + diff / 2;
-		if (std::lexicographical_compare((*i)->base().begin(), (*i)->base().end(), base.begin(), base.end())) {
-			rangeStart = i;
-		}
-		else {
-			rangeEnd = i;
+
+	auto strLessEqual = [](const std::string &a, const std::string &b) {
+		return !std::lexicographical_compare(b.begin(), b.end(), a.begin(), a.end());
+	};
+
+	int i = 0;
+	int n = (rangeEnd - rangeStart);
+	for (int b = n / 2; b >= 1; b /= 2) {
+		while (i + b < n && strLessEqual(rangeStart[i + b]->base(), base)) {
+			i += b;
 		}
 	}
 
+	return rangeStart + i;
 }
 
 Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &params) {

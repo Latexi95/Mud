@@ -11,7 +11,7 @@ class Client {
 		virtual void receiveMessage(const std::string &message);
 		virtual void disconnect() = 0;
 		std::shared_ptr<Player> player() const;
-		void setPlayer(std::shared_ptr<Player> player);
+		void setPlayer(const std::shared_ptr<Player> &player);
 		void setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler);
 	private:
 		std::shared_ptr<Character> mCharacter;

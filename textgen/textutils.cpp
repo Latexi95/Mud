@@ -30,7 +30,7 @@ std::string text::lowered(const std::string &txt) {
 
 
 std::string text::cleanFolded(const std::string &txt) {
-	std::string ret = lowered(txt);//boost::locale::fold_case(txt);
+	std::string ret = boost::locale::fold_case(txt);
 	clean(ret);
 	return ret;
 }

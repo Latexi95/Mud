@@ -18,7 +18,7 @@ std::shared_ptr<Player> Client::player() const {
 	return mPlayer;
 }
 
-void Client::setPlayer(std::shared_ptr<Player> player) {
+void Client::setPlayer(const std::shared_ptr<Player> &player) {
 	mPlayer = player;
 }
 

@@ -1,0 +1,54 @@
+{
+	"name" : "beach",
+	"width" : 4,
+	"height" : 3,
+	"roomsize" : 10.0,
+	"walls" : {
+		"none" : {
+			"solid" : false,
+			"looks" : "Beach everywhere..."
+		},
+		"rock" : {
+			"solid" : true,
+			"looks" : "A huge rock"
+		}
+	},
+	"rooms" : {
+		"a" : {
+			"solid" : false,
+			"walls" : {
+				"n" : "none",
+				"s" : "none",
+				"w" : "none",
+				"e" : "none",
+				"u" : "none",
+				"d" : "none"
+			},
+			"looks" : {
+				"sky" : "Sky is blue"
+			}
+		},
+		"nBorder" : {
+			"solid" : false,
+			"walls" : {
+				"n" : "rock",
+				"s" : "none",
+				"w" : "none",
+				"e" : "none",
+				"u" : "none",
+				"d" : "none"
+			},
+			"looks" : {
+				"sky" : "Sky is blue",
+				"rock" : "There is a huge rock in North of here"
+			}
+		}
+	},
+	"data" : [
+		["nBorder", "nBorder", "nBorder", "nBorder"],
+		["a", "a", "a", "a"],
+		["a", "a", "a", "a"]	
+	]
+	
+
+}
