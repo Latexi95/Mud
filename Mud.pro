@@ -19,10 +19,10 @@ INCLUDEPATH += "$$(BOOST_INCLUDE)" jsoncpp/include
 LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock
 #DEFINES += HAVE_ZLIB
 win32 {
-	debug {
-		LIBS += -lboost_system-mgw48-mt-d-1_56 -lboost_chrono-mgw48-mt-d-1_56 -lboost_locale-mgw48-mt-d-1_56 -lboost_atomic-mgw48-mt-d-1_56 -lboost_thread-mgw48-mt-d-1_56
+        CONFIG(debug, debug|release) {
+                LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
 	} else {
-		LIBS += -lboost_system-mgw48-mt-1_56 -lboost_chrono-mgw48-mt-1_56 -lboost_atomic-mgw48-mt-1_56 -lboost_thread-mgw48-mt-1_56
+                LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
 	}
 }
 
