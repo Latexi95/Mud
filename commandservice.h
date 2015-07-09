@@ -3,8 +3,8 @@
 #include "eventhandler.h"
 class CommandEvent;
 class CommandService {
-	public:
-		CommandService();
+public:
+    CommandService();
 };
 
 #endif // COMMANDSERVICE_H

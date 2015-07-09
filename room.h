@@ -6,38 +6,38 @@
 class Level;
 struct RoomData;
 class Room {
-	public:
-		enum Flags {
-			Solid = 1
-		};
+public:
+    enum Flags {
+        Solid = 1
+    };
 
-		Room(int x, int y, Level *level);
-		~Room();
-		std::vector<std::pair<Item *, Wall::Side>> items() const;
-		std::vector<std::shared_ptr<Character>> characters() const;
-		Wall wall(Wall::Side side) const;
-		const std::vector<std::unique_ptr<RoomTrait> > &traits() const;
-		bool solid() const;
+    Room(int x, int y, Level *level);
+    ~Room();
+    std::vector<std::pair<Item *, Wall::Side>> items() const;
+    std::vector<std::shared_ptr<Character>> characters() const;
+    Wall wall(Wall::Side side) const;
+    const std::vector<std::unique_ptr<RoomTrait> > &traits() const;
+    bool solid() const;
 
-		const std::unordered_map<std::string, std::string> &lookMap() const;
+    const std::unordered_map<std::string, std::string> &lookMap() const;
 
-		int x() const;
-		int y() const;
-		Level *level() const { return mLevel; }
-	protected:
-		Level *mLevel;
-		int mX;
-		int mY;
-		RoomData *mData;
+    int x() const;
+    int y() const;
+    Level *level() const { return mLevel; }
+protected:
+    Level *mLevel;
+    int mX;
+    int mY;
+    RoomData *mData;
 };
 
 struct RoomData {
-	RoomData() : mWalls(), mSolid(true), mRefCount(0) {}
-	std::array<std::list<WallData>::iterator, Wall::SideCount> mWalls;
-	std::vector<std::unique_ptr<RoomTrait>> mTraits;
-	std::unordered_map<std::string, std::string> mLooks;
-	bool mSolid;
-	unsigned mRefCount;
+    RoomData() : mWalls(), mSolid(true), mRefCount(0) {}
+    std::array<std::list<WallData>::iterator, Wall::SideCount> mWalls;
+    std::vector<std::unique_ptr<RoomTrait>> mTraits;
+    std::unordered_map<std::string, std::string> mLooks;
+    bool mSolid;
+    unsigned mRefCount;
 };
 
 #endif // ROOM_H

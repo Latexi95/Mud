@@ -2,8 +2,8 @@
 #define ROOMTRAIT_H
 
 class RoomTrait {
-	public:
-		RoomTrait();
+public:
+    RoomTrait();
 };
 
 #endif // ROOMTRAIT_H

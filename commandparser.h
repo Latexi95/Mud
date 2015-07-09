@@ -5,21 +5,21 @@
 #include <vector>
 
 class CommandParser {
-	public:
-		CommandParser();
-		~CommandParser();
-		Command *parse(const std::string &cmd, std::vector<std::string> &params);
+public:
+    CommandParser();
+    ~CommandParser();
+    Command *parse(const std::string &cmd, std::vector<std::string> &params);
 
-		void addCommand(std::unique_ptr<Command> &&command);
+    void addCommand(std::unique_ptr<Command> &&command);
 
-		const std::string &errorMessage() const { return mErrorMessage; }
+    const std::string &errorMessage() const { return mErrorMessage; }
 
-	private:
-		typedef std::vector<std::unique_ptr<Command> > CmdVector;
-		CmdVector::iterator closestCommand(const std::string &base);
+private:
+    typedef std::vector<std::unique_ptr<Command> > CmdVector;
+    CmdVector::iterator closestCommand(const std::string &base);
 
-		CmdVector mCommands;
-		std::string mErrorMessage;
+    CmdVector mCommands;
+    std::string mErrorMessage;
 };
 
 #endif // COMMANDPARSER_H

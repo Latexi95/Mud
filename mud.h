@@ -9,24 +9,24 @@
 #include "room.h"
 #include <boost/thread.hpp>
 class Mud {
-	public:
-		Mud();
-		~Mud();
+public:
+    Mud();
+    ~Mud();
 
-		CommandService &commandService() { return mCommandService; }
-		void start();
+    CommandService &commandService() { return mCommandService; }
+    void start();
 
-		MainEventQueue &mainEventQueue() { return mEventQueue; }
-	private:
-		CommandService mCommandService;
-		PlayerService mPlayerService;
-		ResourceService mResourceService;
-		LevelService mLevelService;
-		CharacterService mCharacterService;
-		MainEventQueue mEventQueue;
-		boost::chrono::system_clock::time_point mLastUpdate;
-		volatile bool mRunning;
-		time_type mTime;
+    MainEventQueue &mainEventQueue() { return mEventQueue; }
+private:
+    CommandService mCommandService;
+    PlayerService mPlayerService;
+    ResourceService mResourceService;
+    LevelService mLevelService;
+    CharacterService mCharacterService;
+    MainEventQueue mEventQueue;
+    boost::chrono::system_clock::time_point mLastUpdate;
+    volatile bool mRunning;
+    time_type mTime;
 };
 
 #endif // MUD_H

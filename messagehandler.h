@@ -3,10 +3,10 @@
 #include <string>
 class Client;
 class MessageHandler {
-	public:
-		MessageHandler();
-		virtual ~MessageHandler();
-		virtual void handle(Client *client, const std::string &message) = 0;
+public:
+    MessageHandler();
+    virtual ~MessageHandler();
+    virtual void handle(Client *client, const std::string &message) = 0;
 };
 
 #endif // MESSAGEHANDLER_H

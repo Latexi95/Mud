@@ -1,7 +1,7 @@
 #include "event.h"
 
 Event::Event() :
-	mEventLoopHasOwnership(true) {
+    mEventLoopHasOwnership(true) {
 }
 
 Event::~Event() {

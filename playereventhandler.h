@@ -4,14 +4,14 @@
 class Client;
 class PlayerEventHandler : public EventHandler
 {
-	public:
-		PlayerEventHandler(Client *c);
-		~PlayerEventHandler();
+public:
+    PlayerEventHandler(Client *c);
+    ~PlayerEventHandler();
 
-		void handleEvent(Event *e);
+    void handleEvent(Event *e);
 
-	private:
-		Client *mClient;
+private:
+    Client *mClient;
 };
 
 #endif // PLAYEREVENTHANDLER_H

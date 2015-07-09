@@ -11,20 +11,20 @@ class Item;
 class Character;
 class Player;
 class ResourceService {
-	public:
-		ResourceService();
-		~ResourceService();
-		static ResourceService *instance();
+public:
+    ResourceService();
+    ~ResourceService();
+    static ResourceService *instance();
 
-		Json::Value readJsonFile(const std::string &path) const;
-		bool saveJsonFile(const std::string &path, const Json::Value &val) const;
+    Json::Value readJsonFile(const std::string &path) const;
+    bool saveJsonFile(const std::string &path, const Json::Value &val) const;
 
-		std::unique_ptr<Item> item(const std::string &path);
-		std::shared_ptr<Item> baseItem(const std::string &path);
-	private:
-		std::unordered_map<std::string, std::shared_ptr<Item> > mBaseItems;
+    std::unique_ptr<Item> item(const std::string &path);
+    std::shared_ptr<Item> baseItem(const std::string &path);
+private:
+    std::unordered_map<std::string, std::shared_ptr<Item> > mBaseItems;
 
-		boost::mutex mItemMutex;
+    boost::mutex mItemMutex;
 };
 
 extern ResourceService *RS;

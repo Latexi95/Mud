@@ -7,24 +7,24 @@
 class Event;
 
 class TimedEventQueue {
-	public:
+public:
 
-		TimedEventQueue();
-		~TimedEventQueue();
-		void push(time_type t, Event *e);
+    TimedEventQueue();
+    ~TimedEventQueue();
+    void push(time_type t, Event *e);
 
-		void advance(time_type currentTime);
-	private:
-		struct PriorityQueueComparator {
-				bool operator()(const std::pair<time_type, Event*> &a, const std::pair<time_type, Event*> &b) {
-					return a.first > b.first;
-				}
-		};
+    void advance(time_type currentTime);
+private:
+    struct PriorityQueueComparator {
+        bool operator()(const std::pair<time_type, Event*> &a, const std::pair<time_type, Event*> &b) {
+            return a.first > b.first;
+        }
+    };
 
 
-		std::priority_queue<std::pair<time_type, Event*>> mQueue;
-		boost::mutex mMutex;
-		volatile bool mAdvancing;
+    std::priority_queue<std::pair<time_type, Event*>> mQueue;
+    boost::mutex mMutex;
+    volatile bool mAdvancing;
 };
 
 #endif // TIMEDEVENTQUEUE_H

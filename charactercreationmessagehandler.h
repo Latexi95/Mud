@@ -5,28 +5,28 @@
 #include <queue>
 #include "textgen/color.h"
 class CharacterCreationMessageHandler : public MessageHandler {
-	public:
-		CharacterCreationMessageHandler();
-		~CharacterCreationMessageHandler();
+public:
+    CharacterCreationMessageHandler();
+    ~CharacterCreationMessageHandler();
 
-		void sendCharacterCreationInitMessage(Client *c);
-		void handle(Client *c, const std::string &message);
-	private:
-		enum Status {
-			InitMessage,
-			GenderSelection,
-			NameSelection,
-			AgeSelection,
-			HairColorSelection,
-			InsertToMap
-		} mStatus;
+    void sendCharacterCreationInitMessage(Client *c);
+    void handle(Client *c, const std::string &message);
+private:
+    enum Status {
+        InitMessage,
+        GenderSelection,
+        NameSelection,
+        AgeSelection,
+        HairColorSelection,
+        InsertToMap
+    } mStatus;
 
-		std::queue<Status> mStatusStack;
+    std::queue<Status> mStatusStack;
 
-		std::string mName;
-		Character::Gender mGender;
-		int mAge;
-		text::Color *mHairColor;
+    std::string mName;
+    Character::Gender mGender;
+    int mAge;
+    text::Color *mHairColor;
 
 };
 

@@ -11,26 +11,26 @@ class Event;
 
 
 class MainEventQueue {
-	public:
-		MainEventQueue(int workerThreads);
-		~MainEventQueue();
+public:
+    MainEventQueue(int workerThreads);
+    ~MainEventQueue();
 
-		static MainEventQueue *instance();
+    static MainEventQueue *instance();
 
-		void push(Event *e);
-		void push(time_type execTime, Event *e);
+    void push(Event *e);
+    void push(time_type execTime, Event *e);
 
-		void handle(time_type t);
+    void handle(time_type t);
 
-		void addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq);
-	private:
-		boost::asio::io_service mIoService;
-		boost::asio::io_service::work *mWork;
-		boost::lockfree::queue<Event*> mQueue;
-		TimedEventQueue mTimedEventQueue;
-		std::vector<Event*> mHandleQueue;
-		std::vector<std::shared_ptr<LevelEventQueue> > mLevelEventQueues;
-		std::vector<std::unique_ptr<boost::thread>> mWorkers;
+    void addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq);
+private:
+    boost::asio::io_service mIoService;
+    boost::asio::io_service::work *mWork;
+    boost::lockfree::queue<Event*> mQueue;
+    TimedEventQueue mTimedEventQueue;
+    std::vector<Event*> mHandleQueue;
+    std::vector<std::shared_ptr<LevelEventQueue> > mLevelEventQueues;
+    std::vector<std::unique_ptr<boost::thread>> mWorkers;
 };
 
 extern MainEventQueue *MEQ;

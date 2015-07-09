@@ -1,14 +1,14 @@
 #include "lockedtrait.h"
 
 LockedTrait::LockedTrait() :
-	ItemTrait()
+    ItemTrait()
 {
 }
 
 std::unique_ptr<ItemTrait> LockedTrait::clone() const {
-	std::unique_ptr<ItemTrait> trait = std::unique_ptr<ItemTrait>(new LockedTrait());
+    std::unique_ptr<ItemTrait> trait = std::unique_ptr<ItemTrait>(new LockedTrait());
 
-	return trait;
+    return trait;
 }
 
 Json::Value LockedTrait::serialize() const {

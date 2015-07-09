@@ -8,17 +8,17 @@ class Event;
 
 class LevelEventQueue
 {
-	public:
-		LevelEventQueue();
-		~LevelEventQueue();
-		void push(Event *e);
-		void push(time_type execTime, Event *e);
+public:
+    LevelEventQueue();
+    ~LevelEventQueue();
+    void push(Event *e);
+    void push(time_type execTime, Event *e);
 
-		void handle(time_type t);
-	private:
-		boost::lockfree::queue<Event*> mQueue;
-		TimedEventQueue mTimedEventQueue;
-		std::vector<Event*> mHandleQueue;
+    void handle(time_type t);
+private:
+    boost::lockfree::queue<Event*> mQueue;
+    TimedEventQueue mTimedEventQueue;
+    std::vector<Event*> mHandleQueue;
 };
 
 #endif // LEVELEVENTQUEUE_H

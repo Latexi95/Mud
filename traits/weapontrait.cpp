@@ -1,7 +1,7 @@
 #include "weapontrait.h"
 
 WeaponTrait::WeaponTrait() :
-	ItemTrait()
+    ItemTrait()
 {
 }
 
@@ -10,8 +10,8 @@ WeaponTrait::~WeaponTrait() {
 }
 
 std::unique_ptr<ItemTrait> WeaponTrait::clone() const {
-	std::unique_ptr<ItemTrait> trait = std::unique_ptr<ItemTrait>(new WeaponTrait());
-	return trait;
+    std::unique_ptr<ItemTrait> trait = std::unique_ptr<ItemTrait>(new WeaponTrait());
+    return trait;
 }
 
 Json::Value WeaponTrait::serialize() const {
