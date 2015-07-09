@@ -127,6 +127,8 @@ void telnetEvent(telnet_t *telnet, telnet_event_t *event, void *user_data) {
         }
         break;
     }
+    default:
+        break;
     }
 }
 

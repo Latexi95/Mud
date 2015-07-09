@@ -7,16 +7,28 @@ class Item;
 
 class MessageBuilder {
 public:
-    friend MessageBuilder &operator<< (MessageBuilder &mb, int i);
-    friend MessageBuilder &operator<< (MessageBuilder &mb, const std::string &str);
-    friend MessageBuilder &operator<< (MessageBuilder &mb, const Name &name);
-    friend MessageBuilder &operator<< (MessageBuilder &mb, const std::unique_ptr<Item> &item);
-    MessageBuilder();
+    MessageBuilder(const std::string &str);
+    MessageBuilder(std::string &&str);
+    MessageBuilder(const MessageBuilder &mb);
+    MessageBuilder(MessageBuilder &&mb);
     ~MessageBuilder();
+
+    MessageBuilder &operator =(const MessageBuilder &mb);
+    MessageBuilder &operator =(MessageBuilder &&mb);
+
+    MessageBuilder &operator =(const std::string &str);
+    MessageBuilder &operator =(std::string &&str);
 
     operator std::string();
 
+    void append(const std::string &str);
+    void append(std::string &&str);
+    void append(int num);
+    void append(const Name &name);
+    void append(const std::unique_ptr<Item> &item);
 private:
+    void clearNumberStash();
+
     std::vector<std::string> mParts;
     int mNumber;
 };
@@ -24,6 +36,7 @@ private:
 
 MessageBuilder &operator<< (MessageBuilder &mb, int i);
 MessageBuilder &operator<< (MessageBuilder &mb, const std::string &str);
+MessageBuilder &operator<< (MessageBuilder &mb, std::string &&str);
 MessageBuilder &operator<< (MessageBuilder &mb, const Name &name);
 MessageBuilder &operator<< (MessageBuilder &mb, const std::unique_ptr<Item> &item);
 

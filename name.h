@@ -25,7 +25,7 @@ public:
 
     bool isLike(const std::string &name) const;
 
-    std::string name(int itemQuantity, bool definite) const;
+    std::string num(int itemQuantity, bool definite) const;
 
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);

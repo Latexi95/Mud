@@ -63,7 +63,7 @@ bool Name::isLike(const std::string &name) const {
     return false;
 }
 
-std::string Name::name(int itemQuantity, bool definite) const {
+std::string Name::num(int itemQuantity, bool definite) const {
     if (itemQuantity == 1) {
         if (definite || (mFlags & ProperNoun) ) {
             return SB(definiteArticle()) + ' ' + mBase;
