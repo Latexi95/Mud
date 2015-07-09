@@ -82,7 +82,8 @@ SOURCES += main.cpp \
     maineventqueue.cpp \
     leveleventqueue.cpp \
     messageevent.cpp \
-    playereventhandler.cpp
+    playereventhandler.cpp \
+    messagebuilder.cpp
 
 HEADERS += \
     commandevent.h \
@@ -145,4 +146,5 @@ HEADERS += \
     common.h \
     leveleventqueue.h \
     messageevent.h \
-    playereventhandler.h
+    playereventhandler.h \
+    messagebuilder.h

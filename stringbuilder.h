@@ -15,9 +15,11 @@ struct StringBuilder {
 		operator std::string() {
 			std::string s(StringBuilderConcatenable<A>::size(a) + StringBuilderConcatenable<B>::size(b), '\0');
 			char *ptr = &s[0];
+			char *begin = ptr;
 			StringBuilderConcatenable<A>::appendTo(a, ptr);
 			StringBuilderConcatenable<B>::appendTo(b, ptr);
-			std::cout << (StringBuilderConcatenable<A>::size(a) + StringBuilderConcatenable<B>::size(b)) << std::endl;
+			char *end = ptr;
+			s.resize(end - begin);
 			return s;
 		}
 
@@ -165,6 +167,17 @@ struct StringBuilderConcatenable<SBInteger<INTTY, 10> > {
 		}
 };
 
+template <>
+struct StringBuilderConcatenable<int> : public StringBuilderConcatenable<SBInteger<int, 10> > {
+
+};
+
+template <>
+struct StringBuilderConcatenable<unsigned> : public StringBuilderConcatenable<SBInteger<unsigned, 10> > {
+
+};
+
+
 template<typename INTTY>
 struct StringBuilderConcatenable<SBInteger<INTTY, 16> > {
 		typedef SBInteger<INTTY, 16> type;
@@ -226,10 +239,10 @@ operator+(const A &a, const B &b) {
 	return StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>(a, b);
 }
 
-template <typename A, typename B>
-StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>
-operator%(const A &a, const B &b) {
-	return StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>(a, b);
-}
+//template <typename A, typename B>
+//StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>
+//operator%(const A &a, const B &b) {
+//	return StringBuilder<typename StringBuilderConcatenable<A>::type, typename StringBuilderConcatenable<B>::type>(a, b);
+//}
 
 #endif // STRINGBUILDER_H

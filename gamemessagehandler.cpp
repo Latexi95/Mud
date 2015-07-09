@@ -8,6 +8,10 @@
 #include "maineventqueue.h"
 #include "messageevent.h"
 
+#include <boost/algorithm/string.hpp>
+
+
+
 GameMessageHandler::GameMessageHandler(Client *c, const std::shared_ptr<Character> &character):
 	mCharacter(character),
 	mPlayer(c->player()),
@@ -27,5 +31,10 @@ GameMessageHandler::~GameMessageHandler()
 }
 
 void GameMessageHandler::handle(Client *client, const std::string &message) {
-	mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
+	if (message.size() > 2 && message[0] == '!' && message[1] != '!') {
+
+	}
+	else {
+		mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
+	}
 }
