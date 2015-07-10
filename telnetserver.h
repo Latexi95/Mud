@@ -1,6 +1,5 @@
 #ifndef SERVER_H
 #define SERVER_H
-#include <boost/smart_ptr/make_unique.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/atomic/atomic.hpp>

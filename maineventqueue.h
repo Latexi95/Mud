@@ -1,9 +1,8 @@
 #ifndef MAINEVENTQUEUE_H
 #define MAINEVENTQUEUE_H
 #include <boost/lockfree/queue.hpp>
-#include <boost/thread/thread_pool.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/thread/thread_pool.hpp>
+#include <boost/thread.hpp>
 #include "common.h"
 #include "timedeventqueue.h"
 class LevelEventQueue;

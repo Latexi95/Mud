@@ -15,18 +15,23 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += "$$(BOOST_INCLUDE)" jsoncpp/include
-LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock
+INCLUDEPATH += jsoncpp/include
+
 #DEFINES += HAVE_ZLIB
 win32 {
+        INCLUDEPATH += "$$(BOOST_INCLUDE)"
+        LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -liconv
         CONFIG(debug, debug|release) {
                 LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
-	} else {
+    } else {
                 LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
-	}
+    }
+}
+linux {
+    LIBS += -lboost_system -lboost_chrono -lboost_locale -lboost_atomic -lboost_thread
 }
 
-LIBS += -lz -liconv
+LIBS += -lz
 
 
 SOURCES += main.cpp \
