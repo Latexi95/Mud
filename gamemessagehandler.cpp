@@ -9,6 +9,7 @@
 #include "messageevent.h"
 
 #include <boost/algorithm/string.hpp>
+#include "connectionevents.h"
 
 
 
@@ -18,11 +19,7 @@ GameMessageHandler::GameMessageHandler(Client *c, const std::shared_ptr<Characte
     mClient(c)
 {
     std::shared_ptr<Level> level = mCharacter->level();
-    level->eventQueue()->push(makeFunctionEvent([level, character](Event *e) {
-        level->addCharacter(character);
-    }));
-
-    character->addEventHandler(std::unique_ptr<EventHandler>(new PlayerEventHandler(c)));
+    level->eventQueue()->push(new JoinEvent(c->shared_from_this(), mCharacter));
 }
 
 GameMessageHandler::~GameMessageHandler()
@@ -30,11 +27,26 @@ GameMessageHandler::~GameMessageHandler()
 
 }
 
-void GameMessageHandler::handle(Client *client, const std::string &message) {
+void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
     if (message.size() > 2 && message[0] == '!' && message[1] != '!') {
+        std::vector<std::string> params;
+        Command *cmd = mCommandParser.parse(message, params);
+        if (!cmd) {
+            std::vector<std::string> errorMsgParts;
+            boost::split(errorMsgParts, mCommandParser.errorMessage(), boost::is_any_of("\n"));
+            for (const std::string &msg : errorMsgParts) {
+                client->sendMessage(msg);
+            }
 
+        }
     }
     else {
         mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
     }
+}
+
+void GameMessageHandler::disconnected(const std::shared_ptr<Client> &client)
+{
+    std::shared_ptr<Level> level = mCharacter->level();
+    level->eventQueue()->push(new DisconnectEvent(client, mCharacter));
 }

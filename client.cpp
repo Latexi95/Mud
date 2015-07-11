@@ -11,7 +11,12 @@ Client::~Client() {
 }
 
 void Client::receiveMessage(const std::string &message) {
-    mMessageHandler->handle(this, message);
+    mMessageHandler->handle(shared_from_this(), message);
+}
+
+void Client::disconnected()
+{
+    mMessageHandler->disconnected(shared_from_this());
 }
 
 std::shared_ptr<Player> Client::player() const {

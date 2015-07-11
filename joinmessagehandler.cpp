@@ -20,14 +20,14 @@ JoinMessageHandler::~JoinMessageHandler() {
 
 }
 
-void JoinMessageHandler::gotoCharacterCreation(Client *client) {
+void JoinMessageHandler::gotoCharacterCreation(const std::shared_ptr<Client> &client) {
     client->sendMessage("Going to character creation ->");
     std::shared_ptr<CharacterCreationMessageHandler> charCreation = std::make_shared<CharacterCreationMessageHandler>();
     charCreation->sendCharacterCreationInitMessage(client);
     client->setMessageHandler(charCreation);
 }
 
-void JoinMessageHandler::handle(Client *client, const std::string &message) {
+void JoinMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
     if (message.empty()) return;
     std::string trimmed = boost::algorithm::trim_all_copy(message);
     switch (mState) {
@@ -115,7 +115,7 @@ void JoinMessageHandler::handle(Client *client, const std::string &message) {
             for (const std::string &charName : cn) {
                 if (text::cleanFolded(charName) == characterName) {
                     client->sendMessage("Starting an adventure");
-                    client->setMessageHandler(std::make_shared<GameMessageHandler>(client, CS->character(characterName)));
+                    client->setMessageHandler(std::make_shared<GameMessageHandler>(client.get(), CS->character(characterName)));
                     return;
                 }
             }
@@ -126,5 +126,10 @@ void JoinMessageHandler::handle(Client *client, const std::string &message) {
     }
     }
 
+
+}
+
+void JoinMessageHandler::disconnected(const std::shared_ptr<Client> &client)
+{
 
 }

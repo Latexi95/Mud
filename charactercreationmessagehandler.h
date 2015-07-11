@@ -9,8 +9,9 @@ public:
     CharacterCreationMessageHandler();
     ~CharacterCreationMessageHandler();
 
-    void sendCharacterCreationInitMessage(Client *c);
-    void handle(Client *c, const std::string &message);
+    void sendCharacterCreationInitMessage(const std::shared_ptr<Client> &client);
+    void handle(const std::shared_ptr<Client> &client, const std::string &message);
+    void disconnected(const std::shared_ptr<Client> &client);
 private:
     enum Status {
         InitMessage,

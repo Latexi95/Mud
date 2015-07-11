@@ -19,6 +19,7 @@ public:
     bool globalEvent() const { return mGlobal; }
 
     const std::string &base() const { return mBase; }
+    const std::string &usage() const { return mUsage; }
     const std::string &description() const { return mDescription; }
 
     int minParameters() const { return mMinParameters; }
@@ -26,6 +27,7 @@ public:
 private:
     std::string mBase;
     std::string mDescription;
+    std::string mUsage;
     int mMinParameters, mMaxParameters;
     bool mGlobal;
 };

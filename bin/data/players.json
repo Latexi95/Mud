@@ -1,20 +1,8 @@
 
 {
-	"asd" : 
-	{
-		"characters" : [ "asd" ],
-		"name" : "asd",
-		"password-hash" : "asd"
-	},
-	"derp" : 
-	{
-		"characters" : [],
-		"name" : "derp",
-		"password-hash" : "asd"
-	},
 	"latexi" : 
 	{
-		"characters" : [ "latexi" ],
+		"characters" : [ "latexi\r\n" ],
 		"name" : "latexi",
 		"password-hash" : "123"
 	}

@@ -8,7 +8,9 @@ public:
     enum Type {
         Command,
         Function,
-        Message
+        Message,
+        Join,
+        Disconnect
     };
 
     Event();

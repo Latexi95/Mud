@@ -11,6 +11,7 @@ public:
         mConnection(con) {}
     ~MudClient() {}
     void sendMessage(const std::string &message);
+    void sendMessage(const MessageBuilder &mb);
     void disconnect();
 private:
     TelnetConnection::pointer mConnection;

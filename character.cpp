@@ -89,6 +89,9 @@ Json::Value Character::serialize() const {
 }
 
 void Character::deserialize(const Json::Value &val) {
+    if (!val.isObject()) {
+        throw SerialiazationException("Character::deserialize: Expecting an object json value");
+    }
     const Json::Value &str = val["str"];
     mStrength = str.isInt() ? str.asInt() : 0;
     const Json::Value &dex = val["dex"];
@@ -171,4 +174,9 @@ void Character::handleEvent(Event *e)
 
 void Character::addEventHandler(std::unique_ptr<EventHandler> &&eventHandler) {
     mEventHandlers.emplace_back(std::move(eventHandler));
+}
+
+void Character::removeEventHandlers()
+{
+    mEventHandlers.clear();
 }

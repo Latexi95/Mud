@@ -53,7 +53,10 @@ CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::stri
 
 Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &params) {
     mErrorMessage.clear();
-    std::string trimmedCmd = boost::algorithm::trim_copy(cmd);
+
+    std::string trimmedCmd = cmd.substr(1); //remove leading '!'
+    boost::trim(trimmedCmd);
+
 
     auto firstSpaceIndex = trimmedCmd.find(' ');
     std::string cmdName;
@@ -134,6 +137,20 @@ Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &
         }
     }
 
+    {
+        Command *cmd = (*cmdIt).get();
 
-    return (*cmdIt).get();
+        int minParams = cmd->minParameters();
+        int maxParams = cmd->maxParameters();
+        if (params.size() < minParams) {
+            mErrorMessage = "Too few parameters.\n" + cmd->usage();
+            return nullptr;
+        } else if (params.size() > maxParams) {
+            mErrorMessage = "Too many parameters.\n" + cmd->usage();
+            return nullptr;
+        }
+
+
+        return cmd;
+    }
 }

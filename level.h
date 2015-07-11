@@ -35,6 +35,7 @@ public:
     RoomData *roomData(int x, int y) const;
 
     void addCharacter(const std::shared_ptr<Character> &c);
+    void removeCharacter(const std::shared_ptr<Character> &c);
 
     void moveCharacter(const std::shared_ptr<Character> &c, const Position &pos);
 

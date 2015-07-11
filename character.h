@@ -72,6 +72,7 @@ public:
     void handleEvent(Event *e);
 
     void addEventHandler(std::unique_ptr<EventHandler> &&eventHandler);
+    void removeEventHandlers();
 protected:
     std::string mName;
     Gender mGender;

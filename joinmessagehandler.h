@@ -6,9 +6,10 @@ class JoinMessageHandler : public MessageHandler {
 public:
     JoinMessageHandler();
     ~JoinMessageHandler();
-    void handle(Client *client, const std::string &message);
+    void handle(const std::shared_ptr<Client> &client, const std::string &message);
+    void disconnected(const std::shared_ptr<Client> &client);
 
-    void gotoCharacterCreation(Client *client);
+    void gotoCharacterCreation(const std::shared_ptr<Client> &client);
 private:
     enum State {
         ExpectingName,

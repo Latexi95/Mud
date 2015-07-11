@@ -22,11 +22,11 @@ CharacterCreationMessageHandler::~CharacterCreationMessageHandler() {
 
 }
 
-void CharacterCreationMessageHandler::sendCharacterCreationInitMessage(Client *c) {
-    c->sendMessage("");
-    c->sendMessage("Character creation");
-    c->sendMessage("------------------");
-    c->sendMessage("Select gender: male(m), female(f)");
+void CharacterCreationMessageHandler::sendCharacterCreationInitMessage(const std::shared_ptr<Client> &client) {
+    client->sendMessage("");
+    client->sendMessage("Character creation");
+    client->sendMessage("------------------");
+    client->sendMessage("Select gender: male(m), female(f)");
     mStatus = GenderSelection;
     mStatusStack.push(NameSelection);
     mStatusStack.push(AgeSelection);
@@ -34,11 +34,11 @@ void CharacterCreationMessageHandler::sendCharacterCreationInitMessage(Client *c
     mStatusStack.push(InsertToMap);
 }
 
-void CharacterCreationMessageHandler::handle(Client *c, const std::string &message) {
+void CharacterCreationMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
 
     switch (mStatus) {
     case InitMessage:
-        sendCharacterCreationInitMessage(c);
+        sendCharacterCreationInitMessage(client);
         break;
     case GenderSelection: {
         std::string name = boost::algorithm::trim_copy(message);
@@ -49,7 +49,7 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
             mGender = Character::Female;
         }
         else {
-            c->sendMessage("Choose your character's gender: m / f");
+            client->sendMessage("Choose your character's gender: m / f");
             break;
         }
         mStatus = mStatusStack.front(); mStatusStack.pop();
@@ -58,11 +58,11 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
     case NameSelection: {
         std::string name = text::cleanFolded(message);
         if (name.empty()) {
-            c->sendMessage("What is the name of your character?");
+            client->sendMessage("What is the name of your character?");
             return;
         }
 
-        c->sendMessage("Your character name is \"" + message + "\"");
+        client->sendMessage("Your character name is \"" + message + "\"");
 
         mName = message;
 
@@ -75,12 +75,12 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
         try {
             int num = boost::lexical_cast<int>(ageText);
             if (num < 16 || num > 70) {
-                c->sendMessage("Give a number between 16 and 70");
+                client->sendMessage("Give a number between 16 and 70");
                 return;
             }
             mAge = num;
         } catch (const boost::bad_lexical_cast &e) {
-            c->sendMessage("Give a number for the character's age");
+            client->sendMessage("Give a number for the character's age");
             return;
         }
 
@@ -90,7 +90,7 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
     case HairColorSelection: {
         text::Color *color = text::colorByName(message);
         if (!color) {
-            c->sendMessage("Unknown color \"" + message + "\". Try again:");
+            client->sendMessage("Unknown color \"" + message + "\". Try again:");
             return;
         }
         mHairColor = color;
@@ -106,19 +106,19 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
     case InitMessage:
         break;
     case GenderSelection:
-        c->sendMessage("Select gender: male(m), female(f)");
+        client->sendMessage("Select gender: male(m), female(f)");
         break;
     case NameSelection:
-        c->sendMessage("Character name:");
+        client->sendMessage("Character name:");
         break;
     case AgeSelection:
-        c->sendMessage("Character age:");
+        client->sendMessage("Character age:");
         break;
     case HairColorSelection:
-        c->sendMessage("Hair color:");
+        client->sendMessage("Hair color:");
         break;
     case InsertToMap: {
-        c->sendMessage("Inserting the character to the world");
+        client->sendMessage("Inserting the character to the world");
 
         std::shared_ptr<Level> beach = LS->level("beach");
         std::shared_ptr<Character> character = CS->createCharacter(mName);
@@ -129,13 +129,18 @@ void CharacterCreationMessageHandler::handle(Client *c, const std::string &messa
 
         CS->saveCharacter(character);
 
-        c->player()->addCharacterName(mName);
+        client->player()->addCharacterName(mName);
 
         PlayerService::instance()->savePlayers();
 
-        c->setMessageHandler(std::make_shared<GameMessageHandler>(c, character));
+        client->setMessageHandler(std::make_shared<GameMessageHandler>(client.get(), character));
         break;
     }
     }
+
+}
+
+void CharacterCreationMessageHandler::disconnected(const std::shared_ptr<Client> &client)
+{
 
 }

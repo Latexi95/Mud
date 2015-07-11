@@ -5,7 +5,9 @@
 using namespace text;
 
 void text::clean(std::string &str) {
-    boost::algorithm::trim(str);
+    boost::algorithm::trim_if(str, [](char c){
+        return c == ' ' || c == '\r' || c == '\n';
+    });
     std::string::iterator new_end = std::unique(str.begin(), str.end(), [] (char a, char b) {
         return a == b && a == ' ';
     });
@@ -14,7 +16,9 @@ void text::clean(std::string &str) {
 
 
 std::string text::cleaned(const std::string &txt) {
-    std::string str = boost::algorithm::trim_copy(txt);
+    std::string str = boost::algorithm::trim_copy_if(txt, [](char c){
+        return c == ' ' || c == '\r' || c == '\n';
+    });
     std::string::iterator new_end = std::unique(str.begin(), str.end(), [] (char a, char b) {
         return a == b && a == ' ';
     });

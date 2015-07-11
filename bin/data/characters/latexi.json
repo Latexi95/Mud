@@ -1,0 +1,17 @@
+
+{
+	"cha" : 10,
+	"con" : 10,
+	"dex" : 10,
+	"equipment" : {},
+	"height" : 1.8,
+	"int" : 10,
+	"level" : "beach",
+	"name" : "latexi",
+	"posX" : 2,
+	"posY" : 2,
+	"skills" : {},
+	"str" : 10,
+	"width" : 0.5,
+	"wis" : 10
+}

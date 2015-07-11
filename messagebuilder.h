@@ -4,9 +4,35 @@
 #include <vector>
 #include "name.h"
 class Item;
+class Character;
 
 class MessageBuilder {
 public:
+    enum Style {
+        Default = 0,
+        Bold = 1,
+        Underline = 2,
+
+        //Foreground color
+        FGBlack = 1 << 2,
+        FGRed = 2 << 2,
+        FGGreen = 3 << 2,
+        FGYellow = 4 << 2,
+        FGBlue = 5 << 2,
+        FGMagenta = 6 << 2,
+        FGCyan = 7 << 2,
+        FGWhite = 8 << 2,
+
+        BGBlack = 1 << 6,
+        BGRed = 2 << 6,
+        BGGreen = 3 << 6,
+        BGYellow = 4 << 6,
+        BGBlue = 5 << 6,
+        BGMagenta = 6 << 6,
+        BGCyan = 7 << 6,
+        BGWhite = 8 << 6
+    };
+
     MessageBuilder(const std::string &str);
     MessageBuilder(std::string &&str);
     MessageBuilder(const MessageBuilder &mb);
@@ -19,25 +45,57 @@ public:
     MessageBuilder &operator =(const std::string &str);
     MessageBuilder &operator =(std::string &&str);
 
-    operator std::string();
+    std::string generateTelnetString() const;
 
     void append(const std::string &str);
     void append(std::string &&str);
     void append(int num);
     void append(const Name &name);
     void append(const std::unique_ptr<Item> &item);
-private:
-    void clearNumberStash();
+    void append(const std::shared_ptr<Character> &character);
 
-    std::vector<std::string> mParts;
+    static bool underlined(int style);
+    static bool bolded(int style);
+    static bool foregroundColorSet(int style);
+    static bool backgroundColorSet(int style);
+
+
+    MessageBuilder &operator<< (int i);
+    MessageBuilder &operator<< (const std::string &str);
+    MessageBuilder &operator<< (std::string &&str);
+    MessageBuilder &operator<< (const Name &name);
+    MessageBuilder &operator<< (const std::unique_ptr<Item> &item);
+    MessageBuilder &operator<< (const std::shared_ptr<Character> &character);
+
+    template <size_t S>
+    MessageBuilder &operator<< (char text[S]) {
+        append(std::string(text, S));
+        return *this;
+    }
+private:
+    static char foregroundTelnetColorCode(int style);
+    static char backgroundTelnetColorCode(int style);
+
+    void clearNumberStash();
+    struct Part {
+        Part(int style, const std::string &txt) : mText(txt), mStyle(style) {}
+        Part(int style, std::string &&txt) : mText(std::move(txt)), mStyle(style) {}
+        Part(const Part &p) : mText(p.mText), mStyle(p.mStyle) {}
+        Part(Part &&p) : mText(std::move(p.mText)), mStyle(p.mStyle) {}
+        ~Part() {}
+        Part &operator = (const Part &p) { mText = p.mText; mStyle = p.mStyle; return *this; }
+        Part &operator = (Part &&p) { mText = std::move(p.mText); mStyle = p.mStyle; return *this; }
+
+        std::string mText;
+        int mStyle;
+    };
+
+    std::vector<Part> mParts;
     int mNumber;
 };
 
 
-MessageBuilder &operator<< (MessageBuilder &mb, int i);
-MessageBuilder &operator<< (MessageBuilder &mb, const std::string &str);
-MessageBuilder &operator<< (MessageBuilder &mb, std::string &&str);
-MessageBuilder &operator<< (MessageBuilder &mb, const Name &name);
-MessageBuilder &operator<< (MessageBuilder &mb, const std::unique_ptr<Item> &item);
+
+
 
 #endif // MESSAGEBUILDER_H

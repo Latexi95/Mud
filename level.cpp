@@ -210,6 +210,17 @@ void Level::addCharacter(const std::shared_ptr<Character> &c) {
     mCharacters.insert(std::pair<Position, std::shared_ptr<Character> >(c->pos(), c));
 }
 
+void Level::removeCharacter(const std::shared_ptr<Character> &c)
+{
+    auto range = mCharacters.equal_range(c->pos());
+    for (auto it = range.first; it != range.second; ++it) {
+        if (it->second == c) {
+            mCharacters.erase(it);
+            return;
+        }
+    }
+}
+
 void Level::moveCharacter(const std::shared_ptr<Character> &c, const Position &pos) {
     mCharacters.erase(c->pos());
     mCharacters.insert(std::pair<Position, std::shared_ptr<Character> >(pos, c));
