@@ -1,7 +1,7 @@
 #include "mud.h"
 #include "level.h"
 #define STEP_TIME 0.1
-#define TIME_TICKS 10
+#define TIME_TICKS 1
 Mud::Mud() :
     mPlayerService(this),
     mEventQueue(2) {
@@ -23,7 +23,17 @@ void Mud::start() {
             mTime += TIME_TICKS;
             mLastUpdate += step;
         }
+        else {
+            mEventQueue.handle(0);
+        }
     }
 
+}
+
+void Mud::shutdown()
+{
+    std::cout << "Shutting down..." << std::endl;
+    mRunning = false;
+    mEventQueue.shutdown();
 }
 

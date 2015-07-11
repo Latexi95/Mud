@@ -3,27 +3,40 @@
 #include <boost/lexical_cast.hpp>
 #include "character.h"
 
+SetStyle MessageBuilder::reset{MessageBuilder::Default};
+
+MessageBuilder::MessageBuilder() :
+    mNumber(-1),
+    mStyle(Default)
+{
+
+}
+
 MessageBuilder::MessageBuilder(const std::string &str) :
     mParts(1, Part(Default, str)),
-    mNumber(-1)
+    mNumber(-1),
+    mStyle(Default)
 {
 }
 
 MessageBuilder::MessageBuilder(std::string &&str) :
     mParts(1, Part(Default, std::move(str))),
-    mNumber(-1)
+    mNumber(-1),
+    mStyle(Default)
 {
 }
 
 MessageBuilder::MessageBuilder(const MessageBuilder &mb) :
     mParts(mb.mParts),
-    mNumber(mb.mNumber)
+    mNumber(mb.mNumber),
+    mStyle(Default)
 {
 }
 
 MessageBuilder::MessageBuilder(MessageBuilder &&mb) :
     mParts(std::move(mb.mParts)),
-    mNumber(mb.mNumber)
+    mNumber(mb.mNumber),
+    mStyle(Default)
 {
 
 }
@@ -75,7 +88,7 @@ std::string MessageBuilder::generateTelnetString() const
         if (style != part.mStyle) {
             if (style != Default) resultSize += 2 + 1 + 1; //reset to default
             if (part.mStyle != Default) {
-                resultSize += 1 + (int)bolded(style) * 2 + (int)underlined(style) * 2 + (int)foregroundColorSet(style) * 3 + (int)backgroundColorSet(style) * 3;
+                resultSize += 1 + (int)bolded(part.mStyle) * 2 + (int)underlined(part.mStyle) * 2 + (int)foregroundColorSet(part.mStyle) * 3 + (int)backgroundColorSet(part.mStyle) * 3;
             }
             style = part.mStyle;
         }
@@ -92,7 +105,9 @@ std::string MessageBuilder::generateTelnetString() const
     style = Default;
     result.reserve(resultSize);
     std::vector<Part>::const_iterator it = mParts.begin();
+    bool mightNeedSpace = false;
     for (; it != --mParts.end(); ++it) {
+        if (mightNeedSpace && !styleNoSpace(it->mStyle)) result += ' ';
         if (it->mStyle != style) {
             if (style != Default) {
                 result += "\x1b[0m";
@@ -109,25 +124,27 @@ std::string MessageBuilder::generateTelnetString() const
                     result += '4';
                     others = true;
                 }
-                if (foregroundColorSet(style)) {
+                if (foregroundColorSet(it->mStyle)) {
                     if (others) result += ';';
                     result += '3';
-                    result += foregroundTelnetColorCode(style);
+                    result += foregroundTelnetColorCode(it->mStyle);
                     others = true;
                 }
-                if (backgroundColorSet(style)) {
+                if (backgroundColorSet(it->mStyle)) {
                     if (others) result += ';';
                     result += '4';
-                    result += backgroundTelnetColorCode(style);
+                    result += backgroundTelnetColorCode(it->mStyle);
                     others = true;
                 }
+                result += 'm';
             }
             style = it->mStyle;
         }
         result += it->mText;
-        if (it->mText.back() != ' ') result += ' ';
+        mightNeedSpace = it->mText.back() != ' ';
     }
 
+    if (mightNeedSpace && !styleNoSpace(it->mStyle)) result += ' ';
     if (it->mStyle != style) {
         if (style != Default) {
             result += "\x1b[0m";
@@ -144,18 +161,19 @@ std::string MessageBuilder::generateTelnetString() const
                 result += '4';
                 others = true;
             }
-            if (foregroundColorSet(style)) {
+            if (foregroundColorSet(it->mStyle)) {
                 if (others) result += ';';
                 result += '3';
-                result += foregroundTelnetColorCode(style);
+                result += foregroundTelnetColorCode(it->mStyle);
                 others = true;
             }
-            if (backgroundColorSet(style)) {
+            if (backgroundColorSet(it->mStyle)) {
                 if (others) result += ';';
                 result += '4';
-                result += backgroundTelnetColorCode(style);
+                result += backgroundTelnetColorCode(it->mStyle);
                 others = true;
             }
+            result += 'm';
         }
         style = it->mStyle;
     }
@@ -178,13 +196,13 @@ std::string MessageBuilder::generateTelnetString() const
 void MessageBuilder::append(const std::string &str)
 {
     clearNumberStash();
-    mParts.emplace_back(Default, str);
+    mParts.emplace_back(mStyle, str);
 }
 
 void MessageBuilder::append(std::string &&str)
 {
     clearNumberStash();
-    mParts.emplace_back(Default, std::move(str));
+    mParts.emplace_back(mStyle, std::move(str));
 }
 
 void MessageBuilder::append(int num)
@@ -196,11 +214,11 @@ void MessageBuilder::append(int num)
 void MessageBuilder::append(const Name &name)
 {
     if (mNumber >= 0) {
-        mParts.emplace_back(Default, name.num(mNumber, true));
+        mParts.emplace_back(mStyle, name.num(mNumber, true));
         mNumber = -1;
     }
     else {
-        mParts.emplace_back(Default, name.num(1, true));
+        mParts.emplace_back(mStyle, name.num(1, true));
     }
 }
 
@@ -241,6 +259,20 @@ bool MessageBuilder::backgroundColorSet(int style)
     return (style & 0x3C0) != 0;
 }
 
+bool MessageBuilder::styleNoSpace(int style)
+{
+    return (style & NoSpace) == NoSpace;
+}
+
+void MessageBuilder::setStyle(int style)
+{
+    mStyle = style;
+}
+
+int MessageBuilder::style() const
+{
+    return mStyle;
+}
 
 MessageBuilder &MessageBuilder::operator<<(int i)
 {
@@ -259,9 +291,6 @@ MessageBuilder &MessageBuilder::operator<<(const Name &name)
     append(name);
     return *this;
 }
-
-
-
 
 MessageBuilder &MessageBuilder::operator<<(const std::unique_ptr<Item> &item)
 {
@@ -282,6 +311,19 @@ MessageBuilder &MessageBuilder::operator<<(const std::shared_ptr<Character> &cha
     append(character);
     return *this;
 }
+
+MessageBuilder &MessageBuilder::operator<<(const SetStyle &setStyle)
+{
+    mStyle = setStyle.mStyle;
+    return *this;
+}
+
+MessageBuilder &MessageBuilder::operator<<(MessageBuilder::Style xorStyle)
+{
+    mStyle ^= xorStyle;
+    return *this;
+}
+
 
 
 

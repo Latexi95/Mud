@@ -22,6 +22,8 @@ public:
     void handle(time_type t);
 
     void addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq);
+
+    void shutdown();
 private:
     boost::asio::io_service mIoService;
     boost::asio::io_service::work *mWork;
@@ -30,6 +32,7 @@ private:
     std::vector<Event*> mHandleQueue;
     std::vector<std::shared_ptr<LevelEventQueue> > mLevelEventQueues;
     std::vector<std::unique_ptr<boost::thread>> mWorkers;
+    boost::atomic_int mWorkInQueue;
 };
 
 extern MainEventQueue *MEQ;

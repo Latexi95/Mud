@@ -14,7 +14,7 @@ JoinEvent::JoinEvent(const std::shared_ptr<Client> &client, const std::shared_pt
 void JoinEvent::execute()
 {
     mCharacter->level()->addCharacter(mCharacter);
-    mCharacter->addEventHandler(std::unique_ptr<EventHandler>(new PlayerEventHandler(mClient)));
+    mCharacter->addEventHandler(std::unique_ptr<CharacterEventHandler>(new PlayerEventHandler(mClient)));
 
     mCharacter->level()->sendEventToCharacters(this);
 }

@@ -17,6 +17,8 @@ public:
     void start();
 
     MainEventQueue &mainEventQueue() { return mEventQueue; }
+
+    void shutdown();
 private:
     CommandService mCommandService;
     PlayerService mPlayerService;

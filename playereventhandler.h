@@ -1,15 +1,15 @@
 #ifndef PLAYEREVENTHANDLER_H
 #define PLAYEREVENTHANDLER_H
-#include "eventhandler.h"
+#include "charactereventhandler.h"
 #include <memory>
 class Client;
-class PlayerEventHandler : public EventHandler
+class PlayerEventHandler : public CharacterEventHandler
 {
 public:
     PlayerEventHandler(const std::shared_ptr<Client> &client);
     ~PlayerEventHandler();
 
-    void handleEvent(Event *e);
+    void handleEvent(const std::shared_ptr<Character> &character, Event *e);
 
 private:
     std::shared_ptr<Client> mClient;

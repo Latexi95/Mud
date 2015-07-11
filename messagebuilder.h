@@ -6,8 +6,16 @@
 class Item;
 class Character;
 
+struct SetStyle {
+    SetStyle(int style) : mStyle(style) {}
+    int mStyle;
+};
+
+
 class MessageBuilder {
 public:
+    static SetStyle reset;
+
     enum Style {
         Default = 0,
         Bold = 1,
@@ -30,9 +38,14 @@ public:
         BGBlue = 5 << 6,
         BGMagenta = 6 << 6,
         BGCyan = 7 << 6,
-        BGWhite = 8 << 6
+        BGWhite = 8 << 6,
+
+
+        NoSpace = 1 << 10
+
     };
 
+    MessageBuilder();
     MessageBuilder(const std::string &str);
     MessageBuilder(std::string &&str);
     MessageBuilder(const MessageBuilder &mb);
@@ -58,7 +71,10 @@ public:
     static bool bolded(int style);
     static bool foregroundColorSet(int style);
     static bool backgroundColorSet(int style);
+    static bool styleNoSpace(int style);
 
+    void setStyle(int style);
+    int style() const;
 
     MessageBuilder &operator<< (int i);
     MessageBuilder &operator<< (const std::string &str);
@@ -66,6 +82,9 @@ public:
     MessageBuilder &operator<< (const Name &name);
     MessageBuilder &operator<< (const std::unique_ptr<Item> &item);
     MessageBuilder &operator<< (const std::shared_ptr<Character> &character);
+
+    MessageBuilder &operator<< (const SetStyle &setStyle);
+    MessageBuilder &operator<< (Style xorStyle);
 
     template <size_t S>
     MessageBuilder &operator<< (char text[S]) {
@@ -92,6 +111,7 @@ private:
 
     std::vector<Part> mParts;
     int mNumber;
+    int mStyle;
 };
 
 

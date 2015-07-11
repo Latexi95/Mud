@@ -43,7 +43,6 @@ SOURCES += main.cpp \
     skillcheck.cpp \
     event.cpp \
     commandservice.cpp \
-    eventhandler.cpp \
     mud.cpp \
     mudserver.cpp \
     player.cpp \
@@ -89,7 +88,8 @@ SOURCES += main.cpp \
     messageevent.cpp \
     playereventhandler.cpp \
     messagebuilder.cpp \
-    connectionevents.cpp
+    connectionevents.cpp \
+    charactereventhandler.cpp
 
 HEADERS += \
     commandevent.h \
@@ -100,7 +100,6 @@ HEADERS += \
     skillcheck.h \
     event.h \
     commandservice.h \
-    eventhandler.h \
     mud.h \
     mudserver.h \
     player.h \
@@ -154,4 +153,5 @@ HEADERS += \
     messageevent.h \
     playereventhandler.h \
     messagebuilder.h \
-    connectionevents.h
+    connectionevents.h \
+    charactereventhandler.h

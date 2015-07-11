@@ -17,6 +17,8 @@ void sHandleMessage(TelnetConnection::pointer ptr, const std::string &msg) {
 
 
 void MudClient::sendMessage(const std::string &message) {
+    std::cout << '[' << mConnection << "] << " << message << std::endl;
+
     std::string *output = new std::string();
     output->resize(message.size() + 2);
     std::copy(message.begin(), message.end(), output->begin());
@@ -28,6 +30,8 @@ void MudClient::sendMessage(const std::string &message) {
 void MudClient::sendMessage(const MessageBuilder &mb)
 {
     std::string *output = new std::string(mb.generateTelnetString());
+
+    std::cout << '[' << mConnection << "] << " << *output;
     mConnection->addMessage(output);
 }
 
@@ -61,11 +65,15 @@ void MudServer::handleNewConnection(TelnetConnection::pointer newCon) {
 }
 
 void MudServer::handleMessage(TelnetConnection::pointer sender, const std::string &msg) {
-    std::cout << '[' << sender << "] : " << msg << std::endl;
+    std::cout << '[' << sender << "] >> " << msg;
     mClients[sender]->receiveMessage(msg);
 }
 
 void MudServer::handleDisconnect(TelnetConnection::pointer con) {
-    mClients.erase(con);
+    auto clientIt = mClients.find(con);
+    if (clientIt != mClients.end()) {
+        (clientIt->second)->disconnected();
+        mClients.erase(clientIt);
+    }
 }
 

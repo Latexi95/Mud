@@ -1,6 +1,6 @@
 #ifndef COMMANDSERVICE_H
 #define COMMANDSERVICE_H
-#include "eventhandler.h"
+#include "charactereventhandler.h"
 class CommandEvent;
 class CommandService {
 public:

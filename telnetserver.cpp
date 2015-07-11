@@ -46,6 +46,9 @@ void TelnetServer::start(int threads, unsigned short port) {
 
 void TelnetServer::stop() {
     mIOService.stop();
+    for (boost::thread *worker : mWorkers) {
+        worker->join();
+    }
 }
 
 void TelnetServer::startAccept(){
@@ -146,10 +149,11 @@ TelnetConnection::TelnetConnection(boost::asio::io_service& io_service, void (*d
 void TelnetConnection::handleWrite(const boost::system::error_code &err, size_t bytesTransfered) {
     if (err) {
         std::cerr << err.message();
-        if (err == boost::asio::error::connection_reset || err == boost::asio::error::eof) {
-            mDisconnectHandler(shared_from_this());
-            return;
-        }
+        /*if (err == boost::asio::error::connection_reset || err == boost::asio::error::eof) {
+
+        }*/
+        mDisconnectHandler(shared_from_this());
+        return;
     }
     writeMessage();
 }
@@ -168,10 +172,11 @@ void TelnetConnection::handleRead(const boost::system::error_code &err, size_t b
     }
     else {
         std::cerr << err.message();
-        if (err == boost::asio::error::connection_reset || err == boost::asio::error::eof) {
-            mDisconnectHandler(shared_from_this());
-            return;
-        }
+        /*if (err == boost::asio::error::connection_reset || err == boost::asio::error::eof) {
+
+        }*/
+        mDisconnectHandler(shared_from_this());
+        return;
     }
 
     startReceive();

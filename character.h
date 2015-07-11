@@ -8,9 +8,9 @@
 
 class Level;
 class Event;
-class EventHandler;
+class CharacterEventHandler;
 
-class Character : public JsonSerializable {
+class Character : public std::enable_shared_from_this<Character>, public JsonSerializable {
 public:
     enum Gender {
         Male,
@@ -71,7 +71,7 @@ public:
 
     void handleEvent(Event *e);
 
-    void addEventHandler(std::unique_ptr<EventHandler> &&eventHandler);
+    void addEventHandler(std::unique_ptr<CharacterEventHandler> &&eventHandler);
     void removeEventHandlers();
 protected:
     std::string mName;
@@ -92,7 +92,7 @@ protected:
     Position mPos;
 
     std::shared_ptr<Level> mLevel;
-    std::vector<std::unique_ptr<EventHandler> > mEventHandlers;
+    std::vector<std::unique_ptr<CharacterEventHandler> > mEventHandlers;
 
 
 

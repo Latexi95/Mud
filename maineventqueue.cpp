@@ -2,11 +2,13 @@
 #include <iostream>
 #include "event.h"
 #include "leveleventqueue.h"
+#include <boost/atomic.hpp>
 
 MainEventQueue *MEQ = 0;
 
 MainEventQueue::MainEventQueue(int workerThreads) :
-    mQueue(10) {
+    mQueue(10),
+    mWorkInQueue(0) {
     assert(MEQ == 0);
     MEQ = this;
     mWork = new boost::asio::io_service::work(mIoService);
@@ -23,15 +25,7 @@ MainEventQueue::~MainEventQueue()
 {
     assert(MEQ);
     MEQ = 0;
-    delete mWork;
-    mQueue.consume_all([](Event *e) {
-        if (e->eventLoopHasOwnership()) delete e;
-    });
 
-    mIoService.stop();
-    for (std::unique_ptr<boost::thread> &t : mWorkers) {
-        t->join();
-    }
 }
 
 MainEventQueue *MainEventQueue::instance()
@@ -61,11 +55,18 @@ void MainEventQueue::handle(time_type t)
         if (e->eventLoopHasOwnership()) delete e;
     }
     mHandleQueue.clear();
-    mTimedEventQueue.advance(t);
+    if (t != 0)
+        mTimedEventQueue.advance(t);
+
+    //Just to make sure there is not chance that event loop handling overlaps
+    while (mWorkInQueue.load(boost::memory_order_acquire));
 
     for (const std::shared_ptr<LevelEventQueue> &levelEventQueue : mLevelEventQueues) {
-        mIoService.post([levelEventQueue, t](){
+        mWorkInQueue.fetch_add(1, boost::memory_order_relaxed);
+        mIoService.post([this, levelEventQueue, t](){
             levelEventQueue->handle(t);
+
+            mWorkInQueue.fetch_sub(1, boost::memory_order_release);
         });
     }
 
@@ -75,4 +76,18 @@ void MainEventQueue::handle(time_type t)
 void MainEventQueue::addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq)
 {
     mLevelEventQueues.push_back(eq);
+}
+
+void MainEventQueue::shutdown()
+{
+    mIoService.stop();
+    delete mWork;
+    mQueue.consume_all([](Event *e) {
+        if (e->eventLoopHasOwnership()) delete e;
+    });
+
+    mIoService.stop();
+    for (std::unique_ptr<boost::thread> &t : mWorkers) {
+        t->join();
+    }
 }

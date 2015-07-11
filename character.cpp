@@ -4,7 +4,7 @@
 #include "level.h"
 #include "levelservice.h"
 #include "event.h"
-#include "eventhandler.h"
+#include "charactereventhandler.h"
 
 Character::Character() :
     mGender(Male),
@@ -167,12 +167,13 @@ void Character::deserialize(const Json::Value &val) {
 
 void Character::handleEvent(Event *e)
 {
-    for (const std::unique_ptr<EventHandler> &eventHandler : mEventHandlers) {
-        eventHandler->handleEvent(e);
+    std::shared_ptr<Character> self = shared_from_this();
+    for (const std::unique_ptr<CharacterEventHandler> &eventHandler : mEventHandlers) {
+        eventHandler->handleEvent(self, e);
     }
 }
 
-void Character::addEventHandler(std::unique_ptr<EventHandler> &&eventHandler) {
+void Character::addEventHandler(std::unique_ptr<CharacterEventHandler> &&eventHandler) {
     mEventHandlers.emplace_back(std::move(eventHandler));
 }
 

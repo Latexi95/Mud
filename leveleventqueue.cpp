@@ -35,5 +35,8 @@ void LevelEventQueue::handle(time_type t) {
         if (e->eventLoopHasOwnership()) delete e;
     }
     mHandleQueue.clear();
-    mTimedEventQueue.advance(t);
+
+    if (t != 0) {
+        mTimedEventQueue.advance(t);
+    }
 }
