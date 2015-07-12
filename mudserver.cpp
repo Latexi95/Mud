@@ -42,7 +42,7 @@ void MudClient::disconnect() {
 
 MudServer::MudServer() {
     sMudServerInstance = this;
-    mTcpServer.reset(new TelnetServer(
+    mTelnetServer.reset(new TelnetServer(
                          &sHandleNewCon,
                          &sHandleDisconnect,
                          &sHandleMessage,
@@ -51,11 +51,11 @@ MudServer::MudServer() {
 }
 
 void MudServer::start() {
-    mTcpServer->start(2, 3333);
+    mTelnetServer->start(2, 3333);
 }
 
 void MudServer::stop() {
-    mTcpServer->stop();
+    mTelnetServer->stop();
 }
 
 void MudServer::handleNewConnection(TelnetConnection::pointer newCon) {

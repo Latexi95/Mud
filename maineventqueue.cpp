@@ -1,6 +1,6 @@
 #include "maineventqueue.h"
 #include <iostream>
-#include "event.h"
+#include "events/event.h"
 #include "leveleventqueue.h"
 #include <boost/atomic.hpp>
 

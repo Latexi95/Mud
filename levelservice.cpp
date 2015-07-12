@@ -1,7 +1,7 @@
 #include "levelservice.h"
 #include "resourceservice.h"
 #include "maineventqueue.h"
-#include "event.h"
+#include "events/event.h"
 
 LevelService *LS = 0;
 

@@ -1,5 +1,5 @@
 #include "leveleventqueue.h"
-#include "event.h"
+#include "events/event.h"
 
 LevelEventQueue::LevelEventQueue() :
     mQueue(10)

@@ -3,13 +3,13 @@
 #include "level.h"
 #include <boost/lexical_cast.hpp>
 #include "leveleventqueue.h"
-#include "event.h"
+#include "events/event.h"
 #include "playereventhandler.h"
 #include "maineventqueue.h"
-#include "messageevent.h"
+#include "events/messageevent.h"
 
 #include <boost/algorithm/string.hpp>
-#include "connectionevents.h"
+#include "events/connectionevents.h"
 
 
 

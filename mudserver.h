@@ -28,7 +28,7 @@ public:
     void handleMessage(TelnetConnection::pointer sender, const std::string &msg);
     void handleDisconnect(TelnetConnection::pointer con);
 private:
-    std::unique_ptr<TelnetServer> mTcpServer;
+    std::unique_ptr<TelnetServer> mTelnetServer;
     std::map<TelnetConnection::pointer, std::shared_ptr<MudClient> > mClients;
 };
 

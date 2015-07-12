@@ -1,8 +1,8 @@
 #include "playereventhandler.h"
 #include "client.h"
-#include "messageevent.h"
+#include "events/messageevent.h"
 #include "messagebuilder.h"
-#include "connectionevents.h"
+#include "events/connectionevents.h"
 
 PlayerEventHandler::PlayerEventHandler(const std::shared_ptr<Client> &client) :
     mClient(client)

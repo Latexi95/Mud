@@ -35,13 +35,13 @@ LIBS += -lz
 
 
 SOURCES += main.cpp \
-    commandevent.cpp \
+    events/commandevent.cpp \
     item.cpp \
     character.cpp \
     dicerandom.cpp \
     dicesequence.cpp \
     skillcheck.cpp \
-    event.cpp \
+    events/event.cpp \
     commandservice.cpp \
     mud.cpp \
     mudserver.cpp \
@@ -85,20 +85,20 @@ SOURCES += main.cpp \
     timedeventqueue.cpp \
     maineventqueue.cpp \
     leveleventqueue.cpp \
-    messageevent.cpp \
+    events/messageevent.cpp \
     playereventhandler.cpp \
     messagebuilder.cpp \
-    connectionevents.cpp \
+    events/connectionevents.cpp \
     charactereventhandler.cpp
 
 HEADERS += \
-    commandevent.h \
+    events/commandevent.h \
     item.h \
     character.h \
     dicerandom.h \
     dicesequence.h \
     skillcheck.h \
-    event.h \
+    events/event.h \
     commandservice.h \
     mud.h \
     mudserver.h \
@@ -150,8 +150,8 @@ HEADERS += \
     maineventqueue.h \
     common.h \
     leveleventqueue.h \
-    messageevent.h \
+    events/messageevent.h \
     playereventhandler.h \
     messagebuilder.h \
-    connectionevents.h \
+    events/connectionevents.h \
     charactereventhandler.h

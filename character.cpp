@@ -3,7 +3,7 @@
 #include "resourceservice.h"
 #include "level.h"
 #include "levelservice.h"
-#include "event.h"
+#include "events/event.h"
 #include "charactereventhandler.h"
 
 Character::Character() :

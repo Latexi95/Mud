@@ -22,13 +22,13 @@ public:
     const std::string &usage() const { return mUsage; }
     const std::string &description() const { return mDescription; }
 
-    int minParameters() const { return mMinParameters; }
-    int maxParameters() const { return mMaxParameters; }
+    unsigned minParameters() const { return mMinParameters; }
+    unsigned maxParameters() const { return mMaxParameters; }
 private:
     std::string mBase;
     std::string mDescription;
     std::string mUsage;
-    int mMinParameters, mMaxParameters;
+    unsigned mMinParameters, mMaxParameters;
     bool mGlobal;
 };
 

@@ -1,6 +1,6 @@
 #include "commandservice.h"
-#include "event.h"
-#include "commandevent.h"
+#include "events/event.h"
+#include "events/commandevent.h"
 #include <iostream>
 
 CommandService::CommandService()

@@ -1,6 +1,6 @@
 #include "timedeventqueue.h"
 #include <iostream>
-#include "event.h"
+#include "events/event.h"
 
 TimedEventQueue::TimedEventQueue()
 {
