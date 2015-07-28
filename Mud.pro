@@ -79,7 +79,7 @@ SOURCES += main.cpp \
     textgen/color.cpp \
     textgen/textutils.cpp \
     commandparser.cpp \
-    command.cpp \
+    commands/command.cpp \
     levelservice.cpp \
     characterservice.cpp \
     timedeventqueue.cpp \
@@ -89,7 +89,9 @@ SOURCES += main.cpp \
     playereventhandler.cpp \
     messagebuilder.cpp \
     events/connectionevents.cpp \
-    charactereventhandler.cpp
+    charactereventhandler.cpp \
+    commands/shoutcommand.cpp \
+    soundservice.cpp
 
 HEADERS += \
     events/commandevent.h \
@@ -143,7 +145,7 @@ HEADERS += \
     textgen/color.h \
     textgen/textutils.h \
     commandparser.h \
-    command.h \
+    commands/command.h \
     levelservice.h \
     characterservice.h \
     timedeventqueue.h \
@@ -154,4 +156,6 @@ HEADERS += \
     playereventhandler.h \
     messagebuilder.h \
     events/connectionevents.h \
-    charactereventhandler.h
+    charactereventhandler.h \
+    commands/shoutcommand.h \
+    soundservice.h
