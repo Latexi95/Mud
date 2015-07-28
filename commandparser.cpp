@@ -1,4 +1,5 @@
 #include "commandparser.h"
+#include "commands/command.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
 #include "textgen/textutils.h"
@@ -107,41 +108,53 @@ Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &
         }
     }
 
-    if (firstSpaceIndex != std::string::npos) {
-        auto paramListBegin = trimmedCmd.begin() + firstSpaceIndex;
-        auto paramListEnd = trimmedCmd.end();
-        for (auto i = paramListBegin; i != paramListEnd; ++i) {
-            if (*i == ' ') continue;
 
-            if (*i == '"') {
-                ++i;
+
+    if (firstSpaceIndex != std::string::npos) {
+        if ((*cmdIt)->singleParameter()) {
+             params.emplace_back(trimmedCmd.substr(firstSpaceIndex));
+        }
+        else {
+            auto paramListBegin = trimmedCmd.begin() + firstSpaceIndex;
+            auto paramListEnd = trimmedCmd.end();
+            for (auto i = paramListBegin; i != paramListEnd; ++i) {
+                if (*i == ' ') continue;
+
+                if (*i == '"') {
+                    ++i;
+                    auto paramStart = i;
+                    while (i != paramListEnd && *i != '"') {
+                        ++i;
+                    }
+                    if (i == paramListEnd) {
+                        mErrorMessage = "Expecting \" to close the quotation.";
+                        return nullptr;
+                    }
+
+                    params.emplace_back(paramStart, i);
+                }
+
                 auto paramStart = i;
-                while (i != paramListEnd && *i != '"') {
+                while (i != paramListEnd && *i != ' ') {
                     ++i;
                 }
-                if (i == paramListEnd) {
-                    mErrorMessage = "Expecting \" to close the quotation.";
-                    return nullptr;
-                }
-
                 params.emplace_back(paramStart, i);
+                if (i == paramListEnd) break;
             }
-
-            auto paramStart = i;
-            while (i != paramListEnd && *i != ' ') {
-                ++i;
-            }
-            params.emplace_back(paramStart, i);
-            if (i == paramListEnd) break;
         }
     }
 
     {
         Command *cmd = (*cmdIt).get();
 
+        if (cmd->singleParameter()) {
+            if (params.empty()) {
+                mErrorMessage = "Expecting a parameter.\n" + cmd->usage();
+            }
+        }
+
         unsigned minParams = cmd->minParameters();
-        unsigned maxParams = cmd->maxParameters();
-        if (params.size() < minParams) {
+        unsigned maxParams = cmd->maxParameters();        if (params.size() < minParams) {
             mErrorMessage = "Too few parameters.\n" + cmd->usage();
             return nullptr;
         } else if (params.size() > maxParams) {

@@ -12,6 +12,12 @@ enum Direction {
     DirectionCount
 };
 
+enum class MoveType {
+    Walk,
+    Run,
+    Crawl
+};
+
 
 #endif // ENUMS
 

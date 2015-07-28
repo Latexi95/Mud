@@ -91,8 +91,9 @@ SOURCES += main.cpp \
     messagebuilder.cpp \
     events/connectionevents.cpp \
     charactereventhandler.cpp \
-    commands/movecommand.cpp
-
+    commands/shoutcommand.cpp \
+    soundservice.cpp \
+    commands/movecommands.cpp
 HEADERS += \
     events/commandevent.h \
     item.h \
@@ -156,6 +157,8 @@ HEADERS += \
     playereventhandler.h \
     messagebuilder.h \
     events/connectionevents.h \
-    charactereventhandler.h \
-    commands/movecommand.h \
-    enums.h
+    commands/shoutcommand.h \
+    soundservice.h \
+    enums.h \
+    commands/movecommands.h \
+    textgen/textselector.h
