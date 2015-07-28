@@ -4,22 +4,16 @@
 #include "character.h"
 #include <cassert>
 #include <list>
-
+#include "enums.h"
 struct WallData;
+
+
 
 class Room;
 class Wall {
 public:
-    enum Side {
-        North,
-        South,
-        East,
-        West,
-        Up,
-        Down,
-        SideCount
-    };
-    Wall(Side side, const Room *room, std::list<WallData>::iterator wallData);
+
+    Wall(Direction side, const Room *room, std::list<WallData>::iterator wallData);
     ~Wall();
     const Room *room() const;
     const std::vector<std::unique_ptr<Item> > &items() const;
@@ -27,7 +21,7 @@ public:
     const std::string &looks() const;
 protected:
     const Room *mRoom;
-    Side mSide;
+    Direction mSide;
     std::list<WallData>::iterator mData;
 };
 

@@ -13,9 +13,9 @@ public:
 
     Room(int x, int y, Level *level);
     ~Room();
-    std::vector<std::pair<Item *, Wall::Side>> items() const;
+    std::vector<std::pair<Item *, Direction>> items() const;
     std::vector<std::shared_ptr<Character>> characters() const;
-    Wall wall(Wall::Side side) const;
+    Wall wall(Direction side) const;
     const std::vector<std::unique_ptr<RoomTrait> > &traits() const;
     bool solid() const;
 
@@ -33,7 +33,7 @@ protected:
 
 struct RoomData {
     RoomData() : mWalls(), mSolid(true), mRefCount(0) {}
-    std::array<std::list<WallData>::iterator, Wall::SideCount> mWalls;
+    std::array<std::list<WallData>::iterator, (unsigned int)Direction::DirectionCount> mWalls;
     std::vector<std::unique_ptr<RoomTrait>> mTraits;
     std::unordered_map<std::string, std::string> mLooks;
     bool mSolid;

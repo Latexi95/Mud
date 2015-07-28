@@ -90,7 +90,8 @@ SOURCES += main.cpp \
     playereventhandler.cpp \
     messagebuilder.cpp \
     events/connectionevents.cpp \
-    charactereventhandler.cpp
+    charactereventhandler.cpp \
+    commands/movecommand.cpp
 
 HEADERS += \
     events/commandevent.h \
@@ -155,4 +156,6 @@ HEADERS += \
     playereventhandler.h \
     messagebuilder.h \
     events/connectionevents.h \
-    charactereventhandler.h
+    charactereventhandler.h \
+    commands/movecommand.h \
+    enums.h

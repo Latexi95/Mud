@@ -86,20 +86,20 @@ Json::Value Level::serialize() const {
         roomObj["solid"] = roomData->mSolid;
 
         Json::Value wallsObj(Json::objectValue);
-        for (int i = 0; i < Wall::SideCount; ++i) {
+        for (int i = 0; i < Direction::DirectionCount; ++i) {
             std::string wallId = boost::lexical_cast<std::string>(uniqueWalls[&*roomData->mWalls[i]]);
             switch (i) {
-            case Wall::North:
+            case Direction::North:
                 wallsObj["n"] = wallId; break;
-            case Wall::South:
+            case Direction::South:
                 wallsObj["s"] = wallId; break;
-            case Wall::East:
+            case Direction::East:
                 wallsObj["e"] = wallId; break;
-            case Wall::West:
+            case Direction::West:
                 wallsObj["w"] = wallId; break;
-            case Wall::Up:
+            case Direction::Up:
                 wallsObj["u"] = wallId; break;
-            case Wall::Down:
+            case Direction::Down:
                 wallsObj["d"] = wallId; break;
             default:
                 assert("Invalid wall side" && 0);
@@ -170,14 +170,14 @@ void Level::deserialize(const Json::Value &root) {
         data->mSolid = i->get("solid", true).asBool();
 
         Json::Value walls = i->get("walls", Json::Value());
-        Json::Value wallValues[Wall::SideCount];
-        wallValues[Wall::North] = walls["n"];
-        wallValues[Wall::South] = walls["s"];
-        wallValues[Wall::West] = walls["w"];
-        wallValues[Wall::East] = walls["e"];
-        wallValues[Wall::Up] = walls["u"];
-        wallValues[Wall::Down] = walls["d"];
-        for (int i = 0; i < Wall::SideCount; ++i) {
+        Json::Value wallValues[Direction::DirectionCount];
+        wallValues[Direction::North] = walls["n"];
+        wallValues[Direction::South] = walls["s"];
+        wallValues[Direction::West] = walls["w"];
+        wallValues[Direction::East] = walls["e"];
+        wallValues[Direction::Up] = walls["u"];
+        wallValues[Direction::Down] = walls["d"];
+        for (int i = 0; i < Direction::DirectionCount; ++i) {
             data->mWalls[i] = wallDataMap[wallValues[i].asCString()];
             ++data->mWalls[i]->mRefCount;
         }

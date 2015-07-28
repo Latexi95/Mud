@@ -1,6 +1,6 @@
 #include "wall.h"
 
-Wall::Wall(Side side, const Room *room, std::list<WallData>::iterator wallData) :
+Wall::Wall(Direction side, const Room *room, std::list<WallData>::iterator wallData) :
     mRoom(room),
     mSide(side),
     mData(0)

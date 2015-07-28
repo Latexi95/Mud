@@ -13,12 +13,12 @@ Room::~Room() {
 
 }
 
-std::vector<std::pair<Item *, Wall::Side> > Room::items() const {
-    std::vector<std::pair<Item*, Wall::Side> > ret;
-    for (int side = 0; side < Wall::SideCount; ++side) {
+std::vector<std::pair<Item *, Direction> > Room::items() const {
+    std::vector<std::pair<Item*, Direction> > ret;
+    for (int side = 0; side < Direction::DirectionCount; ++side) {
         WallData *wd = &(*mData->mWalls[side]);
         for (const auto &itemPtr : wd->mItems) {
-            ret.emplace_back(itemPtr.get(), (Wall::Side)side);
+            ret.emplace_back(itemPtr.get(), (Direction)side);
         }
     }
     return ret;
@@ -35,12 +35,12 @@ std::vector<std::shared_ptr<Character> > Room::characters() const {
     return ret;
 }
 
-Wall Room::wall(Wall::Side side) const {
+Wall Room::wall(Direction side) const {
     return Wall(side, this, mData->mWalls[side]);
 }
 
 const std::vector<std::unique_ptr<RoomTrait> > &Room::traits() const {
-
+    return mData->mTraits;
 }
 
 bool Room::solid() const {
