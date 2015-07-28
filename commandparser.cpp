@@ -1,5 +1,4 @@
 #include "commandparser.h"
-#include "command.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
 #include "textgen/textutils.h"
@@ -140,8 +139,8 @@ Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &
     {
         Command *cmd = (*cmdIt).get();
 
-        int minParams = cmd->minParameters();
-        int maxParams = cmd->maxParameters();
+        unsigned minParams = cmd->minParameters();
+        unsigned maxParams = cmd->maxParameters();
         if (params.size() < minParams) {
             mErrorMessage = "Too few parameters.\n" + cmd->usage();
             return nullptr;

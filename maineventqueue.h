@@ -3,6 +3,7 @@
 #include <boost/lockfree/queue.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/thread.hpp>
+#include <boost/atomic.hpp>
 #include "common.h"
 #include "timedeventqueue.h"
 class LevelEventQueue;

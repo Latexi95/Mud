@@ -1,6 +1,6 @@
 #ifndef COMMANDPARSER_H
 #define COMMANDPARSER_H
-#include "command.h"
+#include "commands/command.h"
 #include <memory>
 #include <vector>
 
