@@ -65,6 +65,8 @@ CommandResult WalkCommand::execute(const CommandContext &c)
         try {
             Direction dir = selector.value(lower);
 
+
+
             CommandResult result;
             result.mSuccess = true;
             return result;

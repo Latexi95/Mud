@@ -16,7 +16,7 @@ std::unique_ptr<ItemTrait> LandmarkTrait::clone() const {
 }
 
 Json::Value LandmarkTrait::serialize() const {
-
+    return Json::Value();
 }
 
 void LandmarkTrait::deserialize(const Json::Value &val) {

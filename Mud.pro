@@ -18,15 +18,29 @@ TEMPLATE = app
 INCLUDEPATH += jsoncpp/include
 
 #DEFINES += HAVE_ZLIB
-win32 {
-        INCLUDEPATH += "$$(BOOST_INCLUDE)"
+windows {
+    INCLUDEPATH += "$$(BOOST_INCLUDE)"
 
+#mingw
+    *-g++* {
         CONFIG(debug, debug|release) {
-                LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
-    } else {
-                LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
+                    LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
+        } else {
+                    LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
+        }
+        LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -lKernel32 -liconv
     }
-    LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -lKernel32 -liconv
+
+#msvc
+    *-msvc* {
+        CONFIG(debug, debug|release) {
+                    LIBS += -lboost_system-vc120-mt-gd-1_58 -lboost_chrono-vc120-mt-gd-1_58 -lboost_locale-vc120-mt-gd-1_58 -lboost_atomic-vc120-mt-gd-1_58 -lboost_thread-vc120-mt-gd-1_58
+        } else {
+                    LIBS += -lboost_system-vc120-mt-1_58 -lboost_chrono-vc120-mt-1_58 -lboost_locale-vc120-mt-1_58 -lboost_atomic-vc120-mt-1_58 -lboost_thread-vc120-mt-1_58
+        }
+        LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -lKernel32 -liconv
+    }
+
 }
 linux {
     LIBS += -lboost_system -lboost_chrono -lboost_locale -lboost_atomic -lboost_thread
@@ -161,4 +175,5 @@ HEADERS += \
     soundservice.h \
     enums.h \
     commands/movecommands.h \
-    textgen/textselector.h
+    textgen/textselector.h \
+    reflection.h

@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include <type_traits>
+#include "common.h"
 
 class JsonSerializable {
 public:

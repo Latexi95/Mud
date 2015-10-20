@@ -12,7 +12,7 @@ std::unique_ptr<ItemTrait> LockedTrait::clone() const {
 }
 
 Json::Value LockedTrait::serialize() const {
-
+    return Json::Value();
 }
 
 void LockedTrait::deserialize(const Json::Value &val) {

@@ -3,6 +3,8 @@
 #include "wall.h"
 #include <cassert>
 #include "traits/roomtrait.h"
+#include <array>
+
 class Level;
 struct RoomData;
 class Room {

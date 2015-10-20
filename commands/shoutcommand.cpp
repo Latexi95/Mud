@@ -12,7 +12,7 @@ ShoutCommand::~ShoutCommand()
 
 CommandResult ShoutCommand::execute(const CommandContext &c)
 {
-
+    return CommandResult();
 }
 
 

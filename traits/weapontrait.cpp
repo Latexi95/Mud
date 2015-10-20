@@ -15,7 +15,7 @@ std::unique_ptr<ItemTrait> WeaponTrait::clone() const {
 }
 
 Json::Value WeaponTrait::serialize() const {
-
+    return Json::Value();
 }
 
 void WeaponTrait::deserialize(const Json::Value &val) {

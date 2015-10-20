@@ -43,7 +43,7 @@ void JoinMessageHandler::handle(const std::shared_ptr<Client> &client, const std
         }
         std::shared_ptr<Player> player = PlayerService::instance()->findPlayerByName(trimmed);
         if (!player) {
-            player = PlayerService::PlayerService::instance()->createPlayer(trimmed);
+            player = PlayerService::instance()->createPlayer(trimmed);
             client->sendMessage("Can't find a character named \"" + trimmed + "\"");
             client->sendMessage("Creating a new character with given name.");
             client->sendMessage("Input a password");

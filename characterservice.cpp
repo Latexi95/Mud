@@ -42,3 +42,8 @@ void CharacterService::saveCharacter(const std::shared_ptr<Character> &c) {
     Json::Value v = c->serialize();
     RS->saveJsonFile("data/characters/" + c->name() + ".json", v);
 }
+
+bool CharacterService::canMove(const std::shared_ptr<Character> &c, Direction dir)
+{
+    return false;
+}

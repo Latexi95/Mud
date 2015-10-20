@@ -7,9 +7,11 @@
 #include "box.h"
 #include <memory>
 #include <unordered_map>
+#include "reflection.h"
 
 class ItemTrait;
 class Item : public JsonSerializable {
+    PROPERTY_ACCESS
 public:
     Item();
     Item(const std::string &path);
@@ -41,5 +43,11 @@ protected:
     Box<double> mSize;
     std::unordered_map<std::string, std::unique_ptr<ItemTrait> > mTraits;
 };
+
+BEGIN_CLASS_PROPERTY_LIST(Item)
+PROPERTY(&Item::mName, "name")
+PROPERTY(&Item::mSize, "size")
+PROPERTY(&Item::mWeight, "weight")
+END_CLASS_PROPERTY_LIST()
 
 #endif // ITEM_H

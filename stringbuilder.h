@@ -76,7 +76,7 @@ struct StringBuilderConcatenable<std::string> {
 };
 
 template<int N>
-struct StringBuilderConcatenable<char[N]> {
+struct StringBuilderConcatenable<const char[N]> {
     typedef char type[N];
     static int size(const char[N]) { return N - 1; }
     static inline void appendTo(const char a[N], char *&out) {

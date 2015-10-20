@@ -31,7 +31,7 @@ public:
 
     TextSelector();
     TextSelector(const TextSelector<T, SGetter> &t) = default;
-    TextSelector(TextSelector<T, SGetter> &&t) = default;
+    TextSelector(TextSelector<T, SGetter> &&t) { mVector = std::move(t.mVector); }
     ~TextSelector() = default;
 
     TextSelector<T, SGetter> &operator=(const TextSelector<T, SGetter> &t);

@@ -3,7 +3,7 @@
 Wall::Wall(Direction side, const Room *room, std::list<WallData>::iterator wallData) :
     mRoom(room),
     mSide(side),
-    mData(0)
+    mData(wallData)
 {
 }
 
