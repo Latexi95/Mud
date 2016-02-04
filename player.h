@@ -3,7 +3,7 @@
 #include <string>
 #include "jsonserializable.h"
 #include "character.h"
-class Player : public JsonSerializable {
+class Player {
 public:
     Player();
     Player(const std::string &name);
@@ -31,4 +31,13 @@ private:
     std::vector<std::string> mCharacterNames;
     std::shared_ptr<Character> mCurrentCharacter;
 };
+
+namespace Json {
+template<>
+struct Serializer<Player> {
+    static Value serialize(const Player &p);
+    static void deserialize(const Value &v, Player &p);
+};
+}
+
 #endif // PLAYER_H

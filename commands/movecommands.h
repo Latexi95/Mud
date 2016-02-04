@@ -12,7 +12,7 @@ public:
     bool globalEvent() const { return false; }
     CommandResult execute(const CommandContext &c);
 
-    bool isShortcut() const { return mShortcut == DirectionCount; }
+    bool isShortcut() const { return mShortcut != Direction::Count; }
 
 protected:
     Direction mShortcut;

@@ -6,7 +6,7 @@ public:
     WeaponTrait();
     ~WeaponTrait();
 
-    Type type() const { return Weapon; }
+    ItemTraitType type() const { return ItemTraitType::Weapon; }
     std::unique_ptr<ItemTrait> clone() const;
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);

@@ -15,7 +15,7 @@ public:
 
     ContainerTrait();
     ~ContainerTrait();
-    Type type() const { return Container; }
+    ItemTraitType type() const { return ItemTraitType::Container; }
 
     ContainerType containerType() const { return mContainerType; }
     void setContainerType(ContainerType t) { mContainerType = t; }
@@ -42,11 +42,13 @@ struct Serializer<ContainerTrait::ContainerType> {
             return "closed";
         case ContainerTrait::Opened:
             return "opened";
+        default:
+            return "invalid";
         }
     }
 
     static void deserialize(const Json::Value &val, ContainerTrait::ContainerType &t) {
-        if (val.isString()) throw SerialiazationException("Expecting a string to deserialize ContainerTrait::ContainerType");
+        if (!val.isString()) throw SerializationException("Expecting a string to deserialize ContainerTrait::ContainerType");
         std::string s = val.asString();
         boost::algorithm::to_lower(s);
         if (s == "open") {
@@ -56,7 +58,7 @@ struct Serializer<ContainerTrait::ContainerType> {
         } else if (s == "opened") {
             t = ContainerTrait::Opened;
         } else {
-            throw SerialiazationException("No ContainerTrait::ContainerType value named \"" + s + '"');
+            throw SerializationException("No ContainerTrait::ContainerType value named \"" + s + '"');
         }
     }
 };

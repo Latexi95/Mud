@@ -129,10 +129,10 @@ void Name::deserialize(const Json::Value &val) {
             mFlags = flagsInt & MaskFlag;
         }
         if (mBase.empty()) {
-            throw SerialiazationException("Expecting a base name for Name");
+            throw SerializationException("Expecting a base name for Name");
         }
     }
-    throw SerialiazationException("Expecting a name (a string or an object)");
+    throw SerializationException("Expecting a name (a string or an object)");
 }
 
 bool Name::isNull() const {

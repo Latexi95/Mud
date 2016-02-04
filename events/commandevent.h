@@ -8,6 +8,8 @@ public:
     CommandEvent(const std::string &cmd);
     Type type() const { return Command; }
     const std::string command() const { return mCommand; }
+    virtual void execute();
+    DEF_ACCEPT_EVENT_VISITOR()
 private:
     std::string mCommand;
 };

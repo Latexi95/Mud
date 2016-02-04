@@ -1,10 +1,10 @@
 #include "wall.h"
+#include <cassert>
+#include "item.h"
 
-Wall::Wall(Direction side, const Room *room, std::list<WallData>::iterator wallData) :
-    mRoom(room),
-    mSide(side),
-    mData(wallData)
+Wall::Wall()
 {
+
 }
 
 
@@ -12,18 +12,68 @@ Wall::~Wall()
 {
 }
 
-const Room *Wall::room() const {
-    return mRoom;
+const std::vector<std::unique_ptr<Item> > &Wall::items() const
+{
+    return mItems;
 }
 
-const std::vector<std::unique_ptr<Item> > &Wall::items() const {
-    return mData->mItems;
+void Wall::addItem(std::unique_ptr<Item> &&i)
+{
+    mItems.emplace_back(std::move(i));
 }
 
-bool Wall::solid() {
-    return mData->mSolid;
+
+const std::string &Wall::looks() const
+{
+    return mLooks;
 }
 
-const std::string &Wall::looks() const {
-    return mData->mLooks;
+RoomExit *Wall::exit() const
+{
+    return mExit.get();
+}
+
+void Wall::setExit(std::unique_ptr<RoomExit> &&e)
+{
+    mExit = std::move(e);
+}
+
+bool Wall::hasExit() const
+{
+    return mExit != nullptr;
+}
+
+
+void Wall::setLooks(const std::string &looks)
+{
+    mLooks = looks;
+}
+
+using namespace Json;
+Value Serializer<Wall>::serialize(const Wall &w)
+{
+    Value ret(objectValue);
+    ret["looks"] = Json::serialize(w.mLooks);
+
+    if (!w.mItems.empty()) {
+        ret["items"] = Json::serialize(w.mItems);
+    }
+
+    if (w.hasExit()) {
+        ret["exit"] = Json::serialize(*w.exit());
+    }
+
+    return ret;
+}
+
+void Serializer<Wall>::deserialize(const Value &v, Wall &w)
+{
+    Json::deserialize(v["looks"], w.mLooks);
+    Json::deserialize(v["items"], w.mItems);
+
+    Value exitValue = v["exit"];
+    if (exitValue.isObject()) {
+        w.mExit = std::unique_ptr<RoomExit>(new RoomExit());
+        Json::deserialize(exitValue, *w.mExit);
+    }
 }

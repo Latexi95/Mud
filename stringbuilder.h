@@ -86,6 +86,18 @@ struct StringBuilderConcatenable<const char[N]> {
     }
 };
 
+template<int N>
+struct StringBuilderConcatenable<char[N]> {
+    typedef char type[N];
+    static int size(const char[N]) { return N - 1; }
+    static inline void appendTo(const char a[N], char *&out) {
+        for (int i = 0; i != N - 1; i++) {
+            *out++ = a[i];
+        }
+    }
+};
+
+
 template<>
 struct StringBuilderConcatenable<const char*> {
     typedef const char * type;

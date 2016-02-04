@@ -52,9 +52,16 @@ void setupSignalHandler()
 
 int main(int argc, char *argv[])
 {
-    setupSignalHandler();
+
     boost::locale::generator gen;
     std::locale::global(gen(""));
+
+    if (!mud.loadResources()) {
+        std::cerr << "Failed to load all basic resources" << std::endl;
+        return 0;
+    }
+
+    setupSignalHandler();
 
     text::Color::loadColors();
     MudServer server;

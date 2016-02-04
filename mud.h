@@ -18,7 +18,11 @@ public:
 
     MainEventQueue &mainEventQueue() { return mEventQueue; }
 
+    bool loadResources();
     void shutdown();
+    time_type time() const;
+    time_type timeAfter(float seconds) const;
+
 private:
     CommandService mCommandService;
     PlayerService mPlayerService;
@@ -28,7 +32,9 @@ private:
     MainEventQueue mEventQueue;
     boost::chrono::system_clock::time_point mLastUpdate;
     volatile bool mRunning;
-    time_type mTime;
+    volatile time_type mTime;
 };
+
+extern Mud *MUD;
 
 #endif // MUD_H

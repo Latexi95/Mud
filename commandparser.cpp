@@ -54,7 +54,7 @@ CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::stri
 Command *CommandParser::parse(const std::string &cmd, std::vector<std::string> &params) {
     mErrorMessage.clear();
 
-    std::string trimmedCmd = cmd.substr(1); //remove leading '!'
+    std::string trimmedCmd = cmd;
     boost::trim(trimmedCmd);
 
 

@@ -1,15 +1,25 @@
-#ifndef ENUMS
-#define ENUMS
+#ifndef ENUMS_H_
+#define ENUMS_H_
 
-
-enum Direction {
-    North,
+enum class Direction {
+    //DO NOT CHANGE ORDER OR VALUES
+    North = 0,
     South,
     East,
     West,
     Up,
     Down,
-    DirectionCount
+    Count
+};
+
+const char *directionToString(Direction d);
+char directionToChar(Direction d);
+
+enum class ItemTraitType {
+    Weapon,
+    Container,
+    Locked,
+    Landmark
 };
 
 enum class MoveType {
@@ -19,5 +29,5 @@ enum class MoveType {
 };
 
 
-#endif // ENUMS
+#endif // ENUMS_H_
 

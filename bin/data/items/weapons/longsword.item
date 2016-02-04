@@ -1,0 +1,9 @@
+{
+	"name" : "long sword",
+	"size" : {
+		"x" : 1,
+		"y" : 0.2,
+		"z" : 0.02
+	},
+	"weight" : 3
+}

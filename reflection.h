@@ -53,6 +53,7 @@ struct ClassPropertyInstance : public ClassProperty {
     std::string errorMessage(const T &v) { return mLimit.errorMessage(v); }
 
     T CLASS_T::* mVarPtr;
+    T mDefaultValue;
     LIMIT mLimit;
 };
 
@@ -109,27 +110,42 @@ struct ClassPropertyContainer {
     template <> struct ClassPropertyContainer<_C_> { \
         typedef _C_ ClassType; \
         static std::vector<std::unique_ptr<ClassProperty>> sPropertyList; \
-        ClassPropertyContainer() {
+        ClassPropertyContainer() { {
 
 
 
 #define PROPERTY(_VAR_PTR_, _NAME_) \
-    sPropertyList.push_back( makeClassPropertyInstance(_VAR_PTR_, _NAME_));
+    } {   \
+        auto property = makeClassPropertyInstance((_VAR_PTR_),( _NAME_),( _LIMIT_)); \
+        auto propertyPtr = property.get(); \
+        sPropertyList.push_back(std::move(property));
+
 
 #define PROPERTY_WITH_LIMIT(_VAR_PTR_, _NAME_, _LIMIT_) \
-    {   \
-        auto property = makeClassPropertyInstance(_VAR_PTR_, _NAME_, _LIMIT_)); \
-        sPropertyList.push_back(std::move(property)); \
-    }
+    } {   \
+        auto property = makeClassPropertyInstance((_VAR_PTR_), (_NAME_), (_LIMIT_)); \
+        auto propertyPtr = property.get(); \
+        sPropertyList.push_back(std::move(property));
 
 #define PROPERTY_GS(_GETTER_, _SETTER_, _NAME_) \
-    sPropertyList.push_back( makeClassPropertyInstanceGS(_GETTER_, _SETTER_, _NAME_));
+    } {   \
+        auto property = makeClassPropertyInstanceGS((_GETTER_), (_SETTER_), (_NAME_)); \
+        auto propertyPtr = property.get(); \
+        sPropertyList.push_back(std::move(property));
+
 
 #define PROPERTY_GS_WITH_LIMIT(_GETTER_, _SETTER_, _NAME_, _LIMIT_) \
-    sPropertyList.push_back( makeClassPropertyInstanceGS(_GETTER_, _SETTER_, _NAME_, _LIMIT_));
+    } {   \
+        auto property = makeClassPropertyInstanceGS((_GETTER_), (_SETTER_), (_NAME_), (_LIMIT_)); \
+        auto propertyPtr = property.get(); \
+        sPropertyList.push_back(std::move(property));
+
+#define LAST_PROPERTY_DEFAULT_VALUE(_VALUE_) \
+        propertyPtr->mDefaultValue = (_VALUE_);
+
 
 #define END_CLASS_PROPERTY_LIST() \
-        } \
+        } } \
     };
 
 #define INSTANTIATE_CLASS_PROPERTIES(_C_) \

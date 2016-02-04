@@ -6,7 +6,7 @@ class LandmarkTrait : public ItemTrait {
 public:
     LandmarkTrait();
     ~LandmarkTrait();
-    Type type() const { return Landmark; }
+    ItemTraitType type() const { return ItemTraitType::Landmark; }
     std::unique_ptr<ItemTrait> clone() const;
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);

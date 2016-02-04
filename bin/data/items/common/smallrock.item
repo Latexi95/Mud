@@ -1,0 +1,5 @@
+{
+	"name" : "A small rock",
+	"weight" : 0.1,
+	"size" : { "x" : 0.02, "y" : 0.02, "y" : 0.02}
+}

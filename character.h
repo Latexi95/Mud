@@ -7,10 +7,14 @@
 #include "textgen/color.h"
 
 class Level;
+class Room;
 class Event;
+class LevelEventQueue;
 class CharacterEventHandler;
 
-class Character : public std::enable_shared_from_this<Character>, public JsonSerializable {
+class Character : public std::enable_shared_from_this<Character> {
+    template <typename T>
+    friend struct Json::Serializer;
 public:
     enum Gender {
         Male,
@@ -18,7 +22,7 @@ public:
     };
 
     Character();
-    Character(const std::string &name, Gender gender = Male);
+    Character(const std::string &id);
     ~Character();
 
     const std::string &name() const { return mName; }
@@ -58,28 +62,40 @@ public:
     void setSkillLevel(std::string skillName, int level);
     int skillLevel(std::string skillName) const;
 
-    std::shared_ptr<Level> level() const { return mLevel; }
-    void setLevel(const std::shared_ptr<Level> &level) { mLevel = level; }
-    const Position &pos() const { return mPos; }
-    void setPos(const Position &pos) { mPos = pos; }
-
     text::Color *hairColor() const { return mHairColor; }
     void setHairColor(text::Color *c) { mHairColor = c; }
-
-    virtual Json::Value serialize() const;
-    virtual void deserialize(const Json::Value &val);
 
     void handleEvent(Event *e);
 
     void addEventHandler(std::unique_ptr<CharacterEventHandler> &&eventHandler);
     void removeEventHandlers();
+
+    Room *room() const;
+    void setRoom(Room *room);
+    Level *level() const;
+    const std::shared_ptr<LevelEventQueue> &eventQueue() const;
+    const std::string &id() const;
+    void setId(const std::string &id);
+    
+    void setLevelAndRoomIds(const std::string &levelId, const std::string &roomId);
+
+    void placeToLocation();
+    std::string roomId() const;
+    std::string levelId() const;
+
+    bool saveWithLevel() const;
+    void setSaveWithLevel(bool saveWithLevel);
+
 protected:
+    std::string mId;
     std::string mName;
     Gender mGender;
     int mAge;
 
-    double mHeight;
-    double mWidth;
+    bool mSaveWithLevel;
+
+    float mHeight;
+    float mWidth;
 
     int mStrength;
     int mDexterity;
@@ -89,15 +105,23 @@ protected:
     int mCharisma;
 
     text::Color *mHairColor;
-    Position mPos;
+    std::string mRoomId;
+    std::string mLevelId;
+    Room *mRoom;
 
-    std::shared_ptr<Level> mLevel;
     std::vector<std::unique_ptr<CharacterEventHandler> > mEventHandlers;
 
-
-
-    std::map<std::string, int> mSkillLevels;
-    std::map<std::string, std::vector<std::unique_ptr<Item> > > mEquipment;
+    std::unordered_map<std::string, int> mSkillLevels;
+    std::unordered_map<std::string, std::vector<std::unique_ptr<Item> > > mEquipment;
 };
+
+namespace Json {
+template <>
+struct Serializer<Character> {
+    static Value serialize(const Character &c);
+    static void deserialize(const Value &v, Character &c);
+};
+}
+
 
 #endif // CHARACTER_H

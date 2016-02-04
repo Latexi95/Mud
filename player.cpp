@@ -65,3 +65,13 @@ std::string Player::hashPassword(const std::string &password) const {
     //TODO: hash
     return password;
 }
+
+Json::Value Json::Serializer<Player>::serialize(const Player &p)
+{
+    return p.serialize();
+}
+
+void Json::Serializer<Player>::deserialize(const Json::Value &v, Player &p)
+{
+    p.deserialize(v);
+}

@@ -6,6 +6,11 @@
 #include "character.h"
 #include "player.h"
 #include "textgen/textutils.h"
+#include <boost/filesystem.hpp>
+#include "defines.h"
+#include <boost/thread/lock_guard.hpp>
+
+namespace fs = boost::filesystem;
 
 
 ResourceService *RS = 0;
@@ -28,14 +33,13 @@ Json::Value ResourceService::readJsonFile(const std::string &path) const {
     Json::Value ret;
     std::ifstream file(path);
     if (!file) {
-        std::cerr << "Failed to open file " << path << std::endl;
+        throw SerializationException("Failed to open file " + path);
         return Json::Value();
     }
     Json::Reader reader;
 
     if (!reader.parse(file, ret, false)) {
-        std::cerr << reader.getFormattedErrorMessages() << std::endl;
-        return Json::Value();
+        throw SerializationException(path + ": Json: " + reader.getFormattedErrorMessages());
     }
 
     return ret;
@@ -44,7 +48,7 @@ Json::Value ResourceService::readJsonFile(const std::string &path) const {
 bool ResourceService::saveJsonFile(const std::string &path, const Json::Value &val) const {
     std::ofstream file(path);
     if (!file) {
-        std::cerr << "Failed to write file " << path << std::endl;
+        throw SerializationException("Failed to write file " + path);
         return false;
     }
 
@@ -53,25 +57,88 @@ bool ResourceService::saveJsonFile(const std::string &path, const Json::Value &v
     return true;
 }
 
-std::unique_ptr<Item> ResourceService::item(const std::string &path) {
-    std::shared_ptr<Item> base = baseItem(path);
+std::unique_ptr<Item> ResourceService::item(const std::string &id) {
+    std::shared_ptr<Item> base = baseItem(id);
     if (!base) return std::unique_ptr<Item>();
 
-    return base->clone();
+    std::unique_ptr<Item> i = base->clone();
+    return std::move(i);
 }
 
-std::shared_ptr<Item> ResourceService::baseItem(const std::string &path) {
-    boost::unique_lock<boost::mutex> lock(mItemMutex);
-    auto itemIt = mBaseItems.find(path);
+std::shared_ptr<Item> ResourceService::baseItem(const std::string &id) {
+    boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
+
+    auto itemIt = mBaseItems.find(id);
     if (itemIt != mBaseItems.end()) return itemIt->second;
+    return nullptr;
+}
 
-    Json::Value v = readJsonFile("data/" + path);
-    if (v.isNull()) return nullptr;
+void ResourceService::saveItem(const std::shared_ptr<Item> &item)
+{
+    boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
+    std::string id = item->id();
+    if (id.empty()) {
+        std::cerr << "Empty item id. Save failed." << std::endl;
+        return;
+    }
 
-    std::shared_ptr<Item> item = std::make_shared<Item>(path);
-    item->deserialize(v);
-    mBaseItems[path] = item;
-    return item;
+    Json::Value val = Json::serialize(item);
+
+    //Level item template
+    if (id[0] == '$') {
+        saveJsonFile(std::string("data/levels/") + (id.c_str() + 1), val);
+    }
+    else {
+        saveJsonFile(std::string("data/levels/") + id.c_str(), val);
+    }
+}
+
+bool ResourceService::loadAllItemTemplates()
+{
+    boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
+
+    bool success = true;
+    success &= loadItemsFromDirectory("data/items", "");
+    success &= loadItemsFromDirectory("data/levels", "$");
+
+    return success;
+}
+
+bool ResourceService::loadItemsFromDirectory(const std::string &path, const std::string &prefix)
+{
+    fs::path loadPath(path);
+    fs::directory_iterator endIt;
+
+    if (!fs::exists(loadPath) || !fs::is_directory(loadPath)) return true;
+
+    bool success = true;
+
+    for (fs::directory_iterator dirIt(loadPath); dirIt != endIt; ++dirIt) {
+        fs::path path = *dirIt;
+        if (fs::is_directory(path)) {
+            success &= loadItemsFromDirectory(path.string(), prefix + path.stem().string() + "/");
+        }
+        else if (fs::is_regular_file(path) && path.extension().string() == ".item") {
+            success &= loadItem(path.string(), prefix + path.stem().string());
+        }
+    }
+    return success;
+}
+
+bool ResourceService::loadItem(const std::string &path, const std::string &id)
+{
+    try {
+        Json::Value v = readJsonFile(path);
+        std::shared_ptr<Item> item = std::make_shared<Item>(id);
+        item->deserialize(v);
+        mBaseItems[id] = item;
+        return true;
+    }
+    catch (const SerializationException &e) {
+        std::cerr << "Failed to load item " << path << std::endl;
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
 }
 
 

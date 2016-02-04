@@ -14,8 +14,8 @@ public:
 
     const std::string &message() const { return mMessage; }
     const std::shared_ptr<Character> sender() const { return mSender; }
-
-    void execute();
+    DEF_ACCEPT_EVENT_VISITOR()
+    virtual void execute();
 private:
     std::shared_ptr<Character> mSender;
     std::string mMessage;

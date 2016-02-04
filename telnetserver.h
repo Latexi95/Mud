@@ -29,6 +29,8 @@ public:
 
     void startReceive();
     void disconnect();
+
+    void setupLineMode();
 private:
     TelnetConnection(boost::asio::io_service& io_service, void (*disconnectHandler)(pointer), void (*msgHandler)(pointer, const std::string &));
 
@@ -40,6 +42,8 @@ private:
     boost::atomic_flag mCurrentlySending;
     std::string mOutputBuffer;
     std::vector<std::string> mInputQueue;
+    bool mIncompleteMessage;
+
     boost::array<char, 256> mInputBuffer;
     void (*mMessageHandler)(TelnetConnection::pointer, const std::string &);
     void (*mDisconnectHandler)(TelnetConnection::pointer);

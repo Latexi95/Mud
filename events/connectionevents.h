@@ -14,6 +14,7 @@ public:
 
     const std::shared_ptr<Client> &client() const { return mClient; }
     const std::shared_ptr<Character> &character() const { return mCharacter; }
+    DEF_ACCEPT_EVENT_VISITOR()
 private:
     std::shared_ptr<Client> mClient;
     std::shared_ptr<Character> mCharacter;
@@ -29,6 +30,7 @@ public:
 
     const std::shared_ptr<Client> &client() const { return mClient; }
     const std::shared_ptr<Character> &character() const { return mCharacter; }
+    DEF_ACCEPT_EVENT_VISITOR()
 private:
     std::shared_ptr<Client> mClient;
     std::shared_ptr<Character> mCharacter;

@@ -120,19 +120,18 @@ void CharacterCreationMessageHandler::handle(const std::shared_ptr<Client> &clie
     case InsertToMap: {
         client->sendMessage("Inserting the character to the world");
 
-        std::shared_ptr<Level> beach = LS->level("beach");
+        Level *beach = LS->level("beach");
         std::shared_ptr<Character> character = CS->createCharacter(mName);
         character->setGender(mGender);
         character->setAge(mAge);
-        character->setLevel(beach);
-        character->setPos(Position( 2, 2));
+
+        character->setLevelAndRoomIds(beach->id(), beach->defaultRoom()->id());
 
         CS->saveCharacter(character);
 
         client->player()->addCharacterName(mName);
 
         PlayerService::instance()->savePlayers();
-
         client->setMessageHandler(std::make_shared<GameMessageHandler>(client.get(), character));
         break;
     }

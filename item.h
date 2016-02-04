@@ -2,20 +2,21 @@
 #define ITEM_H
 #include <string>
 #include <vector>
-#include "jsonserializable.h"
-#include "name.h"
-#include "box.h"
 #include <memory>
 #include <unordered_map>
+
+#include "name.h"
+#include "box.h"
+#include "defines.h"
+#include "enums.h"
+
 #include "reflection.h"
 
 class ItemTrait;
-class Item : public JsonSerializable {
-    PROPERTY_ACCESS
+class Item {
 public:
     Item();
-    Item(const std::string &path);
-    Item(const Name &name);
+    Item(const std::string &id);
     ~Item();
     void initFromBase(const std::shared_ptr<Item> &b);
     const Name &name() const;
@@ -23,31 +24,35 @@ public:
 
     double weight() const { return mWeight; }
     void setWeight(double t) { mWeight = t; }
-    const Box<double> &size() const { return mSize; }
-    void setSize(const Box<double> &b) { mSize = b; }
+    const Box<float> &size() const { return mSize; }
+    void setSize(const Box<float> &b) { mSize = b; }
 
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);
 
-    bool hasTrait(const std::string &name);
-    const ItemTrait &trait(const std::string &name);
+    bool hasTrait(ItemTraitType traitType);
+    const ItemTrait &trait(ItemTraitType type);
 
+    void clone(Item &copy) const;
     std::unique_ptr<Item> clone() const;
 
-    std::string path() const { return mPath; }
+    std::string id() const { return mId; }
 protected:
     std::shared_ptr<Item> mBase;
-    std::string mPath;
+    std::string mId;
     Name mName;
-    double mWeight;
-    Box<double> mSize;
-    std::unordered_map<std::string, std::unique_ptr<ItemTrait> > mTraits;
+    float mWeight;
+    Box<float> mSize;
+    std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > mTraits;
 };
 
-BEGIN_CLASS_PROPERTY_LIST(Item)
-PROPERTY(&Item::mName, "name")
-PROPERTY(&Item::mSize, "size")
-PROPERTY(&Item::mWeight, "weight")
-END_CLASS_PROPERTY_LIST()
+
+namespace Json {
+template<>
+struct Serializer<Item> {
+    static Value serialize(const Item &i);
+    static void deserialize(const Value &v, Item &i);
+};
+}
 
 #endif // ITEM_H

@@ -2,7 +2,7 @@
 #define NAME_H
 #include <string>
 #include "jsonserializable.h"
-class Name : public JsonSerializable{
+class Name {
 public:
     const static int UnspesifiedItemQuantity = -1;
     enum Flags {
@@ -39,5 +39,6 @@ private:
     mutable std::string mPluralForm;
     int mFlags;
 };
+
 
 #endif // NAME_H

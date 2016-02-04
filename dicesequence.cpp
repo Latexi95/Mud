@@ -132,19 +132,21 @@ std::string DiceSequence::toText(bool tight) const {
     return text;
 }
 
-Json::Value DiceSequence::serialize() const {
-    return toText(true);
+Json::Value Json::Serializer<DiceSequence>::serialize(const DiceSequence &d)
+{
+    return d.toText(true);
 }
 
-void DiceSequence::deserialize(const Json::Value &val) {
-    if (val.isString()) {
-        *this = fromText(val.asString());
+void Json::Serializer<DiceSequence>::deserialize(const Json::Value &v, DiceSequence &d)
+{
+    if (v.isString()) {
+        d = DiceSequence::fromText(v.asString());
     }
-    else if (val.isInt()) {
-        mParts.clear();
-        mConstantPart = val.asInt();
+    else if (v.isInt()) {
+        d.mParts.clear();
+        d.mConstantPart = v.asInt();
     }
     else {
-        throw SerialiazationException("Invalid dice sequence");
+        throw SerializationException("Invalid dice sequence");
     }
 }

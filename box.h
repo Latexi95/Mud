@@ -34,7 +34,7 @@ struct Serializer<Box<T> > {
         return value;
     }
     static void deserialize(const Json::Value &val, Box<T> &b) {
-        if (!val.isObject()) throw SerialiazationException("deserialize<Box> expecting an json object");
+        if (!val.isObject()) throw SerializationException("deserialize<Box> expecting an json object");
         Json::deserialize(val.get("x", Json::Value(b.x)), b.x);
         Json::deserialize(val.get("y", Json::Value(b.y)), b.y);
         Json::deserialize(val.get("z", Json::Value(b.z)), b.z);

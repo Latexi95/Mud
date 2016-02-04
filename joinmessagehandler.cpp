@@ -36,16 +36,16 @@ void JoinMessageHandler::handle(const std::shared_ptr<Client> &client, const std
             client->sendMessage("What's your account name?");
             return;
         }
-        if (trimmed.size() < 2 || message.size() > 20) {
+        if (trimmed.size() < 4 || message.size() > 20) {
             client->sendMessage("Uh... I don't think that's the correct one. "
-                                "(A player name should be between 2 and 20 characters.)");
+                                "(An account name should be between 4 and 20 characters.)");
             return;
         }
         std::shared_ptr<Player> player = PlayerService::instance()->findPlayerByName(trimmed);
         if (!player) {
             player = PlayerService::instance()->createPlayer(trimmed);
-            client->sendMessage("Can't find a character named \"" + trimmed + "\"");
-            client->sendMessage("Creating a new character with given name.");
+            client->sendMessage("Can't find an account named \"" + trimmed + "\"");
+            client->sendMessage("Creating a new account with given name.");
             client->sendMessage("Input a password");
             mState = ExpectingNewPassword;
             player->setName(trimmed);

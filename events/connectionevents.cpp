@@ -3,6 +3,7 @@
 #include "client.h"
 #include "level.h"
 #include "playereventhandler.h"
+#include "eventvisitor.h"
 
 JoinEvent::JoinEvent(const std::shared_ptr<Client> &client, const std::shared_ptr<Character> &character) :
     mClient(client),
@@ -13,10 +14,9 @@ JoinEvent::JoinEvent(const std::shared_ptr<Client> &client, const std::shared_pt
 
 void JoinEvent::execute()
 {
-    mCharacter->level()->addCharacter(mCharacter);
+    mCharacter->room()->addCharacter(mCharacter);
     mCharacter->addEventHandler(std::unique_ptr<CharacterEventHandler>(new PlayerEventHandler(mClient)));
-
-    mCharacter->level()->sendEventToCharacters(this);
+    mCharacter->room()->sendEventToCharacters(this);
 }
 
 
@@ -30,6 +30,9 @@ DisconnectEvent::DisconnectEvent(const std::shared_ptr<Client> &client, const st
 void DisconnectEvent::execute()
 {
     mCharacter->level()->sendEventToCharacters(this);
-    mCharacter->level()->removeCharacter(mCharacter);
+    mCharacter->room()->removeCharacter(mCharacter);
     mCharacter->removeEventHandlers();
 }
+
+IMPL_ACCEPT_EVENT_VISITOR(JoinEvent)
+IMPL_ACCEPT_EVENT_VISITOR(DisconnectEvent)

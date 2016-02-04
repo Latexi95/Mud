@@ -1,5 +1,4 @@
 #include "containertrait.h"
-#include "jsonchecker.h"
 #include "resourceservice.h"
 #include <boost/algorithm/string.hpp>
 
@@ -33,7 +32,7 @@ Json::Value ContainerTrait::serialize() const {
 
 void ContainerTrait::deserialize(const Json::Value &val) {
     if (!val.isObject()) {
-        throw SerialiazationException("Expecting json object ContainerTrait");
+        throw SerializationException("Expecting json object ContainerTrait");
     }
 
     const Json::Value &type = val["type"];
@@ -42,7 +41,7 @@ void ContainerTrait::deserialize(const Json::Value &val) {
 
     const Json::Value &items = val["items"];
     if (!items.isArray()) {
-        throw SerialiazationException("Expecting an array of items in ContainerTrait::items");
+        throw SerializationException("Expecting an array of items in ContainerTrait::items");
     }
     for (Json::Value::const_iterator i = items.begin(); i != items.end(); i++) {
         if (i->isString()) {

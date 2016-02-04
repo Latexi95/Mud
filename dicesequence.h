@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include "jsonserializable.h"
-class DiceSequence : public JsonSerializable {
+class DiceSequence {
 public:
     friend class DiceRandom;
     DiceSequence();
@@ -21,8 +21,6 @@ public:
 
     std::string toText(bool tight = false) const;
 
-    Json::Value serialize() const;
-    void deserialize(const Json::Value &val);
 public:
     typedef char DiceT;
     typedef char TimesT;
@@ -30,5 +28,13 @@ public:
     int mConstantPart;
     std::map<DiceT, TimesT> mParts;
 };
+
+namespace Json {
+template<>
+struct Serializer<DiceSequence> {
+    Value serialize(const DiceSequence &d);
+    void deserialize(const Value &v, DiceSequence &d);
+};
+}
 
 #endif // DICESEQUENCE_H

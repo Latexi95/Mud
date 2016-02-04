@@ -24,9 +24,9 @@ windows {
 #mingw
     *-g++* {
         CONFIG(debug, debug|release) {
-                    LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
+                    LIBS += -lboost_system-mgw49-mt-d-1_58 -lboost_chrono-mgw49-mt-d-1_58 -lboost_filesystem-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_locale-mgw49-mt-d-1_58 -lboost_atomic-mgw49-mt-d-1_58 -lboost_thread-mgw49-mt-d-1_58
         } else {
-                    LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
+                    LIBS += -lboost_system-mgw49-mt-1_58 -lboost_chrono-mgw49-mt-1_58 -lboost_filesystem-mgw49-mt-1_58 -lboost_locale-mgw49-mt-1_58 -lboost_atomic-mgw49-mt-1_58 -lboost_thread-mgw49-mt-1_58
         }
         LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -lKernel32 -liconv
     }
@@ -34,9 +34,9 @@ windows {
 #msvc
     *-msvc* {
         CONFIG(debug, debug|release) {
-                    LIBS += -lboost_system-vc120-mt-gd-1_58 -lboost_chrono-vc120-mt-gd-1_58 -lboost_locale-vc120-mt-gd-1_58 -lboost_atomic-vc120-mt-gd-1_58 -lboost_thread-vc120-mt-gd-1_58
+                    LIBS += -lboost_system-vc120-mt-gd-1_58 -lboost_chrono-vc120-mt-gd-1_58 -lboost_filesystem-vc120-mt-gd-1_58 -lboost_locale-vc120-mt-gd-1_58 -lboost_atomic-vc120-mt-gd-1_58 -lboost_thread-vc120-mt-gd-1_58
         } else {
-                    LIBS += -lboost_system-vc120-mt-1_58 -lboost_chrono-vc120-mt-1_58 -lboost_locale-vc120-mt-1_58 -lboost_atomic-vc120-mt-1_58 -lboost_thread-vc120-mt-1_58
+                    LIBS += -lboost_system-vc120-mt-1_58 -lboost_chrono-vc120-mt-1_58 -lboost_filesystem-vc120-mt-1_58 -lboost_locale-vc120-mt-1_58 -lboost_atomic-vc120-mt-1_58 -lboost_thread-vc120-mt-1_58
         }
         LIBS += -L"$$(BOOST_LIB)" -lWs2_32 -lMswsock -lKernel32 -liconv
     }
@@ -70,7 +70,6 @@ SOURCES += main.cpp \
     jsoncpp/src/lib_json/json_writer.cpp \
     jsonserializable.cpp \
     resourceservice.cpp \
-    jsonchecker.cpp \
     traits/itemtrait.cpp \
     traits/weapontrait.cpp \
     traits/containertrait.cpp \
@@ -107,7 +106,11 @@ SOURCES += main.cpp \
     charactereventhandler.cpp \
     commands/shoutcommand.cpp \
     soundservice.cpp \
-    commands/movecommands.cpp
+    commands/movecommands.cpp \
+    events/moveevent.cpp \
+    roomexit.cpp \
+    enums.cpp \
+    events/eventvisitor.cpp
 HEADERS += \
     events/commandevent.h \
     item.h \
@@ -135,7 +138,6 @@ HEADERS += \
     jsoncpp/include/json/writer.h \
     jsonserializable.h \
     resourceservice.h \
-    jsonchecker.h \
     traits/itemtrait.h \
     traits/weapontrait.h \
     traits/containertrait.h \
@@ -176,4 +178,8 @@ HEADERS += \
     enums.h \
     commands/movecommands.h \
     textgen/textselector.h \
-    reflection.h
+    reflection.h \
+    events/moveevent.h \
+    roomexit.h \
+    defines.h \
+    events/eventvisitor.h

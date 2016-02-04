@@ -51,7 +51,7 @@ MudServer::MudServer() {
 }
 
 void MudServer::start() {
-    mTelnetServer->start(2, 3333);
+    mTelnetServer->start(2, 3334);
 }
 
 void MudServer::stop() {
@@ -60,7 +60,7 @@ void MudServer::stop() {
 
 void MudServer::handleNewConnection(TelnetConnection::pointer newCon) {
     newCon->addMessage(new std::string("Welcome to my mud server\r\n"));
-    newCon->addMessage(new std::string("What's our name adventurer?\r\n"));
+    newCon->addMessage(new std::string("Account name:\r\n"));
     mClients[newCon] = std::make_shared<MudClient>(std::shared_ptr<MessageHandler>(new JoinMessageHandler()), newCon);
 }
 

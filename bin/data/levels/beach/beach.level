@@ -1,0 +1,9 @@
+{
+	"name" : "beach",
+	"default_room" : "test",
+	"rooms" : [
+		"test",
+		"test2"
+	]
+
+}

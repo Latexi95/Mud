@@ -2,17 +2,22 @@
 #include <cassert>
 #include "textgen/textselector.h"
 #include "character.h"
+#include "level.h"
+#include "events/moveevent.h"
+#include "characterservice.h"
+
 
 
 WalkCommand::WalkCommand() :
     Command("walk", "walk [north/south/east/west/up/down/towards xxx]"),
-    mShortcut(DirectionCount)
+    mShortcut(Direction::Count)
 {
 
 }
 
-WalkCommand::WalkCommand(Direction direction)
-    :Command()
+WalkCommand::WalkCommand(Direction direction) :
+    Command(),
+    mShortcut(direction)
 {
     switch (direction) {
     case Direction::North:
@@ -63,13 +68,7 @@ CommandResult WalkCommand::execute(const CommandContext &c)
         selector.insert("down", Direction::Down);
 
         try {
-            Direction dir = selector.value(lower);
-
-
-
-            CommandResult result;
-            result.mSuccess = true;
-            return result;
+            dir = selector.value(lower);
         } catch (TextSelectorError err) {
             assert(err == TextSelectorError::NoMatches);
 
@@ -88,4 +87,18 @@ CommandResult WalkCommand::execute(const CommandContext &c)
             }
         }
     }
+
+    if (CS->canMove(c.mCaller, dir)) {
+        CS->startMove(c.mCaller, dir);
+    }
+    else {
+        CommandResult result;
+        result.mSuccess = false;
+        result.mErrorMessage = "Can't move to that direction";
+    }
+
+
+    CommandResult result;
+    result.mSuccess = true;
+    return result;
 }

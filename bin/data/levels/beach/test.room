@@ -1,0 +1,33 @@
+{
+"name": "a lonely beach",
+"walls" : {
+	"n" : {
+		"looks" : "There is a big rock in the north"
+	},
+	"s" : {
+		"looks" : "There is a big rock in the north"
+	},
+	"e" : {
+		"looks" : "More beach"
+	},
+	"w" : {
+		"looks" : "More beach",
+		"exit" : {
+			"name" : "",
+			"travel_distance" : 300,
+			"target_room" : "test2"
+		}
+	},
+	"u" : {
+		"looks" : "There are only few clouds"
+	},
+	"d" : {
+		"looks" : "White sand with small black rocks lying around",
+		"items" : ["common/smallrock"]
+	}
+},
+"looks" : {
+	"sky" : "There are only few clouds"
+}
+
+}

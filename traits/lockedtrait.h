@@ -5,7 +5,7 @@ class LockedTrait : public ItemTrait  {
 public:
     LockedTrait();
 
-    Type type() const { return Locked; }
+    ItemTraitType type() const { return ItemTraitType::Locked; }
     std::unique_ptr<ItemTrait> clone() const;
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);

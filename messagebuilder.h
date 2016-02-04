@@ -67,11 +67,11 @@ public:
     void append(const std::unique_ptr<Item> &item);
     void append(const std::shared_ptr<Character> &character);
 
-    static bool underlined(int style);
-    static bool bolded(int style);
-    static bool foregroundColorSet(int style);
-    static bool backgroundColorSet(int style);
-    static bool styleNoSpace(int style);
+    static bool underlined(unsigned style);
+    static bool bolded(unsigned style);
+    static bool foregroundColorSet(unsigned style);
+    static bool backgroundColorSet(unsigned style);
+    static bool styleNoSpace(unsigned style);
 
     void setStyle(int style);
     int style() const;
@@ -97,8 +97,8 @@ private:
 
     void clearNumberStash();
     struct Part {
-        Part(int style, const std::string &txt) : mText(txt), mStyle(style) {}
-        Part(int style, std::string &&txt) : mText(std::move(txt)), mStyle(style) {}
+        Part(unsigned style, const std::string &txt) : mText(txt), mStyle(style) {}
+        Part(unsigned style, std::string &&txt) : mText(std::move(txt)), mStyle(style) {}
         Part(const Part &p) : mText(p.mText), mStyle(p.mStyle) {}
         Part(Part &&p) : mText(std::move(p.mText)), mStyle(p.mStyle) {}
         ~Part() {}
@@ -106,7 +106,7 @@ private:
         Part &operator = (Part &&p) { mText = std::move(p.mText); mStyle = p.mStyle; return *this; }
 
         std::string mText;
-        int mStyle;
+        unsigned mStyle;
     };
 
     std::vector<Part> mParts;

@@ -2,57 +2,77 @@
 #define LEVEL_H
 #include <vector>
 #include <string>
+#include <cstdint>
 #include "item.h"
 #include "room.h"
-#include <cstdint>
 #include "jsonserializable.h"
 #include "position.h"
-#include <list>
 #include "leveleventqueue.h"
+#include "room.h"
 
 class Item;
 class Character;
 class LevelEventQueue;
-class Level : public JsonSerializable {
+class LevelService;
+class Level {
 public:
-    friend class Room;
-    friend class Wall;
+    friend class LevelService;
 
+    template <typename T>
+    friend struct Json::Serializer;
+
+    Level();
     Level(const std::string &id);
     ~Level();
-
-
 
     const std::string &name() const;
     void setName(const std::string &value);
 
     const std::string &id() const;
 
-    Room room(int localX, int localY);
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);
 
-    RoomData *roomData(int x, int y) const;
+    Room *roomById(const std::string &id) const;
+    bool hasRoomById(const std::string &id) const;
+    void addRoom(std::unique_ptr<Room> &&room);
 
-    void addCharacter(const std::shared_ptr<Character> &c);
-    void removeCharacter(const std::shared_ptr<Character> &c);
+    Room *defaultRoom() const;
+    const std::vector<std::string> &roomIds() const;
 
-    void moveCharacter(const std::shared_ptr<Character> &c, const Position &pos);
-
-    std::shared_ptr<LevelEventQueue> eventQueue() const { return mEventQueue; }
+    const std::shared_ptr<LevelEventQueue> &eventQueue() const { return mEventQueue; }
 
     void sendEventToCharacters(Event *e);
+
+    template <typename FUNC>
+    void forEachCharacter(FUNC &&f);
 protected:
-    void init();
+    bool resolveRoomExits();
+
     std::string mId;
     std::string mName;
-    unsigned mWidth, mHeight;
-    double mRoomSize;
-    std::list<RoomData>::iterator *mRoomData;
-    std::list<RoomData> mUniqueRoomData;
-    std::list<WallData> mUniqueWallData;
-    std::unordered_multimap<Position, std::shared_ptr<Character> > mCharacters;
+    std::string mDefaultRoomId;
+    std::unordered_map<std::string, std::unique_ptr<Room>> mRooms;
+    std::vector<std::string> mRoomIds;
     std::shared_ptr<LevelEventQueue> mEventQueue;
 };
+
+template <typename FUNC>
+void Level::forEachCharacter(FUNC &&f)
+{
+    for (auto &rPair : mRooms) {
+        for (auto &characterPtr : rPair.second->characters()) {
+            f(*characterPtr);
+        }
+    }
+}
+
+namespace Json {
+template <>
+struct Serializer<Level> {
+    static Value serialize(const Level &l);
+    static void deserialize(const Value &v, Level &l);
+};
+}
 
 #endif // LEVEL_H

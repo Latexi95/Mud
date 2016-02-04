@@ -2,7 +2,7 @@
 #define RESOURCESERVICE_H
 #include <json/value.h>
 #include <memory>
-#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 #include <unordered_map>
 #include <utility>
 #include <memory>
@@ -19,12 +19,19 @@ public:
     Json::Value readJsonFile(const std::string &path) const;
     bool saveJsonFile(const std::string &path, const Json::Value &val) const;
 
-    std::unique_ptr<Item> item(const std::string &path);
-    std::shared_ptr<Item> baseItem(const std::string &path);
+    std::unique_ptr<Item> item(const std::string &id);
+    std::shared_ptr<Item> baseItem(const std::string &id);
+
+    void saveItem(const std::shared_ptr<Item> &item);
+
+    bool loadAllItemTemplates();
 private:
+    bool loadItemsFromDirectory(const std::string &path, const std::string &prefix);
+    bool loadItem(const std::string &path, const std::string &id);
+
     std::unordered_map<std::string, std::shared_ptr<Item> > mBaseItems;
 
-    boost::mutex mItemMutex;
+    boost::recursive_mutex mItemMutex;
 };
 
 extern ResourceService *RS;

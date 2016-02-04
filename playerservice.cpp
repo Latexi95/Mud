@@ -37,11 +37,11 @@ std::shared_ptr<Player> PlayerService::findPlayerByName(const std::string &name)
 
     try {
         std::shared_ptr<Player> p = std::make_shared<Player>(name);
-        p->deserialize(pval);
+        Json::deserialize(pval, p);
         mPlayers.push_back(p);
         return p;
     }
-    catch (const SerialiazationException &e) {
+    catch (const SerializationException &e) {
         std::cerr << e.what();
         return nullptr;
     }

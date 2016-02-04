@@ -4,21 +4,13 @@
 #include <memory>
 #include <utility>
 #include <type_traits>
+#include <unordered_map>
+#include "enums.h"
 #include "common.h"
 
-class JsonSerializable {
+class SerializationException : public std::exception {
 public:
-    JsonSerializable();
-    virtual ~JsonSerializable();
-    virtual Json::Value serialize() const = 0;
-    virtual void deserialize(const Json::Value &val) = 0;
-protected:
-
-};
-
-class SerialiazationException : public std::exception {
-public:
-    SerialiazationException(const std::string &txt) : msg(txt) {}
+    SerializationException(const std::string &txt) : msg(txt) {}
     virtual const char* what() const noexcept { return msg.c_str(); }
     const std::string &message() const { return msg; }
 private:
@@ -47,54 +39,62 @@ struct Serializer {
 template <typename T>
 struct Serializer<std::unique_ptr<T> > {
     static Json::Value serialize(const std::unique_ptr<T> &t) {
-        return t->serialize();
+        return Json::serialize(*t);
     }
     static void deserialize(const Json::Value &jsonVal, std::unique_ptr<T> &t) {
-        t->deserialize(jsonVal);
+        if (!t) t = std::unique_ptr<T>(new T());
+        Json::deserialize(jsonVal, *t);
+    }
+};
+template <typename T>
+struct Serializer<std::shared_ptr<T> > {
+    static Json::Value serialize(const std::shared_ptr<T> &t) {
+        return Json::serialize(*t);
+    }
+    static void deserialize(const Json::Value &jsonVal, std::shared_ptr<T> &t) {
+        if (!t) t = std::make_shared<T>();
+        Json::deserialize(jsonVal, *t);
     }
 };
 
 
 template<>
 struct Serializer<std::string> {
-    static Json::Value serialize(const std::string &value) {
-        return value;
-    }
+    static Json::Value serialize(const std::string &value);
+    static void deserialize(const Value &jsonVal, std::string &s);
+};
 
-    static void deserialize(const Value &jsonVal, std::string &s) {
-        if (!jsonVal.isString()) throw SerialiazationException("deserialize<std::string>: Expecting a string");
-        s = jsonVal.asString();
-    }
+template<>
+struct Serializer<bool> {
+    static Json::Value serialize(bool b);
+    static void deserialize(const Value &v, bool &b);
 };
 
 template<>
 struct Serializer<int> {
-    static Json::Value serialize(int value) {
-        return value;
-    }
-
-    static void deserialize(const Value &jsonVal, int &s) {
-        if (!jsonVal.isInt()) throw SerialiazationException("deserialize<int>: Expecting an integer");
-        s = jsonVal.asInt();
-    }
+    static Json::Value serialize(int value);
+    static void deserialize(const Value &jsonVal, int &s);
 };
 
 
 template<>
 struct Serializer<double> {
-    static Json::Value serialize(double value) {
-        return value;
-    }
-
-    static void deserialize(const Value &jsonVal, double &s) {
-        if (!jsonVal.isDouble()) throw SerialiazationException("deserialize<double>: Expecting a double");
-        s = jsonVal.asDouble();
-    }
+    static Json::Value serialize(double value);
+    static void deserialize(const Value &jsonVal, double &s);
 };
+
+template<>
+struct Serializer<float> {
+    static Json::Value serialize(float value);
+    static void deserialize(const Value &jsonVal, float &s);
+};
+
 
 template<typename T>
 struct Serializer<std::vector<T> > {
     static Json::Value serialize(const std::vector<T> &vec) {
+        if (vec.empty()) return nullValue;
+
         Json::Value val(Json::arrayValue);
         for (auto &t : vec) {
             val.append(Json::serialize(t));
@@ -103,7 +103,8 @@ struct Serializer<std::vector<T> > {
     }
 
     static void deserialize(const Value &val, std::vector<T> &vec) {
-        if (!val.isArray()) throw SerialiazationException("Expecting an array type to deserialize to std::vector<T>");
+        if (val.isNull()) return;
+        if (!val.isArray()) throw SerializationException("Expecting an array type to deserialize to std::vector<T>");
         for (const Json::Value &v : val) {
             T t;
             Json::deserialize(v, t);
@@ -111,6 +112,32 @@ struct Serializer<std::vector<T> > {
         }
     }
 };
+
+template<typename T>
+struct Serializer<std::unordered_map<std::string, T> > {
+    static Json::Value serialize(const std::unordered_map<std::string, T> &m) {
+        Json::Value obj(objectValue);
+        for (const auto &p : m) {
+            obj[p.first] = Json::serialize(p.second);
+        }
+        return obj;
+    }
+    static void deserialize(const Value &v, std::unordered_map<std::string, T> &m) {
+        if (v.isNull()) return;
+        if (!v.isObject()) throw SerializationException("Expecting an object type to deserialize to std::unordered_map<std::string, T>");
+
+        for (auto it = v.begin(); it != v.end(); ++it) {
+            Json::deserialize(*it, m[it.memberName()]);
+        }
+    }
+};
+
+template<>
+struct Serializer<Direction> {
+    static Json::Value serialize(Direction d);
+    static void deserialize(const Json::Value &v, Direction &d);
+};
+
 
 template<typename T>
 Json::Value serialize(T &&t) {

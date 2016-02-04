@@ -82,7 +82,7 @@ std::string MessageBuilder::generateTelnetString() const
 
     std::string result;
     int resultSize = 2;
-    int style = Default;
+    size_t style = Default;
     for (const Part &part : mParts) {
         resultSize += part.mText.size() + 1;
         if (style != part.mStyle) {
@@ -239,27 +239,27 @@ void MessageBuilder::append(const std::shared_ptr<Character> &character)
     mParts.emplace_back(Bold | FGYellow, character->name());
 }
 
-bool MessageBuilder::underlined(int style)
+bool MessageBuilder::underlined(unsigned style)
 {
     return (style & Underline) == Underline;
 }
 
-bool MessageBuilder::bolded(int style)
+bool MessageBuilder::bolded(unsigned style)
 {
     return (style & Bold) == Bold;
 }
 
-bool MessageBuilder::foregroundColorSet(int style)
+bool MessageBuilder::foregroundColorSet(unsigned style)
 {
     return (style & 0x3C) != 0;
 }
 
-bool MessageBuilder::backgroundColorSet(int style)
+bool MessageBuilder::backgroundColorSet(unsigned style)
 {
     return (style & 0x3C0) != 0;
 }
 
-bool MessageBuilder::styleNoSpace(int style)
+bool MessageBuilder::styleNoSpace(unsigned style)
 {
     return (style & NoSpace) == NoSpace;
 }
