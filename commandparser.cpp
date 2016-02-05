@@ -12,7 +12,7 @@ CommandParser::CommandParser()
 CommandParser::~CommandParser() {
 }
 
-void CommandParser::addCommand(std::unique_ptr<Command> &&command) {
+void CommandParser::addCommand(const std::shared_ptr<Command> &command) {
     auto insertIt = closestCommand(command->base());
     mCommands.emplace(insertIt, std::move(command));
 }

@@ -6,13 +6,13 @@
 
 Level::Level() :
     mId(),
-    mEventQueue(std::make_shared<LevelEventQueue>())
+    mEventQueue(new LevelEventQueue())
 {
 }
 
 Level::Level(const std::string &id) :
     mId(id),
-    mEventQueue(std::make_shared<LevelEventQueue>())
+    mEventQueue(new LevelEventQueue())
 {
 }
 
@@ -48,6 +48,7 @@ bool Level::hasRoomById(const std::string &id) const
 
 void Level::addRoom(std::unique_ptr<Room> &&room)
 {
+    room->mLevel = this;
     mRooms[room->id()] = std::move(room);
 }
 

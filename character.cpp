@@ -19,7 +19,8 @@ Character::Character() :
     mIntelligence(10),
     mWisdom(10),
     mCharisma(10),
-    mHairColor(0)
+    mHairColor(0),
+    mRoom(0)
 {
 
 }
@@ -36,7 +37,8 @@ Character::Character(const std::string &id) :
     mConstitution(10),
     mIntelligence(10),
     mWisdom(10),
-    mCharisma(10)
+    mCharisma(10),
+    mRoom(0)
 {
 }
 
@@ -87,7 +89,7 @@ void Character::setRoom(Room *room)
     mRoom = room;
 }
 
-const std::shared_ptr<LevelEventQueue> &Character::eventQueue() const
+LevelEventQueue *Character::eventQueue() const
 {
     return mRoom->level()->eventQueue();
 }

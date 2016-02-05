@@ -211,6 +211,7 @@ void TelnetConnection::handleRead(const boost::system::error_code &err, size_t b
         {boost::lock_guard<boost::mutex> guard(mTelnetMutex);
             telnet_recv(mTelnet, mInputBuffer.begin(), bytesTransfered);
             if (mIncompleteMessage && mInputQueue.size() == 1) {
+                startReceive();
                 return;
             }
             input = std::move(mInputQueue);

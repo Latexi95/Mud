@@ -13,6 +13,7 @@ struct RoomData;
 class Room {
     template<typename T>
     friend class Json::Serializer;
+    friend class Level;
 public:
     Room();
     Room(const std::string &id);

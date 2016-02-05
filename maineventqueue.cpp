@@ -61,7 +61,7 @@ void MainEventQueue::handle(time_type t)
     //Just to make sure there is not chance that event loop handling overlaps
     while (mWorkInQueue.load(boost::memory_order_acquire));
 
-    for (const std::shared_ptr<LevelEventQueue> &levelEventQueue : mLevelEventQueues) {
+    for (LevelEventQueue *levelEventQueue : mLevelEventQueues) {
         mWorkInQueue.fetch_add(1, boost::memory_order_relaxed);
         mIoService.post([this, levelEventQueue, t](){
             levelEventQueue->handle(t);
@@ -73,7 +73,7 @@ void MainEventQueue::handle(time_type t)
     while (mIoService.poll_one()) { }
 }
 
-void MainEventQueue::addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq)
+void MainEventQueue::addLevelEventQueue(LevelEventQueue *eq)
 {
     mLevelEventQueues.push_back(eq);
 }

@@ -6,7 +6,8 @@ Player::Player() :
 }
 
 Player::Player(const std::string &name) :
-    mName(name)
+    mName(name),
+    mLoggedIn(false)
 {
 }
 

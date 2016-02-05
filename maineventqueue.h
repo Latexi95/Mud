@@ -22,7 +22,7 @@ public:
 
     void handle(time_type t);
 
-    void addLevelEventQueue(const std::shared_ptr<LevelEventQueue> &eq);
+    void addLevelEventQueue(LevelEventQueue *eq);
 
     void shutdown();
 private:
@@ -31,7 +31,7 @@ private:
     boost::lockfree::queue<Event*> mQueue;
     TimedEventQueue mTimedEventQueue;
     std::vector<Event*> mHandleQueue;
-    std::vector<std::shared_ptr<LevelEventQueue> > mLevelEventQueues;
+    std::vector<LevelEventQueue *> mLevelEventQueues;
     std::vector<std::unique_ptr<boost::thread>> mWorkers;
     boost::atomic_int mWorkInQueue;
 };

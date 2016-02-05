@@ -73,7 +73,7 @@ public:
     Room *room() const;
     void setRoom(Room *room);
     Level *level() const;
-    const std::shared_ptr<LevelEventQueue> &eventQueue() const;
+    LevelEventQueue *eventQueue() const;
     const std::string &id() const;
     void setId(const std::string &id);
     

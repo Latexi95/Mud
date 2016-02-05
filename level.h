@@ -40,7 +40,7 @@ public:
     Room *defaultRoom() const;
     const std::vector<std::string> &roomIds() const;
 
-    const std::shared_ptr<LevelEventQueue> &eventQueue() const { return mEventQueue; }
+    LevelEventQueue *eventQueue() const { return mEventQueue.get(); }
 
     void sendEventToCharacters(Event *e);
 
@@ -54,7 +54,7 @@ protected:
     std::string mDefaultRoomId;
     std::unordered_map<std::string, std::unique_ptr<Room>> mRooms;
     std::vector<std::string> mRoomIds;
-    std::shared_ptr<LevelEventQueue> mEventQueue;
+    std::unique_ptr<LevelEventQueue> mEventQueue;
 };
 
 template <typename FUNC>
