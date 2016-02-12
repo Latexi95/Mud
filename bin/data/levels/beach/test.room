@@ -1,5 +1,6 @@
 {
-"name": "a lonely beach",
+"name": "Beach1",
+"description" : "The beach looks quiet.",
 "walls" : {
 	"n" : {
 		"looks" : "There is a big rock in the north"
@@ -7,10 +8,10 @@
 	"s" : {
 		"looks" : "There is a big rock in the north"
 	},
-	"e" : {
+	"w" : {
 		"looks" : "More beach"
 	},
-	"w" : {
+	"e" : {
 		"looks" : "More beach",
 		"exit" : {
 			"name" : "",

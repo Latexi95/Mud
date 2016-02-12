@@ -140,9 +140,13 @@ bool Name::isNull() const {
 }
 
 bool Name::operator==(const Name &n) const {
-    return this->mBase == n.mBase && this->mPluralForm == n.mPluralForm && this->mFlags == n.mFlags;
+    return this->mBase == n.mBase;
 }
 
 bool Name::operator!=(const Name &n) const {
-    return this->mBase != n.mBase || this->mPluralForm != n.mPluralForm || this->mFlags != n.mFlags;
+    return this->mBase != n.mBase;
+}
+
+bool Name::operator<(const Name &n) const {
+    return this->mBase < n.mBase;
 }

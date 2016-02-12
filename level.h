@@ -40,12 +40,18 @@ public:
     Room *defaultRoom() const;
     const std::vector<std::string> &roomIds() const;
 
-    LevelEventQueue *eventQueue() const { return mEventQueue.get(); }
+    LevelEventQueue *eventQueue() { return &mEventQueue; }
 
     void sendEventToCharacters(Event *e);
 
     template <typename FUNC>
     void forEachCharacter(FUNC &&f);
+
+    /**
+      * Returns true if Level can be modified and accessed freely without locking.
+      * Eg. current thread is now processing this LevelEventQueue or MainEventQueue.
+      */
+    bool isAccessSafe() const;
 protected:
     bool resolveRoomExits();
 
@@ -54,8 +60,10 @@ protected:
     std::string mDefaultRoomId;
     std::unordered_map<std::string, std::unique_ptr<Room>> mRooms;
     std::vector<std::string> mRoomIds;
-    std::unique_ptr<LevelEventQueue> mEventQueue;
+    LevelEventQueue mEventQueue;
 };
+
+extern thread_local Level *LEVEL;
 
 template <typename FUNC>
 void Level::forEachCharacter(FUNC &&f)

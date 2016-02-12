@@ -10,7 +10,7 @@ public:
     MessageEvent(const std::shared_ptr<Character> &sender, const std::string &msg);
     ~MessageEvent();
 
-    Type type() const { return Message; }
+    EventType type() const { return EventType::Message; }
 
     const std::string &message() const { return mMessage; }
     const std::shared_ptr<Character> sender() const { return mSender; }

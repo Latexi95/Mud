@@ -11,7 +11,7 @@ struct SetStyle {
     int mStyle;
 };
 
-
+class Room;
 class MessageBuilder {
 public:
     static SetStyle reset;
@@ -66,6 +66,7 @@ public:
     void append(const Name &name);
     void append(const std::unique_ptr<Item> &item);
     void append(const std::shared_ptr<Character> &character);
+    void append(const Room *r);
 
     static bool underlined(unsigned style);
     static bool bolded(unsigned style);
@@ -82,6 +83,7 @@ public:
     MessageBuilder &operator<< (const Name &name);
     MessageBuilder &operator<< (const std::unique_ptr<Item> &item);
     MessageBuilder &operator<< (const std::shared_ptr<Character> &character);
+    MessageBuilder &operator<< (const Room *r);
 
     MessageBuilder &operator<< (const SetStyle &setStyle);
     MessageBuilder &operator<< (Style xorStyle);
@@ -91,6 +93,8 @@ public:
         append(std::string(text, S));
         return *this;
     }
+    template <typename Container, typename Func>
+    void appendJoin(Container &&c, Func &&f);
 private:
     static char foregroundTelnetColorCode(int style);
     static char backgroundTelnetColorCode(int style);
@@ -113,6 +117,22 @@ private:
     int mNumber;
     int mStyle;
 };
+
+template <typename Container, typename Func>
+void MessageBuilder::appendJoin(Container &&c, Func &&f)
+{
+    size_t left = c.size();
+    for (const auto &v : c) {
+        this->append(f(v));
+        --left;
+        if (left > 1) {
+            this->append(", ");
+        }
+        else if (left == 1) {
+            this->append(" and ");
+        }
+    }
+}
 
 
 

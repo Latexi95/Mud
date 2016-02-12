@@ -9,7 +9,7 @@ class JoinEvent : public Event
 {
 public:
     JoinEvent(const std::shared_ptr<Client> &client, const std::shared_ptr<Character> &character);
-    Type type() const { return Join; }
+    EventType type() const { return EventType::Join; }
     void execute();
 
     const std::shared_ptr<Client> &client() const { return mClient; }
@@ -25,7 +25,7 @@ class DisconnectEvent : public Event
 {
 public:
     DisconnectEvent(const std::shared_ptr<Client> &client, const std::shared_ptr<Character> &character);
-    Type type() const { return Disconnect; }
+    EventType type() const { return EventType::Disconnect; }
     void execute();
 
     const std::shared_ptr<Client> &client() const { return mClient; }

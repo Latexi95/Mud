@@ -21,7 +21,6 @@ public:
     void push(time_type execTime, Event *e);
 
     void handle(time_type t);
-
     void addLevelEventQueue(LevelEventQueue *eq);
 
     void shutdown();

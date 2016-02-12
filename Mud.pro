@@ -110,7 +110,10 @@ SOURCES += main.cpp \
     events/moveevent.cpp \
     roomexit.cpp \
     enums.cpp \
-    events/eventvisitor.cpp
+    events/eventvisitor.cpp \
+    messagecontext.cpp \
+    commands/lookcommand.cpp
+
 HEADERS += \
     events/commandevent.h \
     item.h \
@@ -182,4 +185,6 @@ HEADERS += \
     events/moveevent.h \
     roomexit.h \
     defines.h \
-    events/eventvisitor.h
+    events/eventvisitor.h \
+    messagecontext.h \
+    commands/lookcommand.h

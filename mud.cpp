@@ -1,7 +1,13 @@
 #include "mud.h"
 #include "level.h"
+#include "commandservice.h"
+#include "playerservice.h"
+#include "resourceservice.h"
+#include "characterservice.h"
+#include "levelservice.h"
+
 //100ms
-#define STEP_TIME 100
+#define STEP_TIME 100 //ms
 #define TIME_TICKS 1
 
 
@@ -9,7 +15,11 @@ namespace chrono = boost::chrono;
 Mud *MUD = 0;
 
 Mud::Mud() :
-    mPlayerService(this),
+    mCommandService(new CommandService()),
+    mPlayerService(new PlayerService(this)),
+    mResourceService(new ResourceService()),
+    mLevelService(new LevelService()),
+    mCharacterService(new CharacterService()),
     mEventQueue(2) {
 
     MUD = this;
@@ -39,9 +49,9 @@ void Mud::start() {
 
 bool Mud::loadResources()
 {
-    if (!mResourceService.loadAllItemTemplates()) return false;
-    if (!mLevelService.loadAllLevels()) return false;
-    if (!mCharacterService.loadAllCharacters()) return false;
+    if (!mResourceService->loadAllItemTemplates()) return false;
+    if (!mLevelService->loadAllLevels()) return false;
+    if (!mCharacterService->loadAllCharacters()) return false;
 
     return true;
 }

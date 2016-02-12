@@ -1,8 +1,10 @@
 #include "leveleventqueue.h"
 #include "events/event.h"
+#include "level.h"
 
-LevelEventQueue::LevelEventQueue() :
-    mQueue(10)
+LevelEventQueue::LevelEventQueue(Level *l) :
+    mQueue(10),
+    mLevel(l)
 {
 
 }
@@ -30,6 +32,8 @@ void LevelEventQueue::handle(time_type t) {
     mQueue.consume_all([this](Event *e) {
         mHandleQueue.push_back(e);
     });
+
+    LEVEL = mLevel;
     for (Event *e : mHandleQueue) {
         e->execute();
         if (e->eventLoopHasOwnership()) delete e;
@@ -39,4 +43,6 @@ void LevelEventQueue::handle(time_type t) {
     if (t != 0) {
         mTimedEventQueue.advance(t);
     }
+
+    LEVEL = 0;
 }

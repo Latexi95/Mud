@@ -3,23 +3,21 @@
 #include "commands/command.h"
 #include <memory>
 #include <vector>
-
+class Client;
+class MessageContext;
 class CommandParser {
 public:
     CommandParser();
     ~CommandParser();
-    Command *parse(const std::string &cmd, std::vector<std::string> &params);
+    bool parse(const std::string &cmd, CommandContext &&context, const std::shared_ptr<Client> &client) const;
 
     void addCommand(const std::shared_ptr<Command> &command);
-
-    const std::string &errorMessage() const { return mErrorMessage; }
-
 private:
     typedef std::vector<std::shared_ptr<Command> > CmdVector;
     CmdVector::iterator closestCommand(const std::string &base);
+    CmdVector::const_iterator closestCommand(const std::string &base) const;
 
     CmdVector mCommands;
-    std::string mErrorMessage;
 };
 
 #endif // COMMANDPARSER_H

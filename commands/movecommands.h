@@ -10,7 +10,8 @@ public:
     WalkCommand(Direction direction);
 
     bool globalEvent() const { return false; }
-    CommandResult execute(const CommandContext &c);
+
+    bool execute(const CommandContext &c, MessageContext &messageContext) const;
 
     bool isShortcut() const { return mShortcut != Direction::Count; }
 

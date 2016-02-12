@@ -12,7 +12,7 @@ public:
     MoveStartEvent(const std::shared_ptr<Character> &c, Room *targetRoom);
     virtual ~MoveStartEvent();
 
-    virtual Type type() const { return MoveStart; }
+    virtual EventType type() const { return EventType::MoveStart; }
 
     virtual void execute();
 
@@ -30,11 +30,13 @@ public:
     MoveEndEvent(const std::shared_ptr<Character> &c, Room *targetRoom);
     virtual ~MoveEndEvent();
 
-    virtual Type type() const { return MoveEnd; }
+    virtual EventType type() const { return EventType::MoveEnd; }
 
     virtual void execute();
 
     std::shared_ptr<Character> character() const;
+    Room *targetRoom() const;
+    
     DEF_ACCEPT_EVENT_VISITOR()
 protected:
     std::shared_ptr<Character> mCharacter;

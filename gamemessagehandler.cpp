@@ -10,6 +10,7 @@
 #include "levelservice.h"
 #include <boost/algorithm/string.hpp>
 #include "events/connectionevents.h"
+#include "commandservice.h"
 
 
 
@@ -28,45 +29,29 @@ GameMessageHandler::~GameMessageHandler()
 
 }
 
-void GameMessageHandler::sendCommandErrorMessage(const std::shared_ptr<Client> &client)
+void GameMessageHandler::handleCommand(const std::shared_ptr<Client> &client, const std::string &message)
 {
-    std::vector<std::string> errorMsgParts;
-    boost::split(errorMsgParts, mCommandParser.errorMessage(), boost::is_any_of("\n"));
-    for (const std::string &msg : errorMsgParts) {
-        client->sendMessage(msg);
-    }
-}
-
-void GameMessageHandler::handleCommand(const std::string &message, const std::shared_ptr<Client> &client)
-{
-    std::vector<std::string> params;
-    Command *cmd = mCommandParser.parse(message, params);
-    if (!cmd) {
-        sendCommandErrorMessage(client);
-    }
-    else {
-        CommandContext ctx;
-        ctx.mCaller = mCharacter;
-        ctx.mParameters = std::move(params);
-        cmd->execute(ctx);
-    }
+    CommandContext ctx;
+    ctx.mCaller = mCharacter;
+    const CommandParser &parser = CMDS->standardCommandParser();
+    parser.parse(message, std::move(ctx), client);
 }
 
 LevelEventQueue *GameMessageHandler::levelQueue() const
 {
-    mCharacter->level()->eventQueue();
+    return mCharacter->level()->eventQueue();
 }
 
 void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
-    if (message.size() >= 1 && message[0] != '!') {
-        handleCommand(message, client);
+    if (message.size() >= 1 && message[0] != '!' && message[0] != ' ') {
+        handleCommand(client, message);
     }
     else {
         if (message.size() > 1 && message[0] == '!') {
             mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message.substr(1)));
         }
         else {
-            mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message.substr(1)));
+            mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
         }
     }
 }

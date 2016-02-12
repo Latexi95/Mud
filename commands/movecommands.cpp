@@ -5,6 +5,7 @@
 #include "level.h"
 #include "events/moveevent.h"
 #include "characterservice.h"
+#include "messagecontext.h"
 
 
 
@@ -49,56 +50,28 @@ WalkCommand::WalkCommand(Direction direction) :
     }
 }
 
-CommandResult WalkCommand::execute(const CommandContext &c)
+bool WalkCommand::execute(const CommandContext &c, MessageContext &messageContext) const
 {
     Direction dir;
     if (isShortcut()) {
         dir = mShortcut;
     }
     else {
-        const std::string &direction = c.mParameters.front();
-        std::string lower = boost::to_lower_copy(direction);
+        dir = DirectionFromString(c.mParameters.front());
+    }
 
-        TextSelectorMap<Direction> selector;
-        selector.insert("north", Direction::North);
-        selector.insert("south", Direction::South);
-        selector.insert("east", Direction::East);
-        selector.insert("west", Direction::West);
-        selector.insert("up", Direction::Up);
-        selector.insert("down", Direction::Down);
-
-        try {
-            dir = selector.value(lower);
-        } catch (TextSelectorError err) {
-            assert(err == TextSelectorError::NoMatches);
-
-            if (boost::starts_with(lower, "toward ") || boost::starts_with(lower, "to ") || boost::starts_with(lower, "towards ")) {
-                //TODO:
-                CommandResult result;
-                result.mSuccess = false;
-                result.mErrorMessage = "\"walk to/towards\" is implemented yet";
-                return result;
-            }
-            else {
-                CommandResult result;
-                result.mSuccess = false;
-                result.mErrorMessage = usage();
-                return result;
-            }
-        }
+    if (dir == Direction::Invalid) {
+        messageContext.commandError("Invalid direction");
+        return false;
     }
 
     if (CS->canMove(c.mCaller, dir)) {
         CS->startMove(c.mCaller, dir);
     }
     else {
-        CommandResult result;
-        result.mSuccess = false;
-        result.mErrorMessage = "Can't move to that direction";
+        messageContext.commandError(MessageBuilder("Can't move to ") << DirectionToString(dir));
+        return false;
     }
 
-
-    CommandResult result;
-    result.mSuccess = true;
-    return result;
+    return true;
 }

@@ -1,9 +1,11 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#include <memory>
+
 #include "character.h"
 #include "messagehandler.h"
 #include "messagebuilder.h"
-#include <memory>
+#include "messagecontext.h"
 
 class Player;
 class Client : public std::enable_shared_from_this<Client> {
@@ -18,10 +20,12 @@ public:
     std::shared_ptr<Player> player() const;
     void setPlayer(const std::shared_ptr<Player> &player);
     void setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler);
+    MessageContext &msgCtx();
 private:
     std::shared_ptr<Character> mCharacter;
     std::shared_ptr<MessageHandler> mMessageHandler;
     std::shared_ptr<Player> mPlayer;
+    MessageContext mMessageContext;
 };
 
 #endif // CLIENT_H

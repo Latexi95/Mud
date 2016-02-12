@@ -9,27 +9,30 @@ class EventVisitor;
     virtual void accept(EventVisitor *v);
 #define IMPL_ACCEPT_EVENT_VISITOR(CLASS) \
     void CLASS::accept(EventVisitor *v) { v->visit(this); }
+
+enum class EventType {
+    Command,
+    Function,
+    Message,
+    MoveStart,
+    MoveEnd,
+    Join,
+    Disconnect
+};
+
 class Event {
 public:
-    enum Type {
-        Command,
-        Function,
-        Message,
-        MoveStart,
-        MoveEnd,
-        Join,
-        Disconnect
-    };
 
     Event();
     virtual ~Event();
-    virtual Type type() const = 0;
+    virtual EventType type() const = 0;
 
     void takeOwnership() { mEventLoopHasOwnership = false; }
 
     bool eventLoopHasOwnership() const { return mEventLoopHasOwnership; }
     virtual void execute() = 0;
     virtual void accept(EventVisitor *v) = 0;
+    virtual bool isGlobalEvent() { return false; }
 protected:
     bool mEventLoopHasOwnership;
 };
@@ -41,7 +44,7 @@ public:
     FunctionEvent(Func &&func) : mFunc(func) {}
     virtual ~FunctionEvent() {}
 
-    virtual Type type() const { return Function; }
+    virtual EventType type() const { return EventType::Function; }
     virtual void accept(EventVisitor *) {}
     virtual void execute() {
         mFunc(this);

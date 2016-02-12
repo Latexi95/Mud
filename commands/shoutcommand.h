@@ -8,7 +8,7 @@ public:
     ShoutCommand();
     ~ShoutCommand();
 
-    CommandResult execute(const CommandContext &c);
+    bool execute(const CommandContext &c, MessageContext &messageContext) const;
     bool globalEvent() const { return true; }
 };
 

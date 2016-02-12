@@ -34,6 +34,7 @@ public:
 
     bool operator==(const Name &n) const;
     bool operator!=(const Name &n) const;
+    bool operator<(const Name &n) const;
 private:
     std::string mBase;
     mutable std::string mPluralForm;

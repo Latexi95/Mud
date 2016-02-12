@@ -31,7 +31,7 @@ void MudClient::sendMessage(const MessageBuilder &mb)
 {
     std::string *output = new std::string(mb.generateTelnetString());
 
-    std::cout << '[' << mConnection << "] << " << *output;
+    std::cout << '[' << mConnection << "] << " << *output << std::endl;
     mConnection->addMessage(output);
 }
 

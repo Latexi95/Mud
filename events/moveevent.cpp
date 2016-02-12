@@ -50,5 +50,10 @@ std::shared_ptr<Character> MoveEndEvent::character() const
     return mCharacter;
 }
 
+Room *MoveEndEvent::targetRoom() const
+{
+    return mTargetRoom;
+}
+
 IMPL_ACCEPT_EVENT_VISITOR(MoveEndEvent)
 IMPL_ACCEPT_EVENT_VISITOR(MoveStartEvent)

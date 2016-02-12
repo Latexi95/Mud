@@ -2,7 +2,8 @@
 
 Client::Client(const std::shared_ptr<MessageHandler> &msgHandler) :
     mMessageHandler(msgHandler),
-    mPlayer(0)
+    mPlayer(0),
+    mMessageContext(this)
 {
 }
 
@@ -29,4 +30,9 @@ void Client::setPlayer(const std::shared_ptr<Player> &player) {
 
 void Client::setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler) {
     mMessageHandler = msgHandler;
+}
+
+MessageContext &Client::msgCtx()
+{
+    return mMessageContext;
 }

@@ -72,6 +72,11 @@ const std::array<Wall, (int)Direction::Count> &Room::walls() const
     return mWalls;
 }
 
+std::array<Wall, (int)Direction::Count> &Room::walls()
+{
+    return mWalls;
+}
+
 const std::vector<std::unique_ptr<RoomTrait>> &Room::traits() const {
     return mTraits;
 }
@@ -108,19 +113,40 @@ RoomExit *Room::exit(Direction side)
     return wall(side).exit();
 }
 
+const std::string &Room::name() const
+{
+    return mName;
+}
+
+void Room::setName(const std::string &name)
+{
+    mName = name;
+}
+
+const std::string &Room::description() const
+{
+    return mDescription;
+}
+
+void Room::setDescription(const std::string &description)
+{
+    mDescription = description;
+}
+
 using namespace Json;
 
 Value Serializer<Room>::serialize(const Room &r)
 {
     Value ret(objectValue);
     ret["name"] = r.mName;
+    ret["description"] = r.mDescription;
 
     Value wallsObj(objectValue);
     char c[2] = {0, 0};
     for (unsigned side = 0; side < (unsigned)Direction::Count; ++side) {
         Direction dir = (Direction)side;
         const Wall &w = r.mWalls[side];
-        c[0] = directionToChar(dir);
+        c[0] = DirectionToChar(dir);
         wallsObj[c] = Json::serialize(w);
     }
     ret["walls"] = wallsObj;
@@ -159,6 +185,7 @@ void Serializer<Room>::deserialize(const Value &v, Room &r)
     if (!v.isObject()) throw SerializationException("Serializer<Room>::deserialize: expecting an json object");
 
     Json::deserialize(v["name"], r.mName);
+    Json::deserialize(v["description"], r.mDescription);
 
     Value wallsObj = v["walls"];
     if (!wallsObj.isObject())
@@ -167,10 +194,10 @@ void Serializer<Room>::deserialize(const Value &v, Room &r)
     char c[2] = {0, 0};
     for (unsigned i = 0; i < (unsigned)Direction::Count; ++i) {
 
-        c[0] = directionToChar((Direction)i);
+        c[0] = DirectionToChar((Direction)i);
         Value wallObj = wallsObj[c];
         if (!wallObj.isObject()) {
-            wallObj = wallsObj[directionToString((Direction)i)];
+            wallObj = wallsObj[DirectionToString((Direction)i)];
         }
         Json::deserialize(wallObj, r.mWalls[i]);
     }

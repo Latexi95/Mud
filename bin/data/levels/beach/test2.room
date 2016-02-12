@@ -1,5 +1,6 @@
 {
-"name": "a lonely beach",
+"name": "Beach2",
+"description" : "The beach looks quiet.",
 "walls" : {
 	"n" : {
 		"looks" : "There is a big rock in the north"

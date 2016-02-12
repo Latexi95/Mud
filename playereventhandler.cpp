@@ -4,6 +4,7 @@
 #include "messagebuilder.h"
 #include "events/connectionevents.h"
 #include "events/moveevent.h"
+#include "room.h"
 
 PlayerEventHandler::PlayerEventHandler(const std::shared_ptr<Client> &client) :
     mClient(client)
@@ -46,8 +47,10 @@ void PlayerEventHandler::visit(MoveStartEvent *e)
 
 void PlayerEventHandler::visit(MoveEndEvent *e)
 {
+    Room *r = e->targetRoom();
     if (e->character() == mCharacter) {
-        mClient->sendMessage(MessageBuilder() << "Arrived");
+        mClient->sendMessage(MessageBuilder() << "Arrived" << r->name());
+        mClient->sendMessage(MessageBuilder() << "Target");
     }
     else {
         mClient->sendMessage(MessageBuilder() << e->character() << "walked here");

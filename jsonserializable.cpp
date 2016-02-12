@@ -4,7 +4,7 @@
 
 Json::Value Json::Serializer<Direction>::serialize(Direction d)
 {
-    return directionToString(d);
+    return DirectionToString(d);
 }
 
 void Json::Serializer<Direction>::deserialize(const Json::Value &v, Direction &d)
@@ -15,7 +15,7 @@ void Json::Serializer<Direction>::deserialize(const Json::Value &v, Direction &d
 
         if (id.size() == 1) {
             for (unsigned dirNum = 0; dirNum < (unsigned)Direction::Count; ++dirNum) {
-                if (*id.c_str() == directionToChar((Direction)dirNum)) {
+                if (*id.c_str() == DirectionToChar((Direction)dirNum)) {
                     d = (Direction)dirNum;
                     return;
                 }
@@ -23,7 +23,7 @@ void Json::Serializer<Direction>::deserialize(const Json::Value &v, Direction &d
         }
 
         for (unsigned dirNum = 0; dirNum < (unsigned)Direction::Count; ++dirNum) {
-            if (id == directionToString((Direction)dirNum)) {
+            if (id == DirectionToString((Direction)dirNum)) {
                 d = (Direction)dirNum;
                 return;
             }

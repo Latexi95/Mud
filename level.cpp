@@ -4,15 +4,19 @@
 #include "item.h"
 #include "room.h"
 
+thread_local Level *LEVEL = 0;
+
+
+
 Level::Level() :
     mId(),
-    mEventQueue(new LevelEventQueue())
+    mEventQueue(this)
 {
 }
 
 Level::Level(const std::string &id) :
     mId(id),
-    mEventQueue(new LevelEventQueue())
+    mEventQueue(this)
 {
 }
 
@@ -66,6 +70,11 @@ void Level::sendEventToCharacters(Event *e) {
     for (auto &room : mRooms) {
         room.second->sendEventToCharacters(e);
     }
+}
+
+bool Level::isAccessSafe() const
+{
+    return LEVEL == (Level*)-1 || LEVEL == this;
 }
 
 bool Level::resolveRoomExits()

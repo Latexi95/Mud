@@ -2,6 +2,7 @@
 #include "item.h"
 #include <boost/lexical_cast.hpp>
 #include "character.h"
+#include "room.h"
 
 SetStyle MessageBuilder::reset{MessageBuilder::Default};
 
@@ -239,6 +240,12 @@ void MessageBuilder::append(const std::shared_ptr<Character> &character)
     mParts.emplace_back(Bold | FGYellow, character->name());
 }
 
+void MessageBuilder::append(const Room *r)
+{
+    clearNumberStash();
+    mParts.emplace_back(Bold | FGGreen, r->name());
+}
+
 bool MessageBuilder::underlined(unsigned style)
 {
     return (style & Underline) == Underline;
@@ -312,6 +319,12 @@ MessageBuilder &MessageBuilder::operator<<(const std::shared_ptr<Character> &cha
     return *this;
 }
 
+MessageBuilder &MessageBuilder::operator<<(const Room *r)
+{
+    append(r);
+    return *this;
+}
+
 MessageBuilder &MessageBuilder::operator<<(const SetStyle &setStyle)
 {
     mStyle = setStyle.mStyle;
@@ -323,9 +336,6 @@ MessageBuilder &MessageBuilder::operator<<(MessageBuilder::Style xorStyle)
     mStyle ^= xorStyle;
     return *this;
 }
-
-
-
 
 char MessageBuilder::foregroundTelnetColorCode(int style)
 {
@@ -344,6 +354,7 @@ void MessageBuilder::clearNumberStash()
         mNumber = -1;
     }
 }
+
 
 
 

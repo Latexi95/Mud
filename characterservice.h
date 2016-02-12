@@ -25,10 +25,11 @@ public:
 
     bool loadAllCharacters();
     std::shared_ptr<Character> loadCharacter(const std::string &fileName);
+
+    std::vector<Item*> itemsInVision(const std::shared_ptr<Character> &c);
 private:
     boost::mutex mMutex;
     std::unordered_map<std::string, std::shared_ptr<Character> > mCharacters;
-
 };
 
 extern CharacterService * CS;

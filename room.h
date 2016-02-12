@@ -27,6 +27,7 @@ public:
     const Wall &wall(Direction side) const;
     Wall &wall(Direction side);
     const std::array<Wall, (int)Direction::Count> &walls() const;
+    std::array<Wall, (int)Direction::Count> &walls();
 
     const std::vector<std::unique_ptr<RoomTrait>> &traits() const;
     void addTrait(std::unique_ptr<RoomTrait> &&r);
@@ -42,9 +43,16 @@ public:
 
     RoomExit *exit(Direction side);
 
+    const std::string &name() const;
+    void setName(const std::string &name);
+
+    const std::string &description() const;
+    void setDescription(const std::string &description);
+
 protected:
     std::string mName;
     std::string mId;
+    std::string mDescription;
     Level *mLevel;
 
     std::unordered_map<std::string, std::string> mLookMap;

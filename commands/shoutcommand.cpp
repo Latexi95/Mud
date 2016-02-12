@@ -10,9 +10,9 @@ ShoutCommand::~ShoutCommand()
 
 }
 
-CommandResult ShoutCommand::execute(const CommandContext &c)
+bool ShoutCommand::execute(const CommandContext &c, MessageContext &messageContext) const
 {
-    return CommandResult();
+    return false;
 }
 
 

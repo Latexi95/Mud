@@ -9,11 +9,7 @@ struct CommandContext {
     std::shared_ptr<Character> mCaller;
     std::vector<std::string> mParameters;
 };
-
-struct CommandResult {
-    bool mSuccess;
-    std::string mErrorMessage;
-};
+class MessageContext;
 
 class Command {
 public:
@@ -22,8 +18,8 @@ public:
     Command(const std::string &base, const std::string &usage, unsigned minParams, unsigned maxParams);
     virtual ~Command();
 
-    virtual CommandResult execute(const CommandContext &c) = 0;
-    virtual bool globalEvent() const = 0;
+    virtual bool execute(const CommandContext &c, MessageContext &messageContext) const = 0;
+    virtual bool globalEvent() const { return false; }
 
     const std::string &base() const { return mBase; }
     const std::string &usage() const { return mUsage; }

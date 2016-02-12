@@ -1,5 +1,6 @@
 #ifndef ENUMS_H_
 #define ENUMS_H_
+#include <string>
 
 enum class Direction {
     //DO NOT CHANGE ORDER OR VALUES
@@ -9,11 +10,20 @@ enum class Direction {
     West,
     Up,
     Down,
-    Count
+    Count,
+    Invalid = Count
 };
 
-const char *directionToString(Direction d);
-char directionToChar(Direction d);
+const char *DirectionToString(Direction d);
+char DirectionToChar(Direction d);
+Direction DirectionFromString(std::string txt);
+
+template <typename Func>
+void DirectionForEach(Func &&f) {
+    for (unsigned i = 0; i < (unsigned)Direction::Count; ++i) {
+        f((Direction)i);
+    }
+}
 
 enum class ItemTraitType {
     Weapon,

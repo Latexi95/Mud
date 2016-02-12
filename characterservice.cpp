@@ -64,7 +64,8 @@ void CharacterService::startMove(const std::shared_ptr<Character> &c, Direction 
     Room *r = c->room();
     RoomExit *exit = r->exit(dir);
     if (exit) {
-        currentLevel->eventQueue()->push(new MoveStartEvent(c, exit->targetRoom()));
+        MoveStartEvent(c, exit->targetRoom()).execute();
+
         Level *targetLevel = exit->targetRoom()->level();
         auto moveEndEvent = new MoveEndEvent(c, exit->targetRoom());
         auto moveEndTime = MUD->timeAfter(travelTime(c, exit->travelDistance()));
@@ -142,4 +143,17 @@ std::shared_ptr<Character> CharacterService::loadCharacter(const std::string &fi
         std::cerr << e.what();
     }
     return nullptr;
+}
+
+std::vector<Item *> CharacterService::itemsInVision(const std::shared_ptr<Character> &c)
+{
+    //TODO: Implement vision detection
+    std::vector<Item *> items;
+    Room *r = c->room();
+    for (const Wall &w : r->walls()) {
+        for (auto &item : w.items()) {
+            items.push_back(item.get());
+        }
+    }
+    return items;
 }

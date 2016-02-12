@@ -22,7 +22,11 @@
 		"alts" : "gray",
 		"rgb" : "A0A0A0",
 		"description" : "grey"
-		
+	},
+	"brown" : {
+		"alts" : "saddle brown",
+		"rgb" : "8B4513",
+		"description" : "saddle brown"
 	}
 	
 }
