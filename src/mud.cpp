@@ -11,7 +11,7 @@
 #define TIME_TICKS 1
 
 
-namespace chrono = boost::chrono;
+namespace chrono = std::chrono;
 Mud *MUD = 0;
 
 Mud::Mud() :
@@ -23,7 +23,7 @@ Mud::Mud() :
     mEventQueue(2) {
 
     MUD = this;
-    mLastUpdate = boost::chrono::system_clock::now();
+    mLastUpdate = chrono::system_clock::now();
     mTime = 0;
 }
 
@@ -33,7 +33,7 @@ Mud::~Mud() {
 void Mud::start() {
     mRunning = true;
     while (mRunning) {
-        auto n = boost::chrono::system_clock::now();
+        auto n = chrono::system_clock::now();
         auto step = chrono::duration_cast<chrono::microseconds>(n - mLastUpdate);
         if (step.count() >= STEP_TIME) {
             mEventQueue.handle(mTime);

@@ -2,7 +2,7 @@
 #define MUD_H
 #include "maineventqueue.h"
 #include "room.h"
-#include <boost/thread.hpp>
+#include <chrono>
 
 class CommandService;
 class PlayerService;
@@ -32,7 +32,7 @@ private:
     std::unique_ptr<CharacterService> mCharacterService;
 
     MainEventQueue mEventQueue;
-    boost::chrono::system_clock::time_point mLastUpdate;
+    std::chrono::system_clock::time_point mLastUpdate;
     volatile bool mRunning;
     volatile time_type mTime;
 };
