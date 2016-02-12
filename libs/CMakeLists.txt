@@ -1,0 +1,3 @@
+option(JSONCPP_WITH_TESTS OFF)
+option(JSONCPP_WITH_POST_BUILD_UNITTEST OFF)
+add_subdirectory(jsoncpp)
