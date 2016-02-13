@@ -25,7 +25,7 @@ public:
     std::unique_ptr<Item> itemCopyForEditing(const std::string &id);
     void storeItem(std::unique_ptr<Item> &&item);
 
-    void saveItem(const std::shared_ptr<Item> &item);
+    bool saveItem(const std::shared_ptr<Item> &item);
     bool loadAllItemTemplates();
 private:
     bool loadItemsFromDirectory(const std::string &path, const std::string &prefix);

@@ -6,16 +6,16 @@ addons:
     - boost-latest
     - ubuntu-toolchain-r-test
     packages:
-    #- gcc-4.6
-    #- g++-4.6
-    - clang-3.8
-    - libboost1.55-all-dev
+    - gcc-4.8
+    - g++-4.8
+    #- clang-3.8
+    #- libboost1.55-all-dev
 compiler:
-  #- gcc
-  - clang
-#install:
-  #- export CXX="clang++-3.8" CC="clang-3.8";
-script: cmake . && make
+  - gcc
+  #- clang
+install:
+  - export CXX="gcc++-4.8" CC="gcc-4.8";
+script: cmake -DBoost_USE_STATIC_LIBS=OFF . && make
 
 notifications:
   irc:

@@ -97,7 +97,7 @@ void ResourceService::storeItem(std::unique_ptr<Item> &&item)
     saveItem(base);
 }
 
-void ResourceService::saveItem(const std::shared_ptr<Item> &item)
+bool ResourceService::saveItem(const std::shared_ptr<Item> &item)
 {
     boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
     std::string path = item->id();
@@ -117,8 +117,14 @@ void ResourceService::saveItem(const std::shared_ptr<Item> &item)
     else {
         path = "data/items/" + path;
     }
-
-    saveJsonFile(path, val);
+    try {
+        saveJsonFile(path, val);
+        return true;
+    }
+    catch (const SerializationException &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
 }
 
 bool ResourceService::loadAllItemTemplates()
