@@ -3,8 +3,8 @@
 #include "dicerandom.h"
 #include "dicesequence.h"
 #include "mud.h"
-#include "mudserver.h"
-#include "textgen/color.h"
+#include "server/mudserver.h"
+#include "util/color.h"
 #include <boost/locale.hpp>
 
 static Mud mud;

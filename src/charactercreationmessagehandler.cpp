@@ -5,7 +5,7 @@
 #include "levelservice.h"
 #include "characterservice.h"
 #include "gamemessagehandler.h"
-#include "textgen/textutils.h"
+#include "util/textutils.h"
 #include "player.h"
 #include "playerservice.h"
 

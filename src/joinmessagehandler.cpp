@@ -8,7 +8,7 @@
 #include "resourceservice.h"
 #include "playerservice.h"
 #include <boost/algorithm/string/join.hpp>
-#include "textgen/textutils.h"
+#include "util/textutils.h"
 #include <algorithm>
 #include "characterservice.h"
 

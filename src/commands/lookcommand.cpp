@@ -1,7 +1,7 @@
 #include "lookcommand.h"
 #include "levelservice.h"
 #include "characterservice.h"
-#include "textgen/textutils.h"
+#include "util/textutils.h"
 #include "messagecontext.h"
 
 LookCommand::LookCommand() :

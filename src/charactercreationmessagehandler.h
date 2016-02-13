@@ -3,7 +3,7 @@
 #include "messagehandler.h"
 #include "character.h"
 #include <queue>
-#include "textgen/color.h"
+#include "util/color.h"
 class CharacterCreationMessageHandler : public MessageHandler {
 public:
     CharacterCreationMessageHandler();

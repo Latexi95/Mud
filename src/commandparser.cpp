@@ -2,7 +2,7 @@
 #include "commands/command.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
-#include "textgen/textutils.h"
+#include "util/textutils.h"
 #include "messagecontext.h"
 #include "events/commandevent.h"
 #include "maineventqueue.h"

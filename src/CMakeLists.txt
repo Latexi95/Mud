@@ -1,31 +1,28 @@
-file(GLOB SRC_A "*.h" "*.cpp" "*.c" "events/*.h" "events/*.cpp" "textgen/*.h" "textgen/*.cpp")
-file(GLOB SRC_B "commands/*.h" "commands/*.cpp" "traits/*.h" "traits/*.cpp")
-set(SRC ${SRC_A} ${SRC_B})
-
 set(Boost_USE_STATIC_LIBS    ON)
 set(Boost_USE_MULTITHREADED  ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 add_definitions(-DBOOST_NO_AUTO_PTR)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem locale)
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(../libs/jsoncpp/include)
-include_directories(".")
+
+add_subdirectory("commands")
+add_subdirectory("events")
+add_subdirectory("traits")
+add_subdirectory("util")
+add_subdirectory("server")
+
+file(GLOB SRC_GLOB "*.h" "*.cpp" "*.c")
+list(APPEND SRC ${SRC_GLOB})
+
+
+include("CMakeCompilerSettings.cmake")
 
 add_executable(mud ${SRC})
 target_link_libraries(mud jsoncpp_lib_static)
 target_link_libraries(mud ${Boost_FILESYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOCALE_LIBRARY})
+target_link_libraries(mud server commands events traits util)
 IF (WIN32)
     target_link_libraries(mud Ws2_32 Mswsock)
 ELSE()
     target_link_libraries(mud icuuc icui18n pthread rt)
 ENDIF()
 
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-elseif(COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-endif()

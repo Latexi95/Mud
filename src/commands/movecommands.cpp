@@ -1,6 +1,5 @@
 #include "movecommands.h"
 #include <cassert>
-#include "textgen/textselector.h"
 #include "character.h"
 #include "level.h"
 #include "events/moveevent.h"

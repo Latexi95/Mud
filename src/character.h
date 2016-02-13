@@ -4,7 +4,7 @@
 #include "jsonserializable.h"
 #include <map>
 #include "position.h"
-#include "textgen/color.h"
+#include "util/color.h"
 
 class Level;
 class Room;

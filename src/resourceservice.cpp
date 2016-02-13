@@ -5,7 +5,7 @@
 #include "item.h"
 #include "character.h"
 #include "player.h"
-#include "textgen/textutils.h"
+#include "util/textutils.h"
 #include <boost/filesystem.hpp>
 #include "defines.h"
 #include <boost/thread/lock_guard.hpp>
