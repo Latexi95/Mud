@@ -8,7 +8,7 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 add_definitions(-DBOOST_NO_AUTO_PTR)
 find_package(Boost REQUIRED COMPONENTS thread system filesystem locale)
 include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${JSONCPP_INCLUDE_DIR})
+include_directories(../libs/jsoncpp/include)
 include_directories(".")
 
 add_executable(mud ${SRC})
