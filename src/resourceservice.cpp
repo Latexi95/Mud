@@ -103,7 +103,7 @@ bool ResourceService::saveItem(const std::shared_ptr<Item> &item)
     std::string path = item->id();
     if (path.empty()) {
         std::cerr << "Empty item id. Save failed." << std::endl;
-        return;
+        return false;
     }
 
     path += ".item";
