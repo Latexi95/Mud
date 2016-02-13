@@ -14,7 +14,7 @@ compiler:
   - gcc
   #- clang
 install:
-  - export CXX="gcc++-4.8" CC="gcc-4.8";
+  - export CXX="g++-4.8" CC="gcc-4.8";
 script: cmake -DBoost_USE_STATIC_LIBS=OFF . && make
 
 notifications:
