@@ -17,7 +17,7 @@ target_link_libraries(mud ${Boost_FILESYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${
 IF (WIN32)
     target_link_libraries(mud Ws2_32 Mswsock)
 ELSE()
-    target_link_libraries(mud icuuc icui18n pthread)
+    target_link_libraries(mud icuuc icui18n pthread rt)
 ENDIF()
 
 
