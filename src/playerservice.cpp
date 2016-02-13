@@ -28,14 +28,14 @@ std::shared_ptr<Player> PlayerService::findPlayerByName(const std::string &name)
         }
     }
 
-    Json::Value val = ResourceService::instance()->readJsonFile("data/players.json");
-    if (!val.isObject()) {
-        return nullptr;
-    }
-    Json::Value pval = val[name];
-    if (!pval.isObject()) return nullptr;
-
     try {
+        Json::Value val = ResourceService::instance()->readJsonFile("data/players.json");
+        if (!val.isObject()) {
+            return nullptr;
+        }
+        Json::Value pval = val[name];
+        if (!pval.isObject()) return nullptr;
+
         std::shared_ptr<Player> p = std::make_shared<Player>(name);
         Json::deserialize(pval, p);
         mPlayers.push_back(p);
@@ -58,7 +58,7 @@ void PlayerService::savePlayers() {
     boost::unique_lock<boost::mutex> lock(mMutex);
     Json::Value val = ResourceService::instance()->readJsonFile("data/players.json");
     if (!val.isObject()) {
-        return;
+        val = Json::Value(Json::objectValue);
     }
 
     for (const std::shared_ptr<Player> &p : mPlayers) {

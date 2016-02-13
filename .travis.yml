@@ -5,7 +5,7 @@ before_script:
 compiler:
   - gcc
 #  - clang
-script: cmake && make
+script: cmake . && make
 
 notifications:
   irc:
