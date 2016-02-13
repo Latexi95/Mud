@@ -16,6 +16,8 @@ target_link_libraries(mud jsoncpp_lib_static)
 target_link_libraries(mud ${Boost_FILESYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOCALE_LIBRARY})
 IF (WIN32)
     target_link_libraries(mud Ws2_32 Mswsock)
+ELSE()
+    target_link_libraries(mud icuuc icui18n pthread)
 ENDIF()
 
 
