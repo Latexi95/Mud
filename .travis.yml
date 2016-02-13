@@ -9,7 +9,7 @@ addons:
     - gcc-4.8
     - g++-4.8
     #- clang-3.8
-    #- libboost1.55-all-dev
+    - libboost1.55-all-dev
 compiler:
   - gcc
   #- clang
