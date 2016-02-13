@@ -14,6 +14,7 @@ public:
 
     void commandError(const std::string &msg);
     void commandError(const MessageBuilder &msg);
+    Client *client();
 private:
     Client *mClient;
 };

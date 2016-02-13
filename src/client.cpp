@@ -36,3 +36,13 @@ MessageContext &Client::msgCtx()
 {
     return mMessageContext;
 }
+
+const std::shared_ptr<editor::BaseEditor> &Client::editor() const
+{
+    return mEditor;
+}
+
+void Client::setEditor(const std::shared_ptr<editor::BaseEditor> &e)
+{
+    mEditor = e;
+}

@@ -6,14 +6,15 @@ addons:
     - boost-latest
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-4.6
-    - g++-4.6
+    #- gcc-4.6
+    #- g++-4.6
+    - clang-3.8
     - libboost1.55-all-dev
 compiler:
-  - gcc
-#  - clang
+  #- gcc
+  - clang
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.6" CC="gcc-4.6"; fi
+  - export CXX="clang++-3.8" CC="clang-3.8"; fi
 script: cmake . && make
 
 notifications:

@@ -22,8 +22,10 @@ public:
     std::unique_ptr<Item> item(const std::string &id);
     std::shared_ptr<Item> baseItem(const std::string &id);
 
-    void saveItem(const std::shared_ptr<Item> &item);
+    std::unique_ptr<Item> itemCopyForEditing(const std::string &id);
+    void storeItem(std::unique_ptr<Item> &&item);
 
+    void saveItem(const std::shared_ptr<Item> &item);
     bool loadAllItemTemplates();
 private:
     bool loadItemsFromDirectory(const std::string &path, const std::string &prefix);

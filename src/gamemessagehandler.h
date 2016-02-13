@@ -13,7 +13,7 @@ public:
     void handle(const std::shared_ptr<Client> &client, const std::string &message);
     void disconnected(const std::shared_ptr<Client> &client);
     void handleCommand(const std::shared_ptr<Client> &client, const std::string &message);
-
+    void handleEditorCommand(const std::shared_ptr<Client> &client, const std::string &message);
 private:
     LevelEventQueue *levelQueue() const;
 

@@ -8,6 +8,9 @@
 #include "messagecontext.h"
 
 class Player;
+namespace editor {
+class BaseEditor;
+}
 class Client : public std::enable_shared_from_this<Client> {
 public:
     Client(const std::shared_ptr<MessageHandler> &msgHandler);
@@ -21,10 +24,14 @@ public:
     void setPlayer(const std::shared_ptr<Player> &player);
     void setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler);
     MessageContext &msgCtx();
+
+    const std::shared_ptr<editor::BaseEditor> &editor() const;
+    void setEditor(const std::shared_ptr<editor::BaseEditor> &e);
 private:
     std::shared_ptr<Character> mCharacter;
     std::shared_ptr<MessageHandler> mMessageHandler;
     std::shared_ptr<Player> mPlayer;
+    std::shared_ptr<editor::BaseEditor> mEditor;
     MessageContext mMessageContext;
 };
 

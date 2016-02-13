@@ -3,6 +3,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include "stringbuilder.h"
+#include "util/textutils.h"
+
 static std::string sArticleA("a");
 static std::string sArticleAn("an");
 static std::string sArticleThe("the");
@@ -35,10 +37,12 @@ const std::string &Name::baseName() const {
     return mBase;
 }
 
-const std::string &Name::pluralForm() const {
+std::string Name::pluralForm() const {
     if (mPluralForm.empty()) {
-        mPluralForm = mBase;
-        mPluralForm+= 's';
+        if (boost::ends_with(mBase, "s") || boost::ends_with(mBase, "x") || boost::ends_with(mBase, "ch")) {
+            return mBase + 'es';
+        }
+        return mBase + 's';
     }
     return mPluralForm;
 }
@@ -88,8 +92,7 @@ std::string Name::num(int itemQuantity, bool definite) const {
 }
 
 Json::Value Name::serialize() const {
-    if (mPluralForm.empty() ||
-            (mPluralForm.size() + 1 == mBase.size() && mPluralForm[mPluralForm.size() - 1] == 's' && boost::starts_with(mPluralForm, mBase))) {
+    if (mPluralForm.empty()) {
         if (mFlags == NoFlags) {
             return Json::Value(mBase);
         }
@@ -149,4 +152,67 @@ bool Name::operator!=(const Name &n) const {
 
 bool Name::operator<(const Name &n) const {
     return this->mBase < n.mBase;
+}
+
+
+
+Name Name::fromParseString(std::string s)
+{
+    text::clean(s);
+    if (s.empty()) return Name();
+    std::string lower = boost::locale::to_lower(s);
+
+    int flags = NoFlags;
+    if (boost::starts_with(lower, "the ")) {
+        flags |= ProperNoun;
+        s = s.substr(4);
+    }
+    else if (boost::starts_with(lower, "a ")) {
+        s = s.substr(2);
+    }
+    else if (boost::starts_with(lower, "an ")){
+        flags |= UseArticleAn;
+        s = s.substr(3);
+    } else {
+        switch (lower[0]) {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+            flags |= UseArticleAn;
+            break;
+        default:
+            break;
+        }
+    }
+
+    std::string::size_type splitIndex = s.find("/");
+    if (splitIndex != std::string::npos) {
+        std::string base = s.substr(0, splitIndex);
+        std::string plural = s.substr(splitIndex + 1);
+        text::clean(plural);
+        text::clean(base);
+        return Name(base, plural, flags);
+    }
+
+    return Name(s, flags);
+}
+
+std::string Name::toParseString() const
+{
+    std::string ret;
+    if (mFlags & ProperNoun) {
+        ret = "the ";
+    } else if (mFlags & UseArticleAn) {
+        ret = "an ";
+    } else {
+        ret = "a ";
+    }
+    ret += mBase;
+    if (!mPluralForm.empty()) {
+        ret += '/';
+        ret += mPluralForm;
+    }
+    return ret;
 }

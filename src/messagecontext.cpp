@@ -25,3 +25,8 @@ void MessageContext::commandError(const MessageBuilder &msg)
 {
     mClient->sendMessage(msg);
 }
+
+Client *MessageContext::client()
+{
+    return mClient;
+}

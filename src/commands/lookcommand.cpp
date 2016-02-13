@@ -26,7 +26,7 @@ bool LookCommand::execute(const CommandContext &c, MessageContext &messageContex
         }
 
         MessageBuilder msg;
-        msg << MessageBuilder::NoSpace << r << ": " << r->description();
+        msg << r << ": " << r->description();
         if (!visibleItems.empty()) {
             msg.append(" You see ");
             msg.appendJoin(visibleItems, [](const std::pair<Name, int> &p){

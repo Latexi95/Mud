@@ -35,9 +35,9 @@ void Item::setName(const Name &n) {
 Json::Value Item::serialize() const {
     Json::Value ret(Json::objectValue);
     if (!mBase) {
-        ret["name"] = mName.serialize();
+        ret["name"] = Json::serialize(mName);
         ret["weight"] = mWeight;
-        ret["size"] = serialize();
+        ret["size"] = Json::serialize(mSize);
         if (!mTraits.empty()) {
             Json::Value traits(Json::objectValue);
             for (const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &t : mTraits) {

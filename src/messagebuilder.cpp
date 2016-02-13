@@ -268,7 +268,7 @@ bool MessageBuilder::backgroundColorSet(unsigned style)
 
 bool MessageBuilder::styleNoSpace(unsigned style)
 {
-    return (style & NoSpace) == NoSpace;
+    return (style & AutoSpace) != AutoSpace;
 }
 
 void MessageBuilder::setStyle(int style)

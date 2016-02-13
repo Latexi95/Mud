@@ -73,24 +73,52 @@ std::shared_ptr<Item> ResourceService::baseItem(const std::string &id) {
     return nullptr;
 }
 
+std::unique_ptr<Item> ResourceService::itemCopyForEditing(const std::string &id)
+{
+    std::shared_ptr<Item> base = baseItem(id);
+    if (!base) return std::unique_ptr<Item>();
+
+    std::unique_ptr<Item> ret(new Item(base->id()));
+    base->clone(*ret);
+    return std::move(ret);
+}
+
+void ResourceService::storeItem(std::unique_ptr<Item> &&item)
+{
+    boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
+    std::shared_ptr<Item> base = baseItem(item->id());
+    if (!base) {
+        base = std::shared_ptr<Item>(item.release());
+        mBaseItems[base->id()] = base;
+    }
+    else {
+        item->clone(*base);
+    }
+    saveItem(base);
+}
+
 void ResourceService::saveItem(const std::shared_ptr<Item> &item)
 {
     boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
-    std::string id = item->id();
-    if (id.empty()) {
+    std::string path = item->id();
+    if (path.empty()) {
         std::cerr << "Empty item id. Save failed." << std::endl;
         return;
     }
 
+    path += ".item";
+
     Json::Value val = Json::serialize(item);
 
     //Level item template
-    if (id[0] == '$') {
-        saveJsonFile(std::string("data/levels/") + (id.c_str() + 1), val);
+    if (path[0] == '$') {
+        path = std::string("data/levels/") + (path.c_str() + 1);
     }
     else {
-        saveJsonFile(std::string("data/levels/") + id.c_str(), val);
+        path = "data/items/" + path;
     }
+
+    saveJsonFile(path, val);
 }
 
 bool ResourceService::loadAllItemTemplates()

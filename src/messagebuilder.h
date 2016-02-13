@@ -41,7 +41,7 @@ public:
         BGWhite = 8 << 6,
 
 
-        NoSpace = 1 << 10
+        AutoSpace = 1 << 10
 
     };
 

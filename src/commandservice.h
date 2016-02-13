@@ -5,8 +5,6 @@
 class Command;
 class CommandEvent;
 
-
-
 class CommandService {
 public:
     CommandService();
@@ -16,9 +14,14 @@ public:
     const CommandParser &standardCommandParser() const;
 
 
+    const std::vector<std::shared_ptr<Command> > &editorCommands() const;
+    const CommandParser &editorCommandParser() const;
+
 private:
     std::vector<std::shared_ptr<Command>> mStandardCommands;
+    std::vector<std::shared_ptr<Command>> mEditorCommands;
     CommandParser mStandardCommandParser;
+    CommandParser mEditorCommandParser;
 };
 
 extern CommandService *CMDS;

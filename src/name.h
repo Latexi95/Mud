@@ -19,7 +19,7 @@ public:
     ~Name();
 
     const std::string &baseName() const;
-    const std::string &pluralForm() const;
+    std::string pluralForm() const;
     const std::string &undefiniteArticle() const;
     const std::string &definiteArticle() const;
 
@@ -35,9 +35,12 @@ public:
     bool operator==(const Name &n) const;
     bool operator!=(const Name &n) const;
     bool operator<(const Name &n) const;
+
+    static Name fromParseString(std::string s);
+    std::string toParseString() const;
 private:
     std::string mBase;
-    mutable std::string mPluralForm;
+    std::string mPluralForm;
     int mFlags;
 };
 

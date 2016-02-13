@@ -24,18 +24,18 @@ void PlayerEventHandler::handleEvent(const std::shared_ptr<Character> &character
 void PlayerEventHandler::visit(MessageEvent *msgEvent)
 {
     if (msgEvent->sender() != mCharacter) {
-        mClient->sendMessage(MessageBuilder() << msgEvent->sender() << MessageBuilder::NoSpace << ": " << msgEvent->message());
+        mClient->sendMessage(MessageBuilder() << msgEvent->sender() << ": " << msgEvent->message());
     }
 }
 
 void PlayerEventHandler::visit(JoinEvent *e)
 {
-    mClient->sendMessage(MessageBuilder("Player ") << e->character() << "joined the game.");
+    mClient->sendMessage(MessageBuilder("Player ") << e->character() << " joined the game.");
 }
 
 void PlayerEventHandler::visit(DisconnectEvent *e)
 {
-    mClient->sendMessage(MessageBuilder("Player ") << e->character() << "disconnected from the game.");
+    mClient->sendMessage(MessageBuilder("Player ") << e->character() << " disconnected from the game.");
 }
 
 void PlayerEventHandler::visit(MoveStartEvent *e)
@@ -49,10 +49,10 @@ void PlayerEventHandler::visit(MoveEndEvent *e)
 {
     Room *r = e->targetRoom();
     if (e->character() == mCharacter) {
-        mClient->sendMessage(MessageBuilder() << "Arrived" << r->name());
+        mClient->sendMessage(MessageBuilder() << "Arrived " << r->name());
         mClient->sendMessage(MessageBuilder() << "Target");
     }
     else {
-        mClient->sendMessage(MessageBuilder() << e->character() << "walked here");
+        mClient->sendMessage(MessageBuilder() << e->character() << " walked here");
     }
 }

@@ -103,7 +103,7 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
 
     auto cmdIt = closestCommand(cmdName);
     if (cmdIt == mCommands.end()) {
-        messageContext.send("Can't find command \"" + cmdName + "\".");
+        messageContext.commandError("Can't find command \"" + cmdName + "\".");
         return false;
     }
     if ((*cmdIt)->base() != cmdName) {
@@ -137,11 +137,11 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
                 }
                 errorMessage += (*i)->base();
             }
-            messageContext.send(errorMessage);
+            messageContext.commandError(errorMessage);
             return false;
         }
         else if (possiblities == 0) {
-            messageContext.send("Can't find command \"" + cmdName + "\".");
+            messageContext.commandError("Can't find command \"" + cmdName + "\".");
             return false;
         }
         else {
@@ -149,13 +149,11 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
         }
     }
 
+    {
+        Command *cmd = (*cmdIt).get();
 
-    std::vector<std::string> params;
-    if (firstSpaceIndex != std::string::npos) {
-        if ((*cmdIt)->singleParameter()) {
-             params.emplace_back(trimmedCmd.substr(firstSpaceIndex + 1));
-        }
-        else {
+        std::vector<std::string> params;
+        if (firstSpaceIndex != std::string::npos) {
             auto paramListBegin = trimmedCmd.begin() + firstSpaceIndex;
             auto paramListEnd = trimmedCmd.end();
             for (auto i = paramListBegin; i != paramListEnd; ++i) {
@@ -168,11 +166,17 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
                         ++i;
                     }
                     if (i == paramListEnd) {
-                        messageContext.send("Expecting \" to close the quotation.");
+                        messageContext.commandError("Expecting \" to close the quotation.");
                         return false;
                     }
 
                     params.emplace_back(paramStart, i);
+                    continue;
+                }
+
+                if (params.size() == cmd->minParameters() - 1 && cmd->limitlessLastParameter()) {
+                    params.emplace_back(i, paramListEnd);
+                    break;
                 }
 
                 auto paramStart = i;
@@ -182,26 +186,17 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
                 params.emplace_back(paramStart, i);
                 if (i == paramListEnd) break;
             }
-        }
-    }
 
-    {
-        Command *cmd = (*cmdIt).get();
-
-        if (cmd->singleParameter()) {
-            if (params.empty()) {
-                messageContext.send("Expecting a parameter.\r\n" + cmd->usage());
-                return false;
-            }
         }
+
 
         unsigned minParams = cmd->minParameters();
         unsigned maxParams = cmd->maxParameters();
         if (params.size() < minParams) {
-            messageContext.send("Too few parameters.\r\n" + cmd->usage());
+            messageContext.commandError("Too few parameters.\r\n" + cmd->usage());
             return false;
         } else if (params.size() > maxParams) {
-            messageContext.send("Too many parameters.\r\n" + cmd->usage());
+            messageContext.commandError("Too many parameters.\r\n" + cmd->usage());
             return false;
         }
 

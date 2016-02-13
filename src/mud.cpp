@@ -5,6 +5,7 @@
 #include "resourceservice.h"
 #include "characterservice.h"
 #include "levelservice.h"
+#include "editor/editorservice.h"
 
 //100ms
 #define STEP_TIME 100 //ms
@@ -20,6 +21,7 @@ Mud::Mud() :
     mResourceService(new ResourceService()),
     mLevelService(new LevelService()),
     mCharacterService(new CharacterService()),
+    mEditorService(new EditorService()),
     mEventQueue(2) {
 
     MUD = this;

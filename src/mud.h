@@ -9,6 +9,7 @@ class PlayerService;
 class ResourceService;
 class CharacterService;
 class LevelService;
+class EditorService;
 
 class Mud {
 public:
@@ -30,6 +31,7 @@ private:
     std::unique_ptr<ResourceService> mResourceService;
     std::unique_ptr<LevelService> mLevelService;
     std::unique_ptr<CharacterService> mCharacterService;
+    std::unique_ptr<EditorService> mEditorService;
 
     MainEventQueue mEventQueue;
     std::chrono::system_clock::time_point mLastUpdate;

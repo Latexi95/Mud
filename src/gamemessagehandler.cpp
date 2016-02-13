@@ -37,13 +37,24 @@ void GameMessageHandler::handleCommand(const std::shared_ptr<Client> &client, co
     parser.parse(message, std::move(ctx), client);
 }
 
+void GameMessageHandler::handleEditorCommand(const std::shared_ptr<Client> &client, const std::string &message)
+{
+    CommandContext ctx;
+    ctx.mCaller = mCharacter;
+    const CommandParser &parser = CMDS->editorCommandParser();
+    parser.parse(message, std::move(ctx), client);
+}
+
 LevelEventQueue *GameMessageHandler::levelQueue() const
 {
     return mCharacter->level()->eventQueue();
 }
 
 void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
-    if (message.size() >= 1 && message[0] != '!' && message[0] != ' ') {
+    if (message.size() >= 1 && message[0] == '$') {
+        handleEditorCommand(client, message.substr(1));
+    }
+    else if (message.size() >= 1 && message[0] != '!' && message[0] != ' ') {
         handleCommand(client, message);
     }
     else {
