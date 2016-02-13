@@ -1,7 +1,13 @@
 language: cpp
-before_script:
-  - sudo apt-get update -qq
-  - sudo apt-get install libboost-dev
+addons:
+  apt:
+    sources:
+    - boost-latest
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.9
+    - g++-4.9
+    - libboost1.59-all-dev
 compiler:
   - gcc
 #  - clang
