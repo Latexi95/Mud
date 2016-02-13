@@ -88,17 +88,17 @@ void Item::deserialize(const Json::Value &val) {
         for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
 
             if (i->isNull()) {
-                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.memberName());
+                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.name());
                 if (!trait) {
-                    std::cerr << "Invalid trait name \"" << i.memberName() << "\"" << std::endl;
+                    std::cerr << "Invalid trait name \"" << i.name() << "\"" << std::endl;
                     continue;
                 }
                 mTraits[(unsigned)trait->type()] = std::move(trait);
             }
             else {
-                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.memberName());
+                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.name());
                 if (!trait) {
-                    std::cerr << "Invalid trait name \"" << i.memberName() << "\"" << std::endl;
+                    std::cerr << "Invalid trait name \"" << i.name() << "\"" << std::endl;
                     continue;
                 }
                 assert(trait);

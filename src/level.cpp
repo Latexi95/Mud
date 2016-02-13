@@ -3,10 +3,9 @@
 #include <boost/lexical_cast.hpp>
 #include "item.h"
 #include "room.h"
+#include <boost/thread.hpp>
 
-thread_local Level *LEVEL = 0;
-
-
+thread_local Level *LEVEL;
 
 Level::Level() :
     mId(),
@@ -74,7 +73,17 @@ void Level::sendEventToCharacters(Event *e) {
 
 bool Level::isAccessSafe() const
 {
-    return LEVEL == (Level*)-1 || LEVEL == this;
+    return current() == (Level*)-1 || current() == this;
+}
+
+Level *Level::current()
+{
+    return LEVEL;
+}
+
+Level *Level::setCurrent(Level *l)
+{
+    LEVEL = l;
 }
 
 bool Level::resolveRoomExits()
@@ -89,8 +98,6 @@ bool Level::resolveRoomExits()
     }
     return success;
 }
-
-
 
 Json::Value Json::Serializer<Level>::serialize(const Level &l)
 {

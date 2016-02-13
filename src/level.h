@@ -10,6 +10,12 @@
 #include "leveleventqueue.h"
 #include "room.h"
 
+#ifdef __GNUC__
+# define thread_local __thread
+#elif defined(_MSC_VER)
+# define thread_local __declspec(thread)
+#endif
+
 class Item;
 class Character;
 class LevelEventQueue;
@@ -52,6 +58,9 @@ public:
       * Eg. current thread is now processing this LevelEventQueue or MainEventQueue.
       */
     bool isAccessSafe() const;
+
+    static Level *current();
+    static Level *setCurrent(Level *l);
 protected:
     bool resolveRoomExits();
 

@@ -52,7 +52,7 @@ void MainEventQueue::handle(time_type t)
         mHandleQueue.push_back(e);
     });
 
-    LEVEL = (Level*)-1;
+    Level::setCurrent((Level*)-1);
     for (Event *e : mHandleQueue) {
         e->execute();
         if (e->eventLoopHasOwnership()) delete e;
@@ -60,7 +60,7 @@ void MainEventQueue::handle(time_type t)
     mHandleQueue.clear();
     if (t != 0)
         mTimedEventQueue.advance(t);
-    LEVEL = 0;
+    Level::setCurrent(0);
 
     //Just to make sure there is not chance that event loop handling overlaps
     while (mWorkInQueue.load(boost::memory_order_acquire));

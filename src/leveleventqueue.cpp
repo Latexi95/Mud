@@ -33,7 +33,7 @@ void LevelEventQueue::handle(time_type t) {
         mHandleQueue.push_back(e);
     });
 
-    LEVEL = mLevel;
+    Level::setCurrent(mLevel);
     for (Event *e : mHandleQueue) {
         e->execute();
         if (e->eventLoopHasOwnership()) delete e;
@@ -44,5 +44,5 @@ void LevelEventQueue::handle(time_type t) {
         mTimedEventQueue.advance(t);
     }
 
-    LEVEL = 0;
+    Level::setCurrent(0);
 }

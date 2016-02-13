@@ -127,7 +127,7 @@ struct Serializer<std::unordered_map<std::string, T> > {
         if (!v.isObject()) throw SerializationException("Expecting an object type to deserialize to std::unordered_map<std::string, T>");
 
         for (auto it = v.begin(); it != v.end(); ++it) {
-            Json::deserialize(*it, m[it.memberName()]);
+            Json::deserialize(*it, m[it.name()]);
         }
     }
 };

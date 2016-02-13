@@ -26,7 +26,7 @@ void Color::loadColors() {
     for (Json::ValueIterator i = v.begin(); i != v.end(); ++i) {
         sColors.emplace_back();
         Color &color = sColors.back();
-        color.mName = i.memberName();
+        color.mName = i.name();
         sNameMap[color.mName] = &color;
         assert(i->isObject());
         Json::Value alts = i->get("alts", Json::Value());

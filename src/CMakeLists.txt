@@ -15,7 +15,7 @@ list(APPEND SRC ${SRC_GLOB})
 
 
 include("CMakeCompilerSettings.cmake")
-
+message("${CMAKE_CXX_FLAGS}")
 add_executable(mud ${SRC})
 target_link_libraries(mud jsoncpp_lib_static)
 target_link_libraries(mud ${Boost_FILESYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOCALE_LIBRARY})

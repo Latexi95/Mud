@@ -213,7 +213,7 @@ void Serializer<Room>::deserialize(const Value &v, Room &r)
     Value looks = v["looks"];
     if (looks.isObject()) {
         for (auto lookIt = looks.begin(); lookIt != looks.end(); ++lookIt) {
-            Json::deserialize(*lookIt, r.mLookMap[lookIt.memberName()]);
+            Json::deserialize(*lookIt, r.mLookMap[lookIt.name()]);
         }
     }
 
