@@ -40,7 +40,7 @@ const std::string &Name::baseName() const {
 std::string Name::pluralForm() const {
     if (mPluralForm.empty()) {
         if (boost::ends_with(mBase, "s") || boost::ends_with(mBase, "x") || boost::ends_with(mBase, "ch")) {
-            return mBase + 'es';
+            return mBase + "es";
         }
         return mBase + 's';
     }

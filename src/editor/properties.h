@@ -18,8 +18,10 @@ template <typename T>
 class Properties
 {
 public:
+    typedef T value_type;
+
     struct Accessor {
-        std::function<bool(T*, const std::string)> mSetter;
+        std::function<void(T*, const std::string)> mSetter;
         std::function<std::string(T*)> mGetter;
     };
 
@@ -78,7 +80,8 @@ bool Properties<T>::set(const Context<T> &c, const std::string &name, const std:
     auto it = findProperty(c, name);
     if (it == mProperties.end()) return false;
 
-    return it->second.mSetter(c.mTarget, value);
+    it->second.mSetter(c.mTarget, value);
+    return true;
 }
 template <typename T>
 std::string Properties<T>::get(const Context<T> &c, const std::string &name)

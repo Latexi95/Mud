@@ -2,6 +2,8 @@
 #include "client.h"
 #include "item.h"
 #include "resourceservice.h"
+#include "propertyserializer.h"
+#include <type_traits>
 
 using namespace editor;
 
@@ -34,15 +36,15 @@ void BaseEditor::setQueuedEditor(const std::shared_ptr<BaseEditor> &queuedEditor
 }
 
 
+#define ADD_PROPERTY(_PROPERTIES, _NAME, _TYPE, _GETTER, _SETTER) \
+    _PROPERTIES.addProperty(_NAME, \
+        [](decltype(_PROPERTIES)::value_type *base) { return property::to_string(base->_GETTER()); }, \
+        [](decltype(_PROPERTIES)::value_type *base, const std::string &value) { return base->_SETTER(property::from_string<_TYPE>(value));})
 void BaseEditor::setupEditors()
 {
-    sItemProperties.addProperty("name", [](const Item *item) {
-        return item->name().toParseString();
-    },
-    [](Item *item, const std::string &value) {
-        item->setName(Name::fromParseString(value));
-        return true;
-    });
+    ADD_PROPERTY(sItemProperties, "name", Name, name, setName);
+    ADD_PROPERTY(sItemProperties, "weight", double, weight, setWeight);
+    ADD_PROPERTY(sItemProperties, "size", Box<float>, size, setSize);
 }
 
 ItemEditor::ItemEditor(std::unique_ptr<Item> &&item, Client *client) :
@@ -98,13 +100,13 @@ void ItemEditor::quit()
 void ItemEditor::handleSet(const std::string &id, const std::string &value)
 {
     MessageContext &msgCtx = mClient->msgCtx();
-    if (!sItemProperties.hasProperty(id)) {
-        msgCtx.commandError(MessageBuilder() << "  Can't find property " << id);
-        return;
+    try {
+        if (!sItemProperties.set(mContext, id, value)) {
+            msgCtx.commandError(MessageBuilder() << "  Can't find property '" << id << "'");
+        }
     }
-
-    if (!sItemProperties.set(mContext, id, value)) {
-        msgCtx.commandError(MessageBuilder() << "  Failed to set " << id << " to value \"" << value << "\"");
+    catch (const property::Exception &e) {
+        msgCtx.commandError(MessageBuilder() << "  " << e.mMessage);
     }
 }
 
@@ -112,9 +114,9 @@ void ItemEditor::handleGet(const std::string &id)
 {
     MessageContext &msgCtx = mClient->msgCtx();
     if (!sItemProperties.hasProperty(id)) {
-        msgCtx.commandError(MessageBuilder() << "  Can't find property " << id);
+        msgCtx.commandError(MessageBuilder() << "  Can't find property '" << id << "'");
         return;
     }
 
-    msgCtx.send(MessageBuilder() << ">> " << sItemProperties.get(mContext, id));
+    msgCtx.send(MessageBuilder() << id << ": " << sItemProperties.get(mContext, id));
 }

@@ -1,6 +1,7 @@
 #ifndef BOX_H
 #define BOX_H
 #include "jsonserializable.h"
+#include "util/textutils.h"
 template <typename T>
 struct Box
 {
@@ -20,8 +21,36 @@ struct Box
     Box<T> expanded(T xe, T ye, T ze) { return Box<T>(x + xe, y + ye, z + ze); }
     Box<T> expanded(const Box<T> &b) { return Box<T>(x + b.x, y + b.y, z + b.z); }
 
+    std::string toString() const;
+    static Box<T> fromString(const std::string &string);
+
     T x, y, z;
 };
+template <typename T>
+std::string Box<T>::toString() const
+{
+    return std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z);
+}
+
+template <typename T>
+Box<T> Box<T>::fromString(const std::string &string)
+{
+    std::vector<std::string> parts = text::split(string,',');
+    if (parts.size() != 3) {
+        throw SerializationException("Expecting 3 values separated with ','");
+    }
+
+    for (std::string &p : parts) {
+        text::strip(p);
+    }
+    try {
+        return Box<T>(lexical_cast<T>(parts[0]), boost::lexical_cast<T>(parts[1]), boost::lexical_cast<T>(parts[2]));
+    }
+    catch (const boost::bad_lexical_cast &c) {
+        throw SerializationException("Can't convert to a number");
+    }
+}
+
 namespace Json {
 
 template <typename T>
