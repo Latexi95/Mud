@@ -3,7 +3,7 @@
 #include <memory>
 #include "character.h"
 #include <boost/thread/mutex.hpp>
-#include "enums.h"
+#include "util/enums.h"
 
 class CharacterService {
 public:

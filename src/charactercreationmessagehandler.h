@@ -1,6 +1,6 @@
 #ifndef CHARACTERCREATIONMESSAGEHANDLER_H
 #define CHARACTERCREATIONMESSAGEHANDLER_H
-#include "messagehandler.h"
+#include "com/messagehandler.h"
 #include "character.h"
 #include <queue>
 #include "util/color.h"

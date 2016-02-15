@@ -1,8 +1,8 @@
 #ifndef PROPERTYSERIALIZER_H
 #define PROPERTYSERIALIZER_H
 #include "properties.h"
-#include "messagecontext.h"
-#include "box.h"
+#include "com/messagecontext.h"
+#include "util/box.h"
 #include <functional>
 namespace editor {
 namespace property {

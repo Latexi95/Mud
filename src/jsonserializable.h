@@ -5,8 +5,8 @@
 #include <utility>
 #include <type_traits>
 #include <unordered_map>
-#include "enums.h"
-#include "common.h"
+#include "util/enums.h"
+#include "util/defines.h"
 
 class SerializationException : public std::exception {
 public:

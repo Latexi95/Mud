@@ -1,7 +1,7 @@
 #ifndef COMMANDSERVICE_H
 #define COMMANDSERVICE_H
 #include "charactereventhandler.h"
-#include "commandparser.h"
+#include "commands/commandparser.h"
 class Command;
 class CommandEvent;
 

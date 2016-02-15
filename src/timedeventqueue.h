@@ -3,7 +3,7 @@
 #include <queue>
 #include <boost/thread/mutex.hpp>
 #include <cstdint>
-#include "common.h"
+#include "util/defines.h"
 class Event;
 
 class TimedEventQueue {

@@ -1,7 +1,7 @@
 #ifndef LEVELEVENTQUEUE_H
 #define LEVELEVENTQUEUE_H
 #include <boost/lockfree/queue.hpp>
-#include "common.h"
+#include "util/defines.h"
 #include "timedeventqueue.h"
 
 class Event;

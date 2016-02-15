@@ -1,7 +1,5 @@
 
 #include <iostream>
-#include "dicerandom.h"
-#include "dicesequence.h"
 #include "mud.h"
 #include "server/mudserver.h"
 #include "util/color.h"

@@ -2,7 +2,7 @@
 #define MESSAGEBUILDER_H
 #include <string>
 #include <vector>
-#include "name.h"
+#include "util/name.h"
 class Item;
 class Character;
 

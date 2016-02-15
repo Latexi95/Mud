@@ -3,7 +3,7 @@
 #include "item.h"
 #include "jsonserializable.h"
 #include <map>
-#include "position.h"
+#include "util/position.h"
 #include "util/color.h"
 
 class Level;

@@ -3,7 +3,7 @@
 #include "item.h"
 #include "character.h"
 
-#include "enums.h"
+#include "util/enums.h"
 #include "roomexit.h"
 #include "jsonserializable.h"
 

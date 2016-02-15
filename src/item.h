@@ -5,12 +5,10 @@
 #include <memory>
 #include <unordered_map>
 
-#include "name.h"
-#include "box.h"
-#include "defines.h"
-#include "enums.h"
-
-#include "reflection.h"
+#include "util/name.h"
+#include "util/box.h"
+#include "util/defines.h"
+#include "util/enums.h"
 
 class ItemTrait;
 class Item {

@@ -1,7 +1,7 @@
 #ifndef MOVECOMMAND_H
 #define MOVECOMMAND_H
 #include "command.h"
-#include "enums.h"
+#include "util/enums.h"
 
 class WalkCommand : public Command
 {

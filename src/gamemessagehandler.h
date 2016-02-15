@@ -1,8 +1,7 @@
 #ifndef GAMEMESSAGEHANDLER_H
 #define GAMEMESSAGEHANDLER_H
-#include "messagehandler.h"
+#include "com/messagehandler.h"
 #include <memory>
-#include "commandparser.h"
 class Player;
 class Character;
 class LevelEventQueue;

@@ -3,7 +3,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
 #include "util/textutils.h"
-#include "messagecontext.h"
+#include "com/messagecontext.h"
 #include "events/commandevent.h"
 #include "maineventqueue.h"
 #include "character.h"

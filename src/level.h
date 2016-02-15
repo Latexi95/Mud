@@ -6,15 +6,10 @@
 #include "item.h"
 #include "room.h"
 #include "jsonserializable.h"
-#include "position.h"
+#include "util/position.h"
 #include "leveleventqueue.h"
 #include "room.h"
-
-#ifdef __GNUC__
-# define thread_local __thread
-#elif defined(_MSC_VER)
-# define thread_local __declspec(thread)
-#endif
+#include "util/defines.h"
 
 class Item;
 class Character;

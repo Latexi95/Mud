@@ -7,7 +7,7 @@
 #include "player.h"
 #include "util/textutils.h"
 #include <boost/filesystem.hpp>
-#include "defines.h"
+#include "util/defines.h"
 #include <boost/thread/lock_guard.hpp>
 
 namespace fs = boost::filesystem;

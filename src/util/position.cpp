@@ -1,4 +1,4 @@
-#include "position.h"
+#include "util/position.h"
 
 Position::Position() :
     mX(0),

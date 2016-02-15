@@ -1,6 +1,6 @@
 #ifndef JOINMESSAGEHANDLER_H
 #define JOINMESSAGEHANDLER_H
-#include "messagehandler.h"
+#include "com/messagehandler.h"
 
 class JoinMessageHandler : public MessageHandler {
 public:

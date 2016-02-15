@@ -2,7 +2,7 @@
 #define ROOMEXIT_H
 #include <string>
 #include <memory>
-#include "defines.h"
+#include "util/defines.h"
 #include "jsonserializable.h"
 
 class Room;

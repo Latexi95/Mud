@@ -3,7 +3,7 @@
 #include <string>
 #include <utility>
 #include <functional>
-#include "messagebuilder.h"
+#include "com/messagebuilder.h"
 #include <map>
 
 namespace editor {

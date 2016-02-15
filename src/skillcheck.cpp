@@ -1,5 +1,5 @@
 #include "skillcheck.h"
-#include "dicerandom.h"
+#include "util/dicerandom.h"
 #include "character.h"
 #include <algorithm>
 

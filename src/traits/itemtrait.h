@@ -3,7 +3,7 @@
 #include "jsonserializable.h"
 #include <memory>
 #include <boost/algorithm/string.hpp>
-#include "enums.h"
+#include "util/enums.h"
 
 class ItemTrait {
 public:

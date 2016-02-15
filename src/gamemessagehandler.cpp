@@ -13,7 +13,6 @@
 #include "commandservice.h"
 
 
-
 GameMessageHandler::GameMessageHandler(Client *c, const std::shared_ptr<Character> &character):
     mCharacter(character),
     mPlayer(c->player()),

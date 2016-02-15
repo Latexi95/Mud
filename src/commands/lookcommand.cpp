@@ -2,7 +2,7 @@
 #include "levelservice.h"
 #include "characterservice.h"
 #include "util/textutils.h"
-#include "messagecontext.h"
+#include "com/messagecontext.h"
 
 LookCommand::LookCommand() :
     Command("look", "look around/object_name")

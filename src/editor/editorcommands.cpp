@@ -1,7 +1,7 @@
 #include "editorcommands.h"
 #include "characterservice.h"
 #include "item.h"
-#include "messagecontext.h"
+#include "com/messagecontext.h"
 #include "client.h"
 #include "editor.h"
 #include "util/textutils.h"

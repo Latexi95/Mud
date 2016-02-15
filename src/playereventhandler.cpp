@@ -1,7 +1,7 @@
 #include "playereventhandler.h"
 #include "client.h"
 #include "events/messageevent.h"
-#include "messagebuilder.h"
+#include "com/messagebuilder.h"
 #include "events/connectionevents.h"
 #include "events/moveevent.h"
 #include "room.h"

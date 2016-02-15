@@ -4,7 +4,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
-#include "common.h"
+#include "util/defines.h"
 #include "timedeventqueue.h"
 class LevelEventQueue;
 class Event;

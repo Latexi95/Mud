@@ -3,9 +3,9 @@
 #include <memory>
 
 #include "character.h"
-#include "messagehandler.h"
-#include "messagebuilder.h"
-#include "messagecontext.h"
+#include "com/messagehandler.h"
+#include "com/messagebuilder.h"
+#include "com/messagecontext.h"
 
 class Player;
 namespace editor {

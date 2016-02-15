@@ -1,8 +1,8 @@
-#include "name.h"
+#include "util/name.h"
 #include <boost/locale.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include "stringbuilder.h"
+#include "util/stringbuilder.h"
 #include "util/textutils.h"
 
 static std::string sArticleA("a");

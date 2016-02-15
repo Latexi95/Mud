@@ -4,7 +4,7 @@
 #include "level.h"
 #include "events/moveevent.h"
 #include "characterservice.h"
-#include "messagecontext.h"
+#include "com/messagecontext.h"
 
 
 

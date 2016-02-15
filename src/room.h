@@ -4,7 +4,7 @@
 #include <array>
 #include "wall.h"
 #include "traits/roomtrait.h"
-#include "defines.h"
+#include "util/defines.h"
 
 #include "jsonserializable.h"
 
