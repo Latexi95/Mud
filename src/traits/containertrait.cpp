@@ -57,3 +57,8 @@ void ContainerTrait::deserialize(const Json::Value &val) {
     }
 }
 
+void ContainerTrait::accept(ItemTraitVisitor *visitor)
+{
+    visitor->visit(this);
+}
+

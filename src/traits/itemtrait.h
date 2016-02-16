@@ -5,6 +5,21 @@
 #include <boost/algorithm/string.hpp>
 #include "util/enums.h"
 
+class ContainerTrait;
+class LandmarkTrait;
+class LockedTrait;
+class WeaponTrait;
+class EatableTrait;
+class ItemTraitVisitor {
+public:
+    virtual void visit(ContainerTrait *t);
+    virtual void visit(LandmarkTrait *t);
+    virtual void visit(LockedTrait *t);
+    virtual void visit(WeaponTrait *t);
+    virtual void visit(EatableTrait *t);
+};
+
+
 class ItemTrait {
 public:
     ItemTrait();
@@ -18,6 +33,7 @@ public:
     virtual Json::Value serialize() const = 0;
     virtual void deserialize(const Json::Value &val) = 0;
 
+    virtual void accept(ItemTraitVisitor *visitor) = 0;
 protected:
     void serializeBase(Json::Value &val) const;
 };

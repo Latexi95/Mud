@@ -12,19 +12,22 @@ public:
         Closed,
         Opened
     };
+    static const ItemTraitType staticTraitType = ItemTraitType::Container;
 
     ContainerTrait();
-    ~ContainerTrait();
+    virtual ~ContainerTrait();
     ItemTraitType type() const { return ItemTraitType::Container; }
+
 
     ContainerType containerType() const { return mContainerType; }
     void setContainerType(ContainerType t) { mContainerType = t; }
     const std::vector<std::unique_ptr<Item> > &containedItems() const { return mContainedItems; }
 
     std::unique_ptr<ItemTrait> clone() const;
-    Json::Value serialize() const;
-    void deserialize(const Json::Value &val);
+    virtual Json::Value serialize() const;
+    virtual void deserialize(const Json::Value &val);
 
+    virtual void accept(ItemTraitVisitor *visitor);
     const char *traitName() const { return "container"; }
 private:
     std::vector<std::unique_ptr<Item>> mContainedItems;

@@ -22,3 +22,8 @@ void WeaponTrait::deserialize(const Json::Value &val) {
 
 }
 
+void WeaponTrait::accept(ItemTraitVisitor *visitor)
+{
+    visitor->visit(this);
+}
+

@@ -21,6 +21,7 @@ public:
     typedef T value_type;
 
     struct Accessor {
+        std::function<bool(T*)> mAvailable;
         std::function<void(T*, const std::string)> mSetter;
         std::function<std::string(T*)> mGetter;
     };
@@ -29,9 +30,12 @@ public:
 
     template <typename GETTER, typename SETTER>
     void addProperty(const std::string &name, GETTER &&getter, SETTER &&setter);
+    template <typename AVAILABILITY, typename GETTER, typename SETTER>
+    void addProperty(const std::string &name, AVAILABILITY &&availibility, GETTER &&getter, SETTER &&setter);
+
     void addProperty(const std::string &name, Accessor &&accessor);
 
-    bool hasProperty(const std::string &name);
+    bool hasProperty(const Context<T> &c,const std::string &name);
     void removeProperty(const std::string &name);
 
     bool set(const Context<T> &c, const std::string &name, const std::string &value);
@@ -52,7 +56,15 @@ template <typename T>
 template<typename GETTER, typename SETTER>
 void Properties<T>::addProperty(const std::string &name, GETTER &&getter, SETTER &&setter)
 {
-    Properties<T>::Accessor a = {setter, getter};
+    Properties<T>::Accessor a = {[](T *){return true;}, setter, getter};
+    addProperty(name, std::move(a));
+}
+
+template <typename T>
+template<typename AVAILABILITY, typename GETTER, typename SETTER>
+void Properties<T>::addProperty(const std::string &name,AVAILABILITY &&availability, GETTER &&getter, SETTER &&setter)
+{
+    Properties<T>::Accessor a = {availability, setter, getter};
     addProperty(name, std::move(a));
 }
 
@@ -62,9 +74,11 @@ void Properties<T>::addProperty(const std::string &name, Accessor &&accessor)
     mProperties[name] = std::move(accessor);
 }
 template <typename T>
-bool Properties<T>::hasProperty(const std::string &name)
+bool Properties<T>::hasProperty(const Context<T> &c, const std::string &name)
 {
-    return mProperties.find(name) != mProperties.end();
+    auto it = mProperties.find(name);
+    if (it == mProperties.end()) return false;
+    return it->second.mAvailable(c.mTarget);
 }
 template <typename T>
 void Properties<T>::removeProperty(const std::string &name)
@@ -77,8 +91,8 @@ void Properties<T>::removeProperty(const std::string &name)
 template <typename T>
 bool Properties<T>::set(const Context<T> &c, const std::string &name, const std::string &value)
 {
-    auto it = findProperty(c, name);
-    if (it == mProperties.end()) return false;
+    auto it = mProperties.find(name);
+    if (it == mProperties.end() || !it->second.mAvailable(c.mTarget)) return false;
 
     it->second.mSetter(c.mTarget, value);
     return true;

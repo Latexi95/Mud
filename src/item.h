@@ -9,8 +9,8 @@
 #include "util/box.h"
 #include "util/defines.h"
 #include "util/enums.h"
+#include "traits/itemtrait.h"
 
-class ItemTrait;
 class Item {
 public:
     Item();
@@ -29,7 +29,14 @@ public:
     void deserialize(const Json::Value &val);
 
     bool hasTrait(ItemTraitType traitType);
-    const ItemTrait &trait(ItemTraitType type);
+    template <typename TraitT>
+    bool hasTrait();
+
+    ItemTrait *trait(ItemTraitType type);
+    template <typename TraitT>
+    TraitT *trait();
+
+    const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &traits() const;
 
     void clone(Item &copy) const;
     std::unique_ptr<Item> clone() const;
@@ -44,6 +51,17 @@ protected:
     std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > mTraits;
 };
 
+template <typename TraitT>
+bool Item::hasTrait() {
+    return mTraits.find(TraitT::staticTraitType()) != mTraits.end();
+}
+
+template <typename TraitT>
+TraitT *Item::trait() {
+    auto it = mTraits.find(TraitT::staticTraitType());
+    if (it == mTraits.end()) return nullptr;
+    return static_cast<TraitT*>(it->second.get());
+}
 
 namespace Json {
 template<>

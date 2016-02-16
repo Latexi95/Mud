@@ -32,3 +32,23 @@ void ItemTrait::serializeBase(Json::Value &val) const {
     val["traitname"] = traitName();
 }
 
+
+void ItemTraitVisitor::visit(ContainerTrait *t)
+{
+}
+
+void ItemTraitVisitor::visit(LandmarkTrait *t)
+{
+}
+
+void ItemTraitVisitor::visit(LockedTrait *t)
+{
+}
+
+void ItemTraitVisitor::visit(WeaponTrait *t)
+{
+}
+
+void ItemTraitVisitor::visit(EatableTrait *t)
+{
+}

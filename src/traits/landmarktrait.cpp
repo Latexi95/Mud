@@ -22,3 +22,8 @@ Json::Value LandmarkTrait::serialize() const {
 void LandmarkTrait::deserialize(const Json::Value &val) {
 
 }
+
+void LandmarkTrait::accept(ItemTraitVisitor *visitor)
+{
+    visitor->visit(this);
+}

@@ -29,7 +29,8 @@ enum class ItemTraitType {
     Weapon,
     Container,
     Locked,
-    Landmark
+    Landmark,
+    Eatable
 };
 
 enum class MoveType {

@@ -131,17 +131,21 @@ bool Item::hasTrait(ItemTraitType type) {
     return false;
 }
 
-const ItemTrait &Item::trait(ItemTraitType type) {
+ItemTrait *Item::trait(ItemTraitType type) {
     auto traitIt = mTraits.find((unsigned)type);
     if (traitIt != mTraits.end()) {
         if (traitIt->second)
-            return *traitIt->second;
+            return traitIt->second.get();
     }
     else if (mBase) {
         return mBase->trait(type);
     }
-    assert("Item doesn't have a trait with that name" && 0);
-    return mBase->trait(type);
+    return nullptr;
+}
+
+const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &Item::traits() const
+{
+    return mTraits;
 }
 
 void Item::clone(Item &copy) const
