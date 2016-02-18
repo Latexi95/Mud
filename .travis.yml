@@ -17,7 +17,7 @@ install:
   - export CXX="g++-4.8" CC="gcc-4.8";
 script:
   - mkdir build && cd build && cmake -DBoost_USE_STATIC_LIBS=OFF .. && make && cd ..
-  - cd bin && ../build/tests/unittest
+  - cd bin && ../build/tests/unit_test
 
 notifications:
   irc:
