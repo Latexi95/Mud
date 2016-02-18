@@ -1,6 +1,11 @@
 if (NOT DEFINED Boost_USE_STATIC_LIBS)
-	set(Boost_USE_STATIC_LIBS    ON)
+    set(Boost_USE_STATIC_LIBS    ON)
 endif()
+
+if (NOT Boost_USE_STATIC_LIBS)
+    ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+endif()
+
 set(Boost_USE_MULTITHREADED  ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 add_definitions(-DBOOST_NO_AUTO_PTR)
