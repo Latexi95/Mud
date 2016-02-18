@@ -15,11 +15,15 @@ compiler:
   #- clang
 install:
   - export CXX="g++-4.8" CC="gcc-4.8";
-script: cmake -DBoost_USE_STATIC_LIBS=OFF . && make
+script:
+  - mkdir build && cd build && cmake -DBoost_USE_STATIC_LIBS=OFF . && make && cd ..
+  - cd bin && build/tests/unittest
 
 notifications:
   irc:
     channels:
-      - "irc.ircnet.ee#ircmud"
-    on_success: always
-    on_failure: change
+      - irc.ircnet.ee#ircmud
+    template:
+      - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
+    on_success: change
+    on_failure: always

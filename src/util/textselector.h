@@ -17,7 +17,7 @@ enum class TextSelectorError {
 };
 
 
-template <typename T, typename SGetter>
+template <typename T, typename SGetter=SGetterString>
 class TextSelector
 {
 public:
@@ -47,6 +47,7 @@ public:
 
     void insert(const T &t);
     void insert(T &&t);
+    void insert(const std::initializer_list<T> &list);
 
     std::pair<const_iterator, const_iterator> selection_range(const std::string &text);
 
@@ -120,23 +121,35 @@ void TextSelector<T, SGetter>::insert(T &&t)
 }
 
 template <typename T, typename SGetter>
+void TextSelector<T, SGetter>::insert(const std::initializer_list<T> &list)
+{
+    for (auto &v : list) {
+        insert(v);
+    }
+}
+
+template <typename T, typename SGetter>
 std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelector<T, SGetter>::const_iterator> TextSelector<T, SGetter>::selection_range(const std::string &text)
 {
     typedef std::pair<TextSelector<T, SGetter>::const_iterator, TextSelector<T, SGetter>::const_iterator> ret_pair;
     auto c = closest(text);
-    if (c == end()) return ret_pair(c, c);
+    if (c == end()) return ret_pair(end(), end());
     SGetter getter;
-    if (!boost::starts_with(getter(*c), text)) return ret_pair(end(), end());
 
     auto rangeBegin = c;
     auto rangeEnd = c + 1;
 
-    while (rangeBegin != begin()) {
-        --rangeBegin;
-        if (!boost::starts_with(getter(*rangeBegin), text)) {
-            ++rangeBegin;
-            break;
+    if (boost::starts_with(getter(*rangeBegin), text)) {
+        while (rangeBegin != begin()) {
+            --rangeBegin;
+            if (!boost::starts_with(getter(*rangeBegin), text)) {
+                ++rangeBegin;
+                break;
+            }
         }
+    }
+    else {
+        ++rangeBegin;
     }
 
     while (rangeEnd != end()) {
@@ -146,6 +159,10 @@ std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelect
         ++rangeEnd;
     }
 
+    for (auto it = rangeBegin; it != rangeEnd; ++it) {
+        if (getter(*it) == text) return ret_pair(it, it + 1);
+    }
+
     return ret_pair(rangeBegin, rangeEnd);
 }
 
@@ -153,9 +170,13 @@ template <typename T, typename SGetter>
 const T &TextSelector<T, SGetter>::find_match(const std::string &text)
 {
     auto p = selection_range(text);
-    if (p.first == end()) throw TextSelectorError::NoMatches;
+    if (p.first == p.second) throw TextSelectorError::NoMatches;
     if (p.first + 1 != p.second) throw TextSelectorError::MultipleMatches;
     return *p.first;
+}
+
+bool strLess(const std::string &a, const std::string &b) {
+    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <typename T, typename SGetter>
@@ -164,11 +185,10 @@ typename TextSelector<T, SGetter>::iterator TextSelector<T, SGetter>::closest(co
     if (mVector.empty()) return mVector.end();
 
     SGetter getter;
-
     {
         iterator i = mVector.begin();
         auto ib = getter(*i);
-        if (std::lexicographical_compare(base.begin(), base.end(), ib.begin(), ib.end())) {
+        if (strLess(base, ib)) {
             return i;
         }
     }
@@ -180,20 +200,15 @@ typename TextSelector<T, SGetter>::iterator TextSelector<T, SGetter>::closest(co
     iterator rangeStart = mVector.begin();
     iterator rangeEnd = mVector.end();
 
-
-    auto strLessEqual = [](const std::string &a, const std::string &b) {
-        return !std::lexicographical_compare(b.begin(), b.end(), a.begin(), a.end());
-    };
-
     int i = 0;
     int n = (rangeEnd - rangeStart);
     for (int b = n / 2; b >= 1; b /= 2) {
-        while (i + b < n && strLessEqual(getter(rangeStart[i + b]), base)) {
+        while (i + b < n && strLess(getter(rangeStart[i + b]), base)) {
             i += b;
         }
     }
 
-    return rangeStart + i;
+    return rangeStart + i + 1;
 }
 
 #endif // TEXTSELECTOR_H

@@ -48,6 +48,13 @@ public:
     bool execute(const CommandContext &c, MessageContext &messageContext) const;
 };
 
+class ListCommand : public Command
+{
+public:
+    ListCommand();
+    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+};
+
 }
 
 #endif // EDITORCOMMANDS_H

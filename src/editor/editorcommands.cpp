@@ -11,7 +11,7 @@
 using namespace editor;
 
 StartEditingCommand::StartEditingCommand() :
-    Command("edit", "edit [item item_id]/[room room_id]/[level level_id]", 2, 2)
+    Command("edit", "edit [item <item_id>]/room <room_id>/[level <level_id>]", 2, 2)
 {
 
 }
@@ -123,7 +123,7 @@ bool AnswerCommand::execute(const CommandContext &c, MessageContext &messageCont
 
 
 SetCommand::SetCommand() :
-    Command("set", "set id value", 2)
+    Command("set", "set <id> <value>", 2)
 {
 }
 
@@ -142,7 +142,7 @@ bool SetCommand::execute(const CommandContext &c, MessageContext &messageContext
 }
 
 GetCommand::GetCommand() :
-    Command("get", "get id", 1)
+    Command("get", "get <id>", 1)
 {
 }
 
@@ -157,4 +157,19 @@ bool GetCommand::execute(const CommandContext &c, MessageContext &messageContext
     std::string id = text::lowered(c.mParameters[0]);
     text::clean(id);
     e->handleGet(id);
+}
+
+ListCommand::ListCommand() :
+    Command("list", "list properties/traits")
+{
+}
+
+bool ListCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+{
+    auto e = messageContext.client()->editor();
+    if (!e) {
+        messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
+        return false;
+    }
+
 }
