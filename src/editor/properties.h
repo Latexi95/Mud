@@ -40,6 +40,8 @@ public:
 
     bool set(const Context<T> &c, const std::string &name, const std::string &value);
     std::string get(const Context<T> &c,  const std::string &name);
+
+    std::vector<std::string> list(const Context<T> &c) const;
 private:
     typename std::map<std::string, Accessor>::iterator findProperty(const Context<T> &c,  const std::string &name);
 
@@ -104,6 +106,19 @@ std::string Properties<T>::get(const Context<T> &c, const std::string &name)
     if (it == mProperties.end()) return std::string();
 
     return it->second.mGetter(c.mTarget);
+}
+
+template <typename T>
+std::vector<std::string> Properties<T>::list(const Context<T> &c) const
+{
+    std::vector<std::string> ret;
+    for (auto &propertyPair : mProperties) {
+        auto &accessor = propertyPair.second;
+        if (accessor.mAvailable(c.mTarget)) {
+            ret.emplace_back(propertyPair.first);
+        }
+    }
+    return ret;
 }
 
 template <typename T>

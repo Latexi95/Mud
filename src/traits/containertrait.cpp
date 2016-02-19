@@ -4,7 +4,7 @@
 
 ContainerTrait::ContainerTrait() :
     ItemTrait(),
-    mContainerType(Open)
+    mContainerType(ContainerState::Open)
 {
 }
 

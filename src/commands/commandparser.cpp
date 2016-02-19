@@ -23,16 +23,12 @@ void CommandParser::addCommand(const std::shared_ptr<Command> &command) {
     mCommands.emplace(insertIt, std::move(command));
 }
 
-bool strLess(const std::string &a, const std::string &b) {
-    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
-}
-
 CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::string &base) {
     if (mCommands.empty()) return mCommands.end();
 
     {
         CmdVector::iterator i = mCommands.begin();
-        if (std::lexicographical_compare(base.begin(), base.end(), (*i)->base().begin(), (*i)->base().end())) {
+        if (base < (*i)->base()) {
             return i;
         }
     }
@@ -47,7 +43,7 @@ CommandParser::CmdVector::iterator CommandParser::closestCommand(const std::stri
     int i = 0;
     int n = (rangeEnd - rangeStart);
     for (int b = n / 2; b >= 1; b /= 2) {
-        while (i + b < n && strLess(rangeStart[i + b]->base(), base)) {
+        while (i + b < n && rangeStart[i + b]->base() < base) {
             i += b;
         }
     }
@@ -61,7 +57,7 @@ CommandParser::CmdVector::const_iterator CommandParser::closestCommand(const std
 
     {
         CmdVector::const_iterator i = mCommands.begin();
-        if (std::lexicographical_compare(base.begin(), base.end(), (*i)->base().begin(), (*i)->base().end())) {
+        if (base < (*i)->base()) {
             return i;
         }
     }
@@ -76,7 +72,7 @@ CommandParser::CmdVector::const_iterator CommandParser::closestCommand(const std
     int i = 0;
     int n = (rangeEnd - rangeStart);
     for (int b = n / 2; b >= 1; b /= 2) {
-        while (i + b < n && strLess(rangeStart[i + b]->base(), base)) {
+        while (i + b < n && rangeStart[i + b]->base() < base) {
             i += b;
         }
     }

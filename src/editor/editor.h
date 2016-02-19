@@ -22,6 +22,7 @@ public:
     virtual ~BaseEditor();
     virtual TryCloseResult tryClose() = 0;
 
+    virtual void list(ListCommandParameter p) = 0;
     virtual void answer(Answer a) = 0;
     virtual void saveAndQuit() = 0;
     virtual void quit() = 0;
@@ -45,7 +46,8 @@ public:
 
     virtual TryCloseResult tryClose();
 
-    void answer(Answer a);
+    virtual void list(ListCommandParameter p);
+    virtual void answer(Answer a);
     virtual void saveAndQuit();
     virtual void quit();
     virtual void handleSet(const std::string &id, const std::string &value);

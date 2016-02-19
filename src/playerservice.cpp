@@ -56,7 +56,14 @@ std::shared_ptr<Player> PlayerService::createPlayer(const std::string &name) {
 
 void PlayerService::savePlayers() {
     boost::unique_lock<boost::mutex> lock(mMutex);
-    Json::Value val = ResourceService::instance()->readJsonFile("data/players.json");
+    Json::Value val;
+    try {
+        val = ResourceService::instance()->readJsonFile("data/players.json");
+    }
+    catch (const SerializationException &e) {
+        std::cerr << e.what() << std::endl;
+    }
+
     if (!val.isObject()) {
         val = Json::Value(Json::objectValue);
     }

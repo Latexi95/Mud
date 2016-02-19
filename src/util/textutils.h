@@ -27,6 +27,7 @@ std::string join(const Container &c, const std::string &sep = ", ") {
             ret += sep;
         }
     }
+    return ret;
 }
 
 }

@@ -40,5 +40,12 @@ enum class MoveType {
 };
 
 
+enum class ContainerState {
+    Open,
+    Closed,
+    Opened
+};
+
+
 #endif // ENUMS_H_
 

@@ -16,7 +16,8 @@
 GameMessageHandler::GameMessageHandler(Client *c, const std::shared_ptr<Character> &character):
     mCharacter(character),
     mPlayer(c->player()),
-    mClient(c)
+    mClient(c),
+    mCommandParserSelection(CommandParserSelection::Default)
 {
     Level *level = LS->level(mCharacter->levelId());
     mCharacter->setRoom(level->roomById(mCharacter->roomId()));
@@ -50,20 +51,40 @@ LevelEventQueue *GameMessageHandler::levelQueue() const
 }
 
 void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
-    if (message.size() >= 1 && message[0] == '$') {
-        handleEditorCommand(client, message.substr(1));
+    if (message == "$") {
+        switch (mCommandParserSelection) {
+        case CommandParserSelection::Default:
+            mCommandParserSelection = CommandParserSelection::Editor;
+            client->msgCtx().send("Switched to edit mode");
+            break;
+        case CommandParserSelection::Editor:
+            mCommandParserSelection = CommandParserSelection::Default;
+            client->msgCtx().send("Switched to default mode");
+            break;
+        }
+        return;
     }
-    else if (message.size() >= 1 && message[0] != '!' && message[0] != ' ') {
-        handleCommand(client, message);
+    if (message.size() > 1 && message[0] == '!') {
+        mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message.substr(1)));
+    }
+
+    if (mCommandParserSelection == CommandParserSelection::Default) {
+        if (message.size() >= 1 && message[0] == '$') {
+            handleEditorCommand(client, message.substr(1));
+            return;
+        }
+        else if (message.size() >= 1 && message[0] != '!' && message[0] != ' ') {
+            handleCommand(client, message);
+            return;
+        }
+
     }
     else {
-        if (message.size() > 1 && message[0] == '!') {
-            mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message.substr(1)));
-        }
-        else {
-            mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
-        }
+        handleEditorCommand(client, message);
+        return;
     }
+
+    mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
 }
 
 void GameMessageHandler::disconnected(const std::shared_ptr<Client> &client)

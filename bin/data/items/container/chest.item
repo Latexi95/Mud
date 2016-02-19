@@ -10,8 +10,6 @@
 		"container" : {
 			"type" : "closed",
 			"items" : [
-				"common/smallrock",
-				"weapons/longsword"
 			]
 		}
 	}

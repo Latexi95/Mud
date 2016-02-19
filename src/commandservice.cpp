@@ -33,7 +33,8 @@ CommandService::CommandService()
         std::make_shared<QuitEditingCommand>(),
         std::make_shared<AnswerCommand>(Answer::Yes),
         std::make_shared<AnswerCommand>(Answer::No),
-        std::make_shared<AnswerCommand>(Answer::Cancel)
+        std::make_shared<AnswerCommand>(Answer::Cancel),
+        std::make_shared<ListCommand>()
     };
 
     for (auto &c : mStandardCommands) {

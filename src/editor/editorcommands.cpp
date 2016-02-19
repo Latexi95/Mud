@@ -7,6 +7,7 @@
 #include "util/textutils.h"
 #include "editorservice.h"
 #include <boost/algorithm/string.hpp>
+#include "util/textselector.h"
 
 using namespace editor;
 
@@ -160,7 +161,7 @@ bool GetCommand::execute(const CommandContext &c, MessageContext &messageContext
 }
 
 ListCommand::ListCommand() :
-    Command("list", "list properties/traits")
+    Command("list", "list properties/traits", 1, 1)
 {
 }
 
@@ -172,4 +173,20 @@ bool ListCommand::execute(const CommandContext &c, MessageContext &messageContex
         return false;
     }
 
+    std::string type = c.mParameters[0];
+    text::clean(type);
+    TextSelectorMap<ListCommandParameter> options;
+    options.insert("properties", ListCommandParameter::Properties);
+    options.insert("traits", ListCommandParameter::Traits);
+
+    ListCommandParameter t;
+    try {
+        t = options.match(type);
+    }
+    catch (TextSelectorError e) {
+        messageContext.commandError("  Expecting \"properties\" or \"traits\" after the command");
+        return false;
+    }
+
+    e->list(t);
 }

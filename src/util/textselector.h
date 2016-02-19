@@ -49,10 +49,11 @@ public:
     void insert(T &&t);
     void insert(const std::initializer_list<T> &list);
 
-    std::pair<const_iterator, const_iterator> selection_range(const std::string &text);
+    std::pair<const_iterator, const_iterator> selection_range(const std::string &text) const;
 
-    const T &find_match(const std::string &text);
+    const T &find_match(const std::string &text) const;
 private:
+    const_iterator closest(const std::string &b) const;
     iterator closest(const std::string &b);
 
     std::vector<T> mVector;
@@ -77,7 +78,7 @@ public:
         this->TextSelector<std::pair<std::string, T>, TextSelectorMapSGetter<T> >::insert(std::move(p));
     }
 
-    const T &value(const std::string &key)  { return this->find_match(key).second; }
+    const T &match(const std::string &key) const { return this->find_match(key).second; }
 
 };
 
@@ -129,7 +130,7 @@ void TextSelector<T, SGetter>::insert(const std::initializer_list<T> &list)
 }
 
 template <typename T, typename SGetter>
-std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelector<T, SGetter>::const_iterator> TextSelector<T, SGetter>::selection_range(const std::string &text)
+std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelector<T, SGetter>::const_iterator> TextSelector<T, SGetter>::selection_range(const std::string &text) const
 {
     typedef std::pair<TextSelector<T, SGetter>::const_iterator, TextSelector<T, SGetter>::const_iterator> ret_pair;
     auto c = closest(text);
@@ -167,16 +168,12 @@ std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelect
 }
 
 template <typename T, typename SGetter>
-const T &TextSelector<T, SGetter>::find_match(const std::string &text)
+const T &TextSelector<T, SGetter>::find_match(const std::string &text) const
 {
     auto p = selection_range(text);
     if (p.first == p.second) throw TextSelectorError::NoMatches;
     if (p.first + 1 != p.second) throw TextSelectorError::MultipleMatches;
     return *p.first;
-}
-
-bool strLess(const std::string &a, const std::string &b) {
-    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <typename T, typename SGetter>
@@ -188,7 +185,7 @@ typename TextSelector<T, SGetter>::iterator TextSelector<T, SGetter>::closest(co
     {
         iterator i = mVector.begin();
         auto ib = getter(*i);
-        if (strLess(base, ib)) {
+        if (base < ib) {
             return i;
         }
     }
@@ -203,7 +200,38 @@ typename TextSelector<T, SGetter>::iterator TextSelector<T, SGetter>::closest(co
     int i = 0;
     int n = (rangeEnd - rangeStart);
     for (int b = n / 2; b >= 1; b /= 2) {
-        while (i + b < n && strLess(getter(rangeStart[i + b]), base)) {
+        while (i + b < n && getter(rangeStart[i + b]) < base) {
+            i += b;
+        }
+    }
+
+    return rangeStart + i + 1;
+}
+
+template <typename T, typename SGetter>
+typename TextSelector<T, SGetter>::const_iterator TextSelector<T, SGetter>::closest(const std::string &base) const
+{
+    if (mVector.empty()) return mVector.end();
+
+    SGetter getter;
+    {
+        const_iterator i = mVector.begin();
+        if (base < getter(*i)) {
+            return i;
+        }
+    }
+
+    if (mVector.size() == 1) {
+        return mVector.end();
+    }
+
+    const_iterator rangeStart = mVector.begin();
+    const_iterator rangeEnd = mVector.end();
+
+    int i = 0;
+    int n = (rangeEnd - rangeStart);
+    for (int b = n / 2; b >= 1; b /= 2) {
+        while (i + b < n && getter(rangeStart[i + b]) < base) {
             i += b;
         }
     }

@@ -69,6 +69,22 @@ TryCloseResult ItemEditor::tryClose()
     return TryCloseResult::DelayedClose;
 }
 
+void ItemEditor::list(ListCommandParameter p)
+{
+    switch (p) {
+    case ListCommandParameter::Properties:
+        mClient->msgCtx().send("  Properties: " + text::join(sItemProperties.list(mContext)));
+        break;
+    case ListCommandParameter::Traits:
+        MessageBuilder mb("  Traits: ");
+        mb.appendJoin(mItem->traits(), [](const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &idTraitPair) {
+            return idTraitPair.second->traitName();
+        });
+        mClient->msgCtx().send(mb);
+        break;
+    }
+}
+
 void ItemEditor::answer(Answer a)
 {
     switch (mState) {

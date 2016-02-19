@@ -4,14 +4,11 @@
 #include "item.h"
 #include <vector>
 #include <boost/algorithm/string.hpp>
+#include "util/enums.h"
 
 class ContainerTrait : public ItemTrait  {
 public:
-    enum ContainerType {
-        Open,
-        Closed,
-        Opened
-    };
+
     static const ItemTraitType staticTraitType = ItemTraitType::Container;
 
     ContainerTrait();
@@ -19,8 +16,8 @@ public:
     ItemTraitType type() const { return ItemTraitType::Container; }
 
 
-    ContainerType containerType() const { return mContainerType; }
-    void setContainerType(ContainerType t) { mContainerType = t; }
+    ContainerState containerType() const { return mContainerType; }
+    void setContainerType(ContainerState t) { mContainerType = t; }
     const std::vector<std::unique_ptr<Item> > &containedItems() const { return mContainedItems; }
 
     std::unique_ptr<ItemTrait> clone() const;
@@ -31,35 +28,35 @@ public:
     const char *traitName() const { return "container"; }
 private:
     std::vector<std::unique_ptr<Item>> mContainedItems;
-    ContainerType mContainerType;
+    ContainerState mContainerType;
 };
 
 namespace Json {
 template<>
-struct Serializer<ContainerTrait::ContainerType> {
-    static Json::Value serialize(ContainerTrait::ContainerType t){
+struct Serializer<ContainerState> {
+    static Json::Value serialize(ContainerState t){
         switch (t) {
-        case ContainerTrait::Open:
+        case ContainerState::Open:
             return "open";
-        case ContainerTrait::Closed:
+        case ContainerState::Closed:
             return "closed";
-        case ContainerTrait::Opened:
+        case ContainerState::Opened:
             return "opened";
         default:
             return "invalid";
         }
     }
 
-    static void deserialize(const Json::Value &val, ContainerTrait::ContainerType &t) {
+    static void deserialize(const Json::Value &val, ContainerState &t) {
         if (!val.isString()) throw SerializationException("Expecting a string to deserialize ContainerTrait::ContainerType");
         std::string s = val.asString();
         boost::algorithm::to_lower(s);
         if (s == "open") {
-            t = ContainerTrait::Open;
+            t = ContainerState::Open;
         } else if (s == "closed") {
-            t = ContainerTrait::Closed;
+            t = ContainerState::Closed;
         } else if (s == "opened") {
-            t = ContainerTrait::Opened;
+            t = ContainerState::Opened;
         } else {
             throw SerializationException("No ContainerTrait::ContainerType value named \"" + s + '"');
         }

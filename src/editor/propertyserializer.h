@@ -3,7 +3,9 @@
 #include "properties.h"
 #include "com/messagecontext.h"
 #include "util/box.h"
+#include "util/enums.h"
 #include <functional>
+
 namespace editor {
 namespace property {
 

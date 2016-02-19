@@ -5,6 +5,11 @@
 class Player;
 class Character;
 class LevelEventQueue;
+enum class CommandParserSelection {
+    Default,
+    Editor
+};
+
 class GameMessageHandler : public MessageHandler {
 public:
     GameMessageHandler(Client *c, const std::shared_ptr<Character> &character);
@@ -19,6 +24,7 @@ private:
     std::shared_ptr<Character> mCharacter;
     std::shared_ptr<Player> mPlayer;
     Client *mClient;
+    CommandParserSelection mCommandParserSelection;
 };
 
 #endif // GAMEMESSAGEHANDLER_H

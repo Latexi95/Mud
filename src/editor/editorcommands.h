@@ -48,6 +48,11 @@ public:
     bool execute(const CommandContext &c, MessageContext &messageContext) const;
 };
 
+
+enum class ListCommandParameter {
+    Properties,
+    Traits
+};
 class ListCommand : public Command
 {
 public:
