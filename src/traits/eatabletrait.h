@@ -16,8 +16,11 @@ public:
     virtual const char *traitName() const { return "eatable"; }
     virtual void accept(ItemTraitVisitor *visitor);
 
-protected:
 
+    int energy() const;
+    void setEnergy(int energy);
+protected:
+    int mEnergy;
 };
 
 #endif // EATABLETRAIT_H

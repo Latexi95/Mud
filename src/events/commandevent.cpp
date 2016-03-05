@@ -12,7 +12,7 @@ CommandEvent::CommandEvent(::Command *cmd, CommandContext &&ctx, const std::shar
 
 void CommandEvent::execute()
 {
-    mCommand->execute(mContext, mClient->msgCtx());
+    mCommand->execute(mContext, mClient->ui());
 }
 
 IMPL_ACCEPT_EVENT_VISITOR(CommandEvent)

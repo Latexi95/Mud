@@ -3,7 +3,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
 #include "util/textutils.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 #include "events/commandevent.h"
 #include "maineventqueue.h"
 #include "character.h"
@@ -84,7 +84,7 @@ bool CommandParser::parse(const std::string &cmd, CommandContext &&context, cons
     std::string trimmedCmd = cmd;
     boost::trim(trimmedCmd);
 
-    MessageContext &messageContext = client->msgCtx();
+    UI &messageContext = client->ui();
 
     auto firstSpaceIndex = trimmedCmd.find(' ');
     std::string cmdName;

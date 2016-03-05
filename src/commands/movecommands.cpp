@@ -4,7 +4,7 @@
 #include "level.h"
 #include "events/moveevent.h"
 #include "characterservice.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 
 
 
@@ -49,7 +49,7 @@ WalkCommand::WalkCommand(Direction direction) :
     }
 }
 
-bool WalkCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void WalkCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     Direction dir;
     if (isShortcut()) {
@@ -61,7 +61,7 @@ bool WalkCommand::execute(const CommandContext &c, MessageContext &messageContex
 
     if (dir == Direction::Invalid) {
         messageContext.commandError("Invalid direction");
-        return false;
+        return;
     }
 
     if (CS->canMove(c.mCaller, dir)) {
@@ -69,8 +69,5 @@ bool WalkCommand::execute(const CommandContext &c, MessageContext &messageContex
     }
     else {
         messageContext.commandError(MessageBuilder("Can't move to ") << DirectionToString(dir));
-        return false;
     }
-
-    return true;
 }

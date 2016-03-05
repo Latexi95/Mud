@@ -22,6 +22,8 @@ public:
     virtual ~BaseEditor();
     virtual TryCloseResult tryClose() = 0;
 
+    virtual void add(AddType add, const std::string &id) = 0;
+    virtual void remove(AddType type, const std::string &id) = 0;
     virtual void list(ListCommandParameter p) = 0;
     virtual void answer(Answer a) = 0;
     virtual void saveAndQuit() = 0;
@@ -46,6 +48,8 @@ public:
 
     virtual TryCloseResult tryClose();
 
+    virtual void add(AddType add, const std::string &id);
+    virtual void remove(AddType type, const std::string &id);
     virtual void list(ListCommandParameter p);
     virtual void answer(Answer a);
     virtual void saveAndQuit();

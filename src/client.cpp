@@ -32,7 +32,7 @@ void Client::setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler
     mMessageHandler = msgHandler;
 }
 
-MessageContext &Client::msgCtx()
+UI &Client::ui()
 {
     return mMessageContext;
 }

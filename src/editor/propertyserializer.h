@@ -1,7 +1,7 @@
 #ifndef PROPERTYSERIALIZER_H
 #define PROPERTYSERIALIZER_H
 #include "properties.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 #include "util/box.h"
 #include "util/enums.h"
 #include <functional>

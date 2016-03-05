@@ -3,6 +3,7 @@
 #include "landmarktrait.h"
 #include "lockedtrait.h"
 #include "weapontrait.h"
+#include "eatabletrait.h"
 
 
 ItemTrait::ItemTrait() {
@@ -12,20 +13,27 @@ ItemTrait::~ItemTrait() {
 
 }
 
-std::unique_ptr<ItemTrait> ItemTrait::createItemTraitByName(const std::string &name) {
-    if (name == "container") {
+std::unique_ptr<ItemTrait> ItemTrait::createItemTraitByType(ItemTraitType type)
+{
+    switch (type) {
+    case ItemTraitType::Container:
         return std::unique_ptr<ItemTrait>(new ContainerTrait());
-    }
-    if (name == "landmark") {
+    case ItemTraitType::Landmark:
         return std::unique_ptr<ItemTrait>(new LandmarkTrait());
-    }
-    if (name == "locked") {
+    case ItemTraitType::Locked:
         return std::unique_ptr<ItemTrait>(new LockedTrait());
-    }
-    if (name == "weapon") {
+    case ItemTraitType::Weapon:
         return std::unique_ptr<ItemTrait>(new WeaponTrait());
+    case ItemTraitType::Eatable:
+        return std::unique_ptr<ItemTrait>(new EatableTrait());
+    default:
+        return std::unique_ptr<ItemTrait>();
     }
-    return std::unique_ptr<ItemTrait>();
+}
+
+std::unique_ptr<ItemTrait> ItemTrait::createItemTraitByName(const std::string &name) {
+    ItemTraitType type = ItemTraitTypeFromString(name);
+    return createItemTraitByType(type);
 }
 
 void ItemTrait::serializeBase(Json::Value &val) const {

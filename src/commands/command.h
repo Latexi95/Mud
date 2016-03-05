@@ -9,7 +9,7 @@ struct CommandContext {
     std::shared_ptr<Character> mCaller;
     std::vector<std::string> mParameters;
 };
-class MessageContext;
+class UI;
 
 class Command {
 public:
@@ -18,7 +18,7 @@ public:
     Command(const std::string &base, const std::string &usage, unsigned minParams, unsigned maxParams = (unsigned)-1);
     virtual ~Command();
 
-    virtual bool execute(const CommandContext &c, MessageContext &messageContext) const = 0;
+    virtual void execute(const CommandContext &c, UI &messageContext) const = 0;
     virtual bool globalEvent() const { return false; }
 
     const std::string &base() const { return mBase; }

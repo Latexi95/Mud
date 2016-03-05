@@ -10,9 +10,9 @@ ShoutCommand::~ShoutCommand()
 
 }
 
-bool ShoutCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void ShoutCommand::execute(const CommandContext &c, UI &messageContext) const
 {
-    return false;
+    return;
 }
 
 

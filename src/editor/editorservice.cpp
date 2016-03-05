@@ -19,11 +19,11 @@ std::shared_ptr<editor::BaseEditor> EditorService::startEditingItem(Client *c, c
 {
     std::unique_ptr<Item> item = RS->itemCopyForEditing(id);
     if (!item) {
-        c->msgCtx().commandError(MessageBuilder() << "Can't find item \"" << id << "\"");
+        c->ui().commandError(MessageBuilder() << "Can't find item \"" << id << "\"");
         return nullptr;
     }
     std::shared_ptr<editor::BaseEditor> editor = std::make_shared<editor::ItemEditor>(std::move(item), c);
-    c->msgCtx().send(MessageBuilder() << "Started editing item \"" << id << "\"");
+    c->ui().send(MessageBuilder() << "Started editing item \"" << id << "\"");
     c->setEditor(editor);
     return editor;
 }

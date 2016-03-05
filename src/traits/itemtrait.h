@@ -28,6 +28,7 @@ public:
     virtual ItemTraitType type() const = 0;
     virtual const char *traitName() const = 0;
 
+    static std::unique_ptr<ItemTrait> createItemTraitByType(ItemTraitType type);
     static std::unique_ptr<ItemTrait> createItemTraitByName(const std::string &name);
 
     virtual Json::Value serialize() const = 0;

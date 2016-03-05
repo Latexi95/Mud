@@ -2,7 +2,7 @@
 #include "levelservice.h"
 #include "characterservice.h"
 #include "util/textutils.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 
 LookCommand::LookCommand() :
     Command("look", "look around/object_name")
@@ -10,7 +10,7 @@ LookCommand::LookCommand() :
 
 }
 
-bool LookCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void LookCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     const auto &character = c.mCaller;
     Room *r = character->room();
@@ -34,10 +34,8 @@ bool LookCommand::execute(const CommandContext &c, MessageContext &messageContex
             });
         }
         messageContext.send(msg);
-        return true;
     }
     else {
         messageContext.commandError("Not implemented... Just look around");
     }
-    return false;
 }

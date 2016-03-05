@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 class Client;
-class MessageContext;
+class UI;
 class CommandParser {
 public:
     CommandParser();

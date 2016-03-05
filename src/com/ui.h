@@ -1,13 +1,13 @@
-#ifndef MESSAGECONTEXT_H
-#define MESSAGECONTEXT_H
+#ifndef UI_H
+#define UI_H
 #include "messagebuilder.h"
 
 class Client;
 
-class MessageContext
+class UI
 {
 public:
-    MessageContext(Client *c);
+    UI(Client *c);
 
     void send(const std::string &str);
     void send(const MessageBuilder &msg);
@@ -19,4 +19,4 @@ private:
     Client *mClient;
 };
 
-#endif // MESSAGECONTEXT_H
+#endif // UI_H

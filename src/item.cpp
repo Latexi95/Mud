@@ -143,6 +143,21 @@ ItemTrait *Item::trait(ItemTraitType type) {
     return nullptr;
 }
 
+void Item::addTrait(std::unique_ptr<ItemTrait> &&trait)
+{
+    mTraits[(unsigned)trait->type()] = std::move(trait);
+}
+
+std::unique_ptr<ItemTrait> Item::removeTrait(ItemTraitType type)
+{
+    auto it = mTraits.find((unsigned)type);
+    if (it == mTraits.end()) return std::unique_ptr<ItemTrait>();
+
+    std::unique_ptr<ItemTrait> trait = std::move(it->second);
+    mTraits.erase(it);
+    return std::move(trait);
+}
+
 const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &Item::traits() const
 {
     return mTraits;

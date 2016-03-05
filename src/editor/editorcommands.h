@@ -14,7 +14,7 @@ class StartEditingCommand : public Command
 public:
     StartEditingCommand();
     bool globalEvent() const { return true; }
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 private:
 };
 
@@ -23,13 +23,13 @@ class QuitEditingCommand : public Command
 public:
     QuitEditingCommand();
     bool globalEvent() const { return true; }
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 };
 
 class AnswerCommand : public Command {
 public:
     AnswerCommand(Answer a);
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 private:
     Answer mAnswer;
 };
@@ -38,14 +38,14 @@ class SetCommand : public Command
 {
 public:
     SetCommand();
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 };
 
 class GetCommand : public Command
 {
 public:
     GetCommand();
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 };
 
 
@@ -57,7 +57,27 @@ class ListCommand : public Command
 {
 public:
     ListCommand();
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
+};
+
+enum class AddType {
+    Trait,
+    Item,
+    Exit
+};
+
+class AddCommand : public Command
+{
+public:
+    AddCommand();
+    void execute(const CommandContext &c, UI &messageContext) const;
+};
+
+class RemoveCommand : public Command
+{
+public:
+    RemoveCommand();
+    void execute(const CommandContext &c, UI &messageContext) const;
 };
 
 }

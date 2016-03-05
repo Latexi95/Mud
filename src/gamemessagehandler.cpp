@@ -55,11 +55,11 @@ void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std
         switch (mCommandParserSelection) {
         case CommandParserSelection::Default:
             mCommandParserSelection = CommandParserSelection::Editor;
-            client->msgCtx().send("Switched to edit mode");
+            client->ui().send("Switched to edit mode");
             break;
         case CommandParserSelection::Editor:
             mCommandParserSelection = CommandParserSelection::Default;
-            client->msgCtx().send("Switched to default mode");
+            client->ui().send("Switched to default mode");
             break;
         }
         return;

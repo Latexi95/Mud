@@ -30,8 +30,14 @@ enum class ItemTraitType {
     Container,
     Locked,
     Landmark,
-    Eatable
+    Eatable,
+
+    Invalid
 };
+
+ItemTraitType ItemTraitTypeFromString(std::string txt);
+const char *ItemTraitTypeToString(ItemTraitType type);
+
 
 enum class MoveType {
     Walk,

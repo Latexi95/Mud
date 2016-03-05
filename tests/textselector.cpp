@@ -17,4 +17,12 @@ BOOST_AUTO_TEST_CASE( textselector_test ) {
     auto correct = {"asdaf123", "asdfees"};
     BOOST_CHECK_EQUAL_COLLECTIONS(range.first, range.second, correct.begin(), correct.end());
 
+
+    TextSelector<std::string> Selector2 = {"aa", "bb", "cc"};
+
+    BOOST_CHECK_NO_THROW(found = Selector2.find_match("aa"));
+    BOOST_CHECK(found == "aa");
+
+    BOOST_CHECK_NO_THROW(found = Selector2.find_match("bb"));
+    BOOST_CHECK(found == "bb");
 }

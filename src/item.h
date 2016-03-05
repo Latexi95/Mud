@@ -35,6 +35,8 @@ public:
     ItemTrait *trait(ItemTraitType type);
     template <typename TraitT>
     TraitT *trait();
+    void addTrait(std::unique_ptr<ItemTrait> &&trait);
+    std::unique_ptr<ItemTrait> removeTrait(ItemTraitType type);
 
     const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &traits() const;
 
@@ -53,12 +55,12 @@ protected:
 
 template <typename TraitT>
 bool Item::hasTrait() {
-    return mTraits.find(TraitT::staticTraitType()) != mTraits.end();
+    return mTraits.find((unsigned)TraitT::staticTraitType) != mTraits.end();
 }
 
 template <typename TraitT>
 TraitT *Item::trait() {
-    auto it = mTraits.find(TraitT::staticTraitType());
+    auto it = mTraits.find((unsigned)TraitT::staticTraitType);
     if (it == mTraits.end()) return nullptr;
     return static_cast<TraitT*>(it->second.get());
 }

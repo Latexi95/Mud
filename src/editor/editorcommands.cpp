@@ -1,7 +1,7 @@
 #include "editorcommands.h"
 #include "characterservice.h"
 #include "item.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 #include "client.h"
 #include "editor.h"
 #include "util/textutils.h"
@@ -22,33 +22,29 @@ enum class EditType {
     Room,
     Level
 };
-bool StartEditingCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+
+static TextSelectorMap<EditType> itemRoomLevelSelector = {
+    {"item", EditType::Item},
+    {"room", EditType::Room},
+    {"level", EditType::Level}};
+
+void StartEditingCommand::execute(const CommandContext &c, UI &messageContext) const
 {
-    std::shared_ptr<Character> character = c.mCaller;
-
     std::string editType = c.mParameters[0];
-    boost::to_lower(editType);
+    text::selectClean(editType);
 
-    std::string id = text::lowered(c.mParameters[1]);
-    text::clean(id);
+    std::string id = c.mParameters[1];
+    text::selectClean(id);
+
+
 
     EditType eTy;
-    if (editType == "item") {
-        eTy = EditType::Item;
+    try {
+        eTy = itemRoomLevelSelector.match(editType);
     }
-    else if (editType == "room") {
-        messageContext.commandError(MessageBuilder() << "Not implemented");
-        eTy = EditType::Room;
-        return false;
-    }
-    else if (editType == "level") {
-        messageContext.commandError(MessageBuilder() << "Not implemented");
-        eTy = EditType::Level;
-        return false;
-    }
-    else {
+    catch (TextSelectorError e) {
         messageContext.commandError(MessageBuilder() << "Expecting \"item\", \"room\" or \"level\" as the first parameter");
-        return false;
+        return;
     }
 
     Client *client = messageContext.client();
@@ -69,16 +65,9 @@ bool StartEditingCommand::execute(const CommandContext &c, MessageContext &messa
 
     switch (eTy) {
     case EditType::Item:
-        if (ES->startEditingItem(client, id)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        ES->startEditingItem(client, id);
+        break;
     }
-
-
-    return false;
 }
 
 QuitEditingCommand::QuitEditingCommand() :
@@ -87,17 +76,15 @@ QuitEditingCommand::QuitEditingCommand() :
 
 }
 
-bool QuitEditingCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void QuitEditingCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     Client *client = messageContext.client();
     auto currentEditor = client->editor();
     if (currentEditor) {
         currentEditor->tryClose();
-        return true;
     }
     else {
         messageContext.commandError("  Not currently editing");
-        return false;
     }
 }
 
@@ -113,7 +100,7 @@ AnswerCommand::AnswerCommand(Answer a) :
 {
 }
 
-bool AnswerCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void AnswerCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     auto e = messageContext.client()->editor();
     if (e) {
@@ -128,16 +115,16 @@ SetCommand::SetCommand() :
 {
 }
 
-bool SetCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void SetCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     auto e = messageContext.client()->editor();
     if (!e) {
         messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
-        return false;
+        return;
     }
 
-    std::string id = text::lowered(c.mParameters[0]);
-    text::clean(id);
+    std::string id = c.mParameters[0];
+    text::selectClean(id);
     std::string value = c.mParameters[1];
     e->handleSet(id, value);
 }
@@ -147,12 +134,12 @@ GetCommand::GetCommand() :
 {
 }
 
-bool GetCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void GetCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     auto e = messageContext.client()->editor();
     if (!e) {
         messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
-        return false;
+        return;
     }
 
     std::string id = text::lowered(c.mParameters[0]);
@@ -160,33 +147,105 @@ bool GetCommand::execute(const CommandContext &c, MessageContext &messageContext
     e->handleGet(id);
 }
 
+
+static TextSelectorMap<ListCommandParameter> listCommandOptionsSelector = {
+    {"properties", ListCommandParameter::Properties},
+    {"traits", ListCommandParameter::Traits}
+};
+
 ListCommand::ListCommand() :
     Command("list", "list properties/traits", 1, 1)
 {
 }
 
-bool ListCommand::execute(const CommandContext &c, MessageContext &messageContext) const
+void ListCommand::execute(const CommandContext &c, UI &messageContext) const
 {
     auto e = messageContext.client()->editor();
     if (!e) {
         messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
-        return false;
+        return;
     }
 
     std::string type = c.mParameters[0];
-    text::clean(type);
-    TextSelectorMap<ListCommandParameter> options;
-    options.insert("properties", ListCommandParameter::Properties);
-    options.insert("traits", ListCommandParameter::Traits);
+    text::selectClean(type);
 
     ListCommandParameter t;
     try {
-        t = options.match(type);
+        t = listCommandOptionsSelector.match(type);
     }
     catch (TextSelectorError e) {
         messageContext.commandError("  Expecting \"properties\" or \"traits\" after the command");
-        return false;
+        return;
     }
 
     e->list(t);
+}
+
+
+static TextSelectorMap<AddType> addTypeSelector = {
+    {"trait", AddType::Trait},
+    {"item", AddType::Item},
+    {"exit", AddType::Exit}
+};
+
+AddCommand::AddCommand() :
+    Command("add", "add trait/item/exit <name/id>", 2)
+{
+}
+
+void AddCommand::execute(const CommandContext &c, UI &messageContext) const
+{
+    auto e = messageContext.client()->editor();
+    if (!e) {
+        messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
+        return;
+    }
+
+    std::string type = c.mParameters.front();
+    text::selectClean(type);
+
+    std::string id = c.mParameters.back();
+    text::clean(id);
+
+    AddType addType;
+    try {
+        addType = addTypeSelector.match(type);
+    }
+    catch (TextSelectorError e) {
+        messageContext.commandError("  Expecting \"trait\", \"item\" or \"exit\" after the command");
+        return;
+    }
+
+    e->add(addType, id);
+}
+
+RemoveCommand::RemoveCommand() :
+    Command("remove", "remove trait/item/exit <name/id>", 2)
+{
+}
+
+void RemoveCommand::execute(const CommandContext &c, UI &messageContext) const
+{
+    auto e = messageContext.client()->editor();
+    if (!e) {
+        messageContext.commandError(MessageBuilder() << "  Not currently editing anything");
+        return;
+    }
+
+    std::string type = c.mParameters.front();
+    text::selectClean(type);
+
+    std::string id = c.mParameters.back();
+    text::clean(id);
+
+    AddType addType;
+    try {
+        addType = addTypeSelector.match(type);
+    }
+    catch (TextSelectorError) {
+        messageContext.commandError("  Expecting \"trait\", \"item\" or \"exit\" after the command");
+        return;
+    }
+
+    e->remove(addType, id);
 }

@@ -69,3 +69,9 @@ std::vector<std::string> text::split(const std::string &s, char sep) {
     ret.emplace_back(s.substr(lastFound));
     return ret;
 }
+
+void text::selectClean(std::string &str)
+{
+    clean(str);
+    boost::locale::to_lower(str);
+}

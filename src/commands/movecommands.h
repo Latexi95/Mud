@@ -11,7 +11,7 @@ public:
 
     bool globalEvent() const { return false; }
 
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 
     bool isShortcut() const { return mShortcut != Direction::Count; }
 

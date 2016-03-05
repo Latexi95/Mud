@@ -5,7 +5,7 @@
 #include "character.h"
 #include "com/messagehandler.h"
 #include "com/messagebuilder.h"
-#include "com/messagecontext.h"
+#include "com/ui.h"
 
 class Player;
 namespace editor {
@@ -23,7 +23,7 @@ public:
     std::shared_ptr<Player> player() const;
     void setPlayer(const std::shared_ptr<Player> &player);
     void setMessageHandler(const std::shared_ptr<MessageHandler> &msgHandler);
-    MessageContext &msgCtx();
+    UI &ui();
 
     const std::shared_ptr<editor::BaseEditor> &editor() const;
     void setEditor(const std::shared_ptr<editor::BaseEditor> &e);
@@ -32,7 +32,7 @@ private:
     std::shared_ptr<MessageHandler> mMessageHandler;
     std::shared_ptr<Player> mPlayer;
     std::shared_ptr<editor::BaseEditor> mEditor;
-    MessageContext mMessageContext;
+    UI mMessageContext;
 };
 
 #endif // CLIENT_H

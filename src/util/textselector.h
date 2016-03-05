@@ -30,6 +30,7 @@ public:
     typedef typename std::vector<T>::size_type size_type;
 
     TextSelector();
+    TextSelector(const std::initializer_list<T> &list);
     TextSelector(const TextSelector<T, SGetter> &t) = default;
     TextSelector(TextSelector<T, SGetter> &&t) { mVector = std::move(t.mVector); }
     ~TextSelector() = default;
@@ -68,7 +69,14 @@ struct TextSelectorMapSGetter {
 
 template <typename T>
 class TextSelectorMap : public TextSelector<std::pair<std::string, T>, TextSelectorMapSGetter<T> > {
+    typedef TextSelector<std::pair<std::string, T>, TextSelectorMapSGetter<T> > base_type;
 public:
+    TextSelectorMap() = default;
+    TextSelectorMap(const std::initializer_list<std::pair<std::string, T>> &list) : base_type(list) {}
+    TextSelectorMap(const TextSelectorMap &) = default;
+
+    TextSelectorMap &operator=(const TextSelectorMap &) = default;
+
     void insert(const std::string &key, const T &t) {
         typename TextSelector<std::pair<std::string, T>, TextSelectorMapSGetter<T> >::value_type p(key, t);
         this->TextSelector<std::pair<std::string, T>, TextSelectorMapSGetter<T> >::insert(std::move(p));
@@ -89,6 +97,12 @@ public:
 template <typename T, typename SGetter>
 TextSelector<T, SGetter>::TextSelector() {
 
+}
+
+template <typename T, typename SGetter>
+TextSelector<T, SGetter>::TextSelector(const std::initializer_list<T> &list)
+{
+    insert(list);
 }
 
 template <typename T, typename SGetter>
@@ -138,28 +152,26 @@ std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelect
     SGetter getter;
 
     auto rangeBegin = c;
-    auto rangeEnd = c + 1;
+    auto rangeEnd = c;
 
-    if (boost::starts_with(getter(*rangeBegin), text)) {
-        while (rangeBegin != begin()) {
-            --rangeBegin;
-            if (!boost::starts_with(getter(*rangeBegin), text)) {
-                ++rangeBegin;
-                break;
-            }
-        }
-    }
-    else {
-        ++rangeBegin;
-    }
-
-    while (rangeEnd != end()) {
-        if (!boost::starts_with(getter(*rangeEnd), text)) {
+    while (rangeBegin != begin()) {
+        --rangeBegin;
+        if (!boost::starts_with(getter(*rangeBegin), text)) {
+            ++rangeBegin;
             break;
         }
+    }
+    if (boost::starts_with(getter(*rangeEnd), text)) {
         ++rangeEnd;
+        while (rangeEnd != end()) {
+            if (!boost::starts_with(getter(*rangeEnd), text)) {
+                break;
+            }
+            ++rangeEnd;
+        }
     }
 
+    //Find exact match
     for (auto it = rangeBegin; it != rangeEnd; ++it) {
         if (getter(*it) == text) return ret_pair(it, it + 1);
     }

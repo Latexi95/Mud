@@ -6,7 +6,7 @@ class LookCommand : public Command
 {
 public:
     LookCommand();
-    bool execute(const CommandContext &c, MessageContext &messageContext) const;
+    void execute(const CommandContext &c, UI &messageContext) const;
 private:
 
 };
