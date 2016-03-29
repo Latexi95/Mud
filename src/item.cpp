@@ -2,153 +2,101 @@
 #include "traits/itemtrait.h"
 #include "resourceservice.h"
 
-Item::Item() :
+BaseItem::BaseItem() :
     mWeight(0)
 {
 }
 
-Item::Item(const std::string &id) :
+BaseItem::BaseItem(const std::string &id) :
     mId(id),
     mName(),
     mWeight(0) {
 
 }
 
-Item::~Item() {
+BaseItem::~BaseItem() {
 }
 
-void Item::initFromBase(const std::shared_ptr<Item> &b) {
+void BaseItem::initFromBase(const std::shared_ptr<Item> &b) {
     mBase = b;
     mName = b->name();
     mWeight = b->weight();
     mSize = b->size();
 }
 
-const Name &Item::name() const {
+const Name &BaseItem::name() const {
     return mName;
 }
 
-void Item::setName(const Name &n) {
+void BaseItem::setName(const Name &n) {
     mName = n;
 }
 
-Json::Value Item::serialize() const {
+Json::Value BaseItem::serialize() const {
     Json::Value ret(Json::objectValue);
-    if (!mBase) {
-        ret["name"] = Json::serialize(mName);
-        ret["weight"] = mWeight;
-        ret["size"] = Json::serialize(mSize);
-        if (!mTraits.empty()) {
-            Json::Value traits(Json::objectValue);
-            for (const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &t : mTraits) {
-                traits[t.second->traitName()] = t.second->serialize();
-            }
-        }
-    }
-    else {
-        ret["base"] = mBase->id();
-        if (mName != mBase->name()) ret["name"] = mName.serialize();
-        if (mWeight != mBase->weight()) ret["weight"] = mWeight;
-        if (size() != mBase->size())  {
-            ret["size"] = Json::serialize(size());
-        }
-        if (!mTraits.empty()) {
-            Json::Value traits(Json::objectValue);
-            for (const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &t : mBase->mTraits) {
-                if (t.second) {
-                    traits[t.second->traitName()] = t.second->serialize();
-                }
-                else {
-                    traits[t.second->traitName()] = Json::Value();
-                }
-
-            }
-            ret["traits"] = traits;
+    ret["name"] = Json::serialize(mName);
+    ret["weight"] = mWeight;
+    ret["size"] = Json::serialize(mSize);
+    if (!mTraits.empty()) {
+        Json::Value traits(Json::objectValue);
+        for (const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &t : mTraits) {
+            traits[t.second->traitName()] = t.second->serialize();
         }
     }
     return ret;
 }
 
-void Item::deserialize(const Json::Value &val) {
-    if (val.isObject()) {
-        const Json::Value &base = val["base"];
-        if (base.isString()) {
-            std::shared_ptr<Item> b = ResourceService::instance()->baseItem(base.asString());
-            if (!b) throw SerializationException("Can't find base item \"" + base.asString() + "\"");
-            initFromBase(b);
-        }
-        mName.deserialize(val["name"]);
-
-        Box<float> size;
-        Json::deserialize(val["size"], size);
-        setSize(size);
-        setWeight(base.get("weight", weight()).asDouble());
-
-        const Json::Value &traits = val["traits"];
-        for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
-
-            if (i->isNull()) {
-                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.name());
-                if (!trait) {
-                    std::cerr << "Invalid trait name \"" << i.name() << "\"" << std::endl;
-                    continue;
-                }
-                mTraits[(unsigned)trait->type()] = std::move(trait);
-            }
-            else {
-                std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.name());
-                if (!trait) {
-                    std::cerr << "Invalid trait name \"" << i.name() << "\"" << std::endl;
-                    continue;
-                }
-                assert(trait);
-                trait->deserialize(*i);
-                mTraits[(unsigned)trait->type()] = std::move(trait);
-            }
-        }
+void BaseItem::deserialize(const Json::Value &val) {
+    if (!val.isObject()) {
+        throw SerializationException("BaseItem::deserialize: expecting object value");
     }
-    else if (val.isString()) {
-        auto base = ResourceService::instance()->baseItem(val.asString());
-        if (!base) {
-            throw SerializationException("Can't find item \"" + val.asString() + "\"");
+
+    mName.deserialize(val["name"]);
+
+    Json::deserialize(val["size"], mSize);
+    Json::deserialize(val["weight"], mWeight);
+
+    const Json::Value &traits = val["traits"];
+    for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
+        std::unique_ptr<ItemTrait> trait = ItemTrait::createItemTraitByName(i.name());
+        if (!trait) {
+            std::cerr << "Invalid trait name \"" << i.name() << "\"" << std::endl;
+            continue;
         }
-        base->clone(*this);
-    }
-    else {
-        throw SerializationException("Item::deserialize: expecting string or object value");
+        if (i->isNull()) {
+            mTraits[(unsigned)trait->type()] = std::move(trait);
+        }
+        else {
+            trait->deserialize(*i);
+            mTraits[(unsigned)trait->type()] = std::move(trait);
+        }
     }
 
 }
 
-bool Item::hasTrait(ItemTraitType type) {
+bool BaseItem::hasTrait(ItemTraitType type) {
     auto traitIt = mTraits.find((unsigned)type);
     if (traitIt != mTraits.end()) {
         if (traitIt->second) return true;
     }
-    else if (mBase) {
-        return mBase->hasTrait(type);
-    }
     return false;
 }
 
-ItemTrait *Item::trait(ItemTraitType type) {
+ItemTrait *BaseItem::trait(ItemTraitType type) {
     auto traitIt = mTraits.find((unsigned)type);
     if (traitIt != mTraits.end()) {
         if (traitIt->second)
             return traitIt->second.get();
     }
-    else if (mBase) {
-        return mBase->trait(type);
-    }
     return nullptr;
 }
 
-void Item::addTrait(std::unique_ptr<ItemTrait> &&trait)
+void BaseItem::addTrait(std::unique_ptr<ItemTrait> &&trait)
 {
     mTraits[(unsigned)trait->type()] = std::move(trait);
 }
 
-std::unique_ptr<ItemTrait> Item::removeTrait(ItemTraitType type)
+std::unique_ptr<ItemTrait> BaseItem::removeTrait(ItemTraitType type)
 {
     auto it = mTraits.find((unsigned)type);
     if (it == mTraits.end()) return std::unique_ptr<ItemTrait>();
@@ -158,14 +106,13 @@ std::unique_ptr<ItemTrait> Item::removeTrait(ItemTraitType type)
     return std::move(trait);
 }
 
-const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &Item::traits() const
+const std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > &BaseItem::traits() const
 {
     return mTraits;
 }
 
-void Item::clone(Item &copy) const
+void BaseItem::clone(BaseItem &copy) const
 {
-    copy.mBase = mBase;
     copy.mName = name();
     copy.mWeight = weight();
     copy.mSize = size();
@@ -175,18 +122,29 @@ void Item::clone(Item &copy) const
     }
 }
 
-std::unique_ptr<Item> Item::clone() const {
-    std::unique_ptr<Item> copy(new Item());
+std::unique_ptr<BaseItem> BaseItem::clone() const {
+    std::unique_ptr<BaseItem> copy(new BaseItem());
     clone(*copy);
     return std::move(copy);
 }
 
-Json::Value Json::Serializer<Item>::serialize(const Item &i)
+Json::Value Json::Serializer<BaseItem>::serialize(const BaseItem &i)
 {
     return i.serialize();
 }
 
-void Json::Serializer<Item>::deserialize(const Json::Value &v, Item &i)
+void Json::Serializer<BaseItem>::deserialize(const Json::Value &v, BaseItem &i)
 {
     i.deserialize(v);
+}
+
+Item::Item(const std::shared_ptr<BaseItem> &base) :
+    mBase(base)
+{
+
+}
+
+Item::~Item()
+{
+
 }
