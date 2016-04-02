@@ -17,13 +17,6 @@ BaseItem::BaseItem(const std::string &id) :
 BaseItem::~BaseItem() {
 }
 
-void BaseItem::initFromBase(const std::shared_ptr<Item> &b) {
-    mBase = b;
-    mName = b->name();
-    mWeight = b->weight();
-    mSize = b->size();
-}
-
 const Name &BaseItem::name() const {
     return mName;
 }
@@ -74,7 +67,7 @@ void BaseItem::deserialize(const Json::Value &val) {
 
 }
 
-bool BaseItem::hasTrait(ItemTraitType type) {
+bool BaseItem::hasTrait(ItemTraitType type) const {
     auto traitIt = mTraits.find((unsigned)type);
     if (traitIt != mTraits.end()) {
         if (traitIt->second) return true;
@@ -138,6 +131,10 @@ void Json::Serializer<BaseItem>::deserialize(const Json::Value &v, BaseItem &i)
     i.deserialize(v);
 }
 
+Item::Item()
+{
+}
+
 Item::Item(const std::shared_ptr<BaseItem> &base) :
     mBase(base)
 {
@@ -146,5 +143,60 @@ Item::Item(const std::shared_ptr<BaseItem> &base) :
 
 Item::~Item()
 {
+    if (mTraitPropertyValues.empty()) return;
+    for (auto &traitPair : mBase->traits()) {
+        ItemTrait *trait = traitPair.second.get();
+        trait->destructProperties(mTraitPropertyValues);
+    }
+}
 
+Json::Value Json::Serializer<Item>::serialize(const Item &i)
+{
+    if (i.mTraitPropertyValues.empty()) {
+        return i.mBase->id();
+    }
+    else {
+        Json::Value obj(Json::objectValue);
+        obj["base"] = i.mBase->id();
+
+        Json::Value properties(Json::objectValue);
+        i.foreachTrait([&](ItemTrait *trait) {
+            Json::Value p = trait->serializeProperties(i.mTraitPropertyValues);
+            if (!p.isNull()) {
+                properties[trait->traitName()] = p;
+            }
+        });
+        obj["properties"] = properties;
+    }
+}
+
+void Json::Serializer<Item>::deserialize(const Json::Value &v, Item &i)
+{
+    i.mTraitPropertyValues.clear();
+    if (v.isString()) {
+        std::shared_ptr<BaseItem> base = RS->baseItem(v.asString());
+        if (!base) {
+            throw SerializationException("Can't find base item \"" + v.asString() + "\"");
+        }
+        i.mBase = base;
+    }
+    else if (v.isObject()) {
+        std::string baseId;
+        Json::deserialize(v["base"], baseId);
+        std::shared_ptr<BaseItem> base = RS->baseItem(baseId);
+        i.mBase = base;
+
+        Json::Value properties = v["properties"];
+        if (properties.isObject()) {
+            i.foreachTrait([&](ItemTrait *trait) {
+                Json::Value p = properties[trait->traitName()];
+                if (!p.isNull()) {
+                    trait->deserializeProperties(p, i.mTraitPropertyValues);
+                }
+            });
+        }
+    }
+    else {
+        throw SerializationException("Serializer<Item>::deserialize: Expecting an object or a string");
+    }
 }

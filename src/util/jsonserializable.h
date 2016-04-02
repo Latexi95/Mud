@@ -8,6 +8,7 @@
 #include "util/enums.h"
 #include "util/defines.h"
 
+
 class SerializationException : public std::exception {
 public:
     SerializationException(const std::string &txt) : msg(txt) {}
@@ -151,5 +152,6 @@ void deserialize(const Value &jsonVal, T &v) {
 }
 
 }
+
 
 #endif // JSONSERIALIZABLE_H

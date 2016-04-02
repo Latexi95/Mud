@@ -36,6 +36,7 @@ std::unique_ptr<ItemTrait> ItemTrait::createItemTraitByName(const std::string &n
     return createItemTraitByType(type);
 }
 
+
 void ItemTrait::serializeBase(Json::Value &val) const {
     val["traitname"] = traitName();
 }

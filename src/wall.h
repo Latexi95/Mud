@@ -5,7 +5,7 @@
 
 #include "util/enums.h"
 #include "roomexit.h"
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 
 class Wall {
     template<typename T>

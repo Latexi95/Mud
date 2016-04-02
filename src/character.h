@@ -1,7 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 #include "item.h"
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 #include <map>
 #include "util/position.h"
 #include "util/color.h"

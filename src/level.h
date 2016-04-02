@@ -5,7 +5,7 @@
 #include <cstdint>
 #include "item.h"
 #include "room.h"
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 #include "util/position.h"
 #include "leveleventqueue.h"
 #include "room.h"

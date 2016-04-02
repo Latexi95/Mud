@@ -6,7 +6,7 @@
 #include "traits/roomtrait.h"
 #include "util/defines.h"
 
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 
 class Level;
 struct RoomData;

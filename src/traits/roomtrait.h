@@ -1,6 +1,6 @@
 #ifndef ROOMTRAIT_H
 #define ROOMTRAIT_H
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 class RoomTrait {
 public:
     RoomTrait();

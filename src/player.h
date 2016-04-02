@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 #include "character.h"
 class Player {
 public:

@@ -8,7 +8,7 @@
 
 using namespace editor;
 
-static Properties<Item> sItemProperties;
+static Properties<BaseItem> sItemProperties;
 
 BaseEditor::BaseEditor(Client *client) :
     mClient(client)
@@ -38,15 +38,15 @@ void BaseEditor::setQueuedEditor(const std::shared_ptr<BaseEditor> &queuedEditor
 
 #define ADD_ITEM_PROPERTY(_NAME, _TYPE, _GETTER, _SETTER) \
     sItemProperties.addProperty(_NAME, \
-        [](Item *base) { return property::to_string(base->_GETTER()); }, \
-        [](Item *base, const std::string &value) { return base->_SETTER(property::from_string<_TYPE>(value));})
+        [](BaseItem *base) { return property::to_string(base->_GETTER()); }, \
+        [](BaseItem *base, const std::string &value) { return base->_SETTER(property::from_string<_TYPE>(value));})
 
 
 #define ADD_ITEM_TRAIT_PROPERTY(_NAME, _TRAIT, _TYPE, _GETTER, _SETTER) \
     sItemProperties.addProperty(_NAME, \
-        [](Item *base) { return base->hasTrait<_TRAIT>(); }, \
-        [](Item *base) { return property::to_string(base->trait<_TRAIT>()->_GETTER()); }, \
-        [](Item *base, const std::string &value) { return base->trait<_TRAIT>()->_SETTER(property::from_string<_TYPE>(value));})
+        [](BaseItem *base) { return base->hasTrait<_TRAIT>(); }, \
+        [](BaseItem *base) { return property::to_string(base->trait<_TRAIT>()->_GETTER()); }, \
+        [](BaseItem *base, const std::string &value) { return base->trait<_TRAIT>()->_SETTER(property::from_string<_TYPE>(value));})
 
 void BaseEditor::setupEditors()
 {
@@ -57,7 +57,7 @@ void BaseEditor::setupEditors()
     ADD_ITEM_TRAIT_PROPERTY("eatable.energy", EatableTrait, int, energy, setEnergy);
 }
 
-ItemEditor::ItemEditor(std::unique_ptr<Item> &&item, Client *client) :
+ItemEditor::ItemEditor(std::unique_ptr<BaseItem> &&item, Client *client) :
     BaseEditor(client),
     mItem(std::move(item)),
     mState(State::Main)
@@ -158,7 +158,7 @@ void ItemEditor::answer(Answer a)
 
 void ItemEditor::saveAndQuit()
 {
-    RS->storeItem(std::move(mItem));
+    RS->storeBaseItem(std::move(mItem));
     quit();
 }
 

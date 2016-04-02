@@ -1,9 +1,10 @@
 #ifndef ITEMTRAIT_H
 #define ITEMTRAIT_H
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 #include <memory>
 #include <boost/algorithm/string.hpp>
 #include "util/enums.h"
+#include "traitproperty.h"
 
 class ContainerTrait;
 class LandmarkTrait;
@@ -19,6 +20,14 @@ public:
     virtual void visit(EatableTrait *t);
 };
 
+
+template <typename TRAIT>
+struct ItemTraitProperties {
+    ItemTraitProperties(TRAIT *trait, TraitPropertyValueMap &m) : mTrait(trait), mValueMap(m) {}
+protected:
+    TRAIT *mTrait;
+    TraitPropertyValueMap &mValueMap;
+};
 
 
 class ItemTrait {
@@ -36,6 +45,10 @@ public:
     virtual void deserialize(const Json::Value &val) = 0;
 
     virtual void accept(ItemTraitVisitor *visitor) = 0;
+
+    virtual void destructProperties(TraitPropertyValueMap &v) { }
+    virtual Json::Value serializeProperties(const TraitPropertyValueMap &v) {}
+    virtual void deserializeProperties(const Json::Value &obj, TraitPropertyValueMap &v) {}
 protected:
     void serializeBase(Json::Value &val) const;
 };
@@ -62,5 +75,28 @@ struct Serializer<std::unique_ptr<ItemTrait> > {
 };
 
 }
+
+#define TRAIT_PROPERTIES_ACCESSOR_BEGIN(_TRAIT_) \
+template<> \
+struct ItemTraitProperties<_TRAIT_> {
+
+#define TRAIT_PROPERTIES_ACCESSOR_END() };
+
+#define TRAIT_PROPERTIES_ACCESSOR_BASE(_TRAIT_) \
+    public: ItemTraitProperties<_TRAIT_>(_TRAIT_ *trait, TraitPropertyValueMap &p) : mTrait(trait), mValueMap(p) {} \
+    private: _TRAIT_ *mTrait; TraitPropertyValueMap &mValueMap;
+
+#define TRAIT_PROPERTIES_ACCESSOR_COPY(_PROPERTY_NAME_, _TYPE_) \
+    public: void set ## _PROPERTY_NAME_ (const _TYPE_ &v) { (mTrait->mProperty ## _PROPERTY_NAME_).store(mValueMap, v);} \
+    _TYPE_ &get ## _PROPERTY_NAME_ () { return (mTrait->mProperty ## _PROPERTY_NAME_).load(mValueMap); }
+
+#define TRAIT_PROPERTIES_ACCESSOR_MOVE(_PROPERTY_NAME_, _TYPE_) \
+    public: void set ## _PROPERTY_NAME_ (_TYPE_ &&v) { (mTrait->mProperty ## _PROPERTY_NAME_).store(mValueMap, std::move(v));} \
+    _TYPE_ &get ## _PROPERTY_NAME_ () { return (mTrait->mProperty ## _PROPERTY_NAME_).load(mValueMap); }
+
+#define TRAIT_PROPERTY(_PROPERTY_NAME_, _TYPE_) \
+    TraitProperty<_TYPE_> mProperty##_PROPERTY_NAME_
+
+
 
 #endif // ITEMTRAIT_H

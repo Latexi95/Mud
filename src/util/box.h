@@ -1,6 +1,6 @@
 #ifndef BOX_H
 #define BOX_H
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 #include "util/textutils.h"
 template <typename T>
 struct Box

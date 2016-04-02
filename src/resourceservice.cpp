@@ -57,15 +57,15 @@ bool ResourceService::saveJsonFile(const std::string &path, const Json::Value &v
     return true;
 }
 
-std::unique_ptr<Item> ResourceService::item(const std::string &id) {
-    std::shared_ptr<Item> base = baseItem(id);
+std::unique_ptr<Item> ResourceService::createItem(const std::string &id) {
+    std::shared_ptr<BaseItem> base = baseItem(id);
     if (!base) return std::unique_ptr<Item>();
 
-    std::unique_ptr<Item> i = base->clone();
+    std::unique_ptr<Item> i(new Item(base));
     return std::move(i);
 }
 
-std::shared_ptr<Item> ResourceService::baseItem(const std::string &id) {
+std::shared_ptr<BaseItem> ResourceService::baseItem(const std::string &id) {
     boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
 
     auto itemIt = mBaseItems.find(id);
@@ -73,31 +73,31 @@ std::shared_ptr<Item> ResourceService::baseItem(const std::string &id) {
     return nullptr;
 }
 
-std::unique_ptr<Item> ResourceService::itemCopyForEditing(const std::string &id)
+std::unique_ptr<BaseItem> ResourceService::baseItemCopyForEditing(const std::string &id)
 {
-    std::shared_ptr<Item> base = baseItem(id);
-    if (!base) return std::unique_ptr<Item>();
+    std::shared_ptr<BaseItem> base = baseItem(id);
+    if (!base) return std::unique_ptr<BaseItem>();
 
-    std::unique_ptr<Item> ret(new Item(base->id()));
+    std::unique_ptr<BaseItem> ret(new BaseItem(base->id()));
     base->clone(*ret);
     return std::move(ret);
 }
 
-void ResourceService::storeItem(std::unique_ptr<Item> &&item)
+void ResourceService::storeBaseItem(std::unique_ptr<BaseItem> &&item)
 {
     boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
-    std::shared_ptr<Item> base = baseItem(item->id());
+    std::shared_ptr<BaseItem> base = baseItem(item->id());
     if (!base) {
-        base = std::shared_ptr<Item>(item.release());
+        base = std::shared_ptr<BaseItem>(item.release());
         mBaseItems[base->id()] = base;
     }
     else {
         item->clone(*base);
     }
-    saveItem(base);
+    saveBaseItem(base);
 }
 
-bool ResourceService::saveItem(const std::shared_ptr<Item> &item)
+bool ResourceService::saveBaseItem(const std::shared_ptr<BaseItem> &item)
 {
     boost::lock_guard<boost::recursive_mutex> lock(mItemMutex);
     std::string path = item->id();
@@ -163,7 +163,7 @@ bool ResourceService::loadItem(const std::string &path, const std::string &id)
 {
     try {
         Json::Value v = readJsonFile(path);
-        std::shared_ptr<Item> item = std::make_shared<Item>(id);
+        std::shared_ptr<BaseItem> item = std::make_shared<BaseItem>(id);
         item->deserialize(v);
         mBaseItems[id] = item;
         return true;

@@ -8,6 +8,7 @@
 #include <memory>
 
 class Item;
+class BaseItem;
 class Character;
 class Player;
 class ResourceService {
@@ -19,19 +20,19 @@ public:
     Json::Value readJsonFile(const std::string &path) const;
     bool saveJsonFile(const std::string &path, const Json::Value &val) const;
 
-    std::unique_ptr<Item> item(const std::string &id);
-    std::shared_ptr<Item> baseItem(const std::string &id);
+    std::unique_ptr<Item> createItem(const std::string &id);
+    std::shared_ptr<BaseItem> baseItem(const std::string &id);
 
-    std::unique_ptr<Item> itemCopyForEditing(const std::string &id);
-    void storeItem(std::unique_ptr<Item> &&item);
+    std::unique_ptr<BaseItem> baseItemCopyForEditing(const std::string &id);
+    void storeBaseItem(std::unique_ptr<BaseItem> &&item);
 
-    bool saveItem(const std::shared_ptr<Item> &item);
+    bool saveBaseItem(const std::shared_ptr<BaseItem> &item);
     bool loadAllItemTemplates();
 private:
     bool loadItemsFromDirectory(const std::string &path, const std::string &prefix);
     bool loadItem(const std::string &path, const std::string &id);
 
-    std::unordered_map<std::string, std::shared_ptr<Item> > mBaseItems;
+    std::unordered_map<std::string, std::shared_ptr<BaseItem> > mBaseItems;
 
     boost::recursive_mutex mItemMutex;
 };

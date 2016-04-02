@@ -11,7 +11,7 @@
 #include "util/defines.h"
 #include "util/enums.h"
 #include "traits/itemtrait.h"
-#include "traitproperty.h"
+#include "traits/traitproperty.h"
 
 
 class BaseItem {
@@ -30,9 +30,13 @@ public:
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);
 
-    bool hasTrait(ItemTraitType traitType);
-
+    bool hasTrait(ItemTraitType traitType) const;
+    template <typename TRAIT>
+    bool hasTrait() const { return hasTrait(TRAIT::staticTraitType);}
     ItemTrait *trait(ItemTraitType type);
+    template <typename TRAIT>
+    TRAIT *trait() { return static_cast<TRAIT*>(trait(TRAIT::staticTraitType));}
+
     void addTrait(std::unique_ptr<ItemTrait> &&trait);
     std::unique_ptr<ItemTrait> removeTrait(ItemTraitType type);
 
@@ -41,7 +45,7 @@ public:
     void clone(BaseItem &copy) const;
     std::unique_ptr<BaseItem> clone() const;
 
-    std::string id() const { return mId; }
+    const std::string &id() const { return mId; }
 protected:
     std::string mId;
     Name mName;
@@ -52,6 +56,9 @@ protected:
 
 class Item {
 public:
+    template<typename T>
+    friend class Json::Serializer;
+    Item();
     Item(const std::shared_ptr<BaseItem> &base);
     ~Item();
 
@@ -66,10 +73,23 @@ public:
     bool hasTrait(ItemTraitType type) const { return mBase->hasTrait(type); }
     template <typename TRAIT>
     bool hasTrait() const { return mBase->hasTrait(TRAIT::staticTraitType);}
+
+    const std::shared_ptr<BaseItem> &base() const { return mBase; }
+
+    template <typename FUNC>
+    void foreachTrait(FUNC &&f) const;
 private:
     std::shared_ptr<BaseItem> mBase;
     TraitPropertyValueMap mTraitPropertyValues;
 };
+
+template <typename FUNC>
+void Item::foreachTrait(FUNC &&f) const {
+    for (auto &traitPair : mBase->traits()) {
+        f(traitPair.second.get());
+    }
+}
+
 
 namespace Json {
 template<>

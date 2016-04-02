@@ -17,7 +17,7 @@ EditorService::~EditorService()
 
 std::shared_ptr<editor::BaseEditor> EditorService::startEditingItem(Client *c, const std::string &id)
 {
-    std::unique_ptr<Item> item = RS->itemCopyForEditing(id);
+    std::unique_ptr<BaseItem> item = RS->baseItemCopyForEditing(id);
     if (!item) {
         c->ui().commandError(MessageBuilder() << "Can't find item \"" << id << "\"");
         return nullptr;

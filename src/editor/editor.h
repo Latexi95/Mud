@@ -5,7 +5,7 @@
 #include "properties.h"
 #include "editorcommands.h"
 
-class Item;
+class BaseItem;
 class Client;
 
 namespace editor {
@@ -44,7 +44,7 @@ protected:
 
 class ItemEditor : public BaseEditor {
 public:
-    ItemEditor(std::unique_ptr<Item> &&item, Client *client);
+    ItemEditor(std::unique_ptr<BaseItem> &&item, Client *client);
 
     virtual TryCloseResult tryClose();
 
@@ -62,9 +62,9 @@ private:
         QuitQuestion
     };
 
-    std::unique_ptr<Item> mItem;
+    std::unique_ptr<BaseItem> mItem;
     State mState;
-    Context<Item> mContext;
+    Context<BaseItem> mContext;
 };
 
 }

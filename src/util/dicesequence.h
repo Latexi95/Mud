@@ -2,7 +2,7 @@
 #define DICESEQUENCE_H
 #include <map>
 #include <string>
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 class DiceSequence {
 public:
     friend class DiceRandom;

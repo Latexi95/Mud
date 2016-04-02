@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include "util/defines.h"
-#include "jsonserializable.h"
+#include "util/jsonserializable.h"
 
 class Room;
 class Level;
