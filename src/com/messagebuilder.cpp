@@ -223,7 +223,7 @@ void MessageBuilder::append(const Name &name)
     }
 }
 
-void MessageBuilder::append(const std::unique_ptr<Item> &item)
+void MessageBuilder::append(const Item *item)
 {
     if (mNumber >= 0) {
         mParts.emplace_back(Bold | FGBlue, item->name().num(mNumber, true));
@@ -232,6 +232,11 @@ void MessageBuilder::append(const std::unique_ptr<Item> &item)
     else {
         mParts.emplace_back(Bold | FGBlue, item->name().num(1, true));
     }
+}
+
+void MessageBuilder::append(const std::unique_ptr<Item> &item)
+{
+    append(item.get());
 }
 
 void MessageBuilder::append(const std::shared_ptr<Character> &character)
@@ -279,6 +284,12 @@ void MessageBuilder::setStyle(int style)
 int MessageBuilder::style() const
 {
     return mStyle;
+}
+
+MessageBuilder &MessageBuilder::operator<<(const Item *item)
+{
+    append(item);
+    return *this;
 }
 
 MessageBuilder &MessageBuilder::operator<<(int i)

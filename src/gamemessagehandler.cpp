@@ -14,14 +14,14 @@
 
 
 GameMessageHandler::GameMessageHandler(Client *c, const std::shared_ptr<Character> &character):
-    mCharacter(character),
     mPlayer(c->player()),
     mClient(c),
     mCommandParserSelection(CommandParserSelection::Default)
 {
-    Level *level = LS->level(mCharacter->levelId());
-    mCharacter->setRoom(level->roomById(mCharacter->roomId()));
-    level->eventQueue()->push(new JoinEvent(c->shared_from_this(), mCharacter));
+    c->setCharacter(character);
+    Level *level = LS->level(character->levelId());
+    character->setRoom(level->roomById(character->roomId()));
+    level->eventQueue()->push(new JoinEvent(c->shared_from_this(), character));
 }
 
 GameMessageHandler::~GameMessageHandler()
@@ -32,7 +32,7 @@ GameMessageHandler::~GameMessageHandler()
 void GameMessageHandler::handleCommand(const std::shared_ptr<Client> &client, const std::string &message)
 {
     CommandContext ctx;
-    ctx.mCaller = mCharacter;
+    ctx.mCaller = character();
     const CommandParser &parser = CMDS->standardCommandParser();
     parser.parse(message, std::move(ctx), client);
 }
@@ -40,14 +40,19 @@ void GameMessageHandler::handleCommand(const std::shared_ptr<Client> &client, co
 void GameMessageHandler::handleEditorCommand(const std::shared_ptr<Client> &client, const std::string &message)
 {
     CommandContext ctx;
-    ctx.mCaller = mCharacter;
+    ctx.mCaller = character();
     const CommandParser &parser = CMDS->editorCommandParser();
     parser.parse(message, std::move(ctx), client);
 }
 
+const std::shared_ptr<Character> &GameMessageHandler::character() const
+{
+    return mClient->character();
+}
+
 LevelEventQueue *GameMessageHandler::levelQueue() const
 {
-    return mCharacter->level()->eventQueue();
+    return character()->level()->eventQueue();
 }
 
 void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std::string &message) {
@@ -65,7 +70,7 @@ void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std
         return;
     }
     if (message.size() > 1 && message[0] == '!') {
-        mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message.substr(1)));
+        levelQueue()->push(new MessageEvent(client->character(), message.substr(1)));
     }
 
     if (mCommandParserSelection == CommandParserSelection::Default) {
@@ -84,11 +89,10 @@ void GameMessageHandler::handle(const std::shared_ptr<Client> &client, const std
         return;
     }
 
-    mCharacter->level()->eventQueue()->push(new MessageEvent(mCharacter, message));
+    levelQueue()->push(new MessageEvent(client->character(), message));
 }
 
 void GameMessageHandler::disconnected(const std::shared_ptr<Client> &client)
 {
-    Level *level = mCharacter->level();
-    level->eventQueue()->push(new DisconnectEvent(client, mCharacter));
+    levelQueue()->push(new DisconnectEvent(client, character()));
 }

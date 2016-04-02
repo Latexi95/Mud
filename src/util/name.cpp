@@ -2,6 +2,7 @@
 #include <boost/locale.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/locale/conversion.hpp>
 #include "util/stringbuilder.h"
 #include "util/textutils.h"
 
@@ -56,6 +57,10 @@ const std::string &Name::undefiniteArticle() const {
 
 const std::string &Name::definiteArticle() const {
     return sArticleThe;
+}
+
+std::string Name::searchFormatted() const {
+    return boost::locale::to_lower(mBase);
 }
 
 bool Name::isLike(const std::string &name) const {

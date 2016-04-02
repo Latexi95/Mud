@@ -73,7 +73,7 @@ ItemTraitType ItemTraitTypeFromString(std::string txt)
     try {
         return ItemTraitTypeSelector.match(txt);
     }
-    catch (TextSelectorError){
+    catch (SelectorError){
         return ItemTraitType::Invalid;
     }
 }

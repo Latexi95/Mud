@@ -64,6 +64,7 @@ public:
     void append(std::string &&str);
     void append(int num);
     void append(const Name &name);
+    void append(const Item *item);
     void append(const std::unique_ptr<Item> &item);
     void append(const std::shared_ptr<Character> &character);
     void append(const Room *r);
@@ -81,6 +82,7 @@ public:
     MessageBuilder &operator<< (const std::string &str);
     MessageBuilder &operator<< (std::string &&str);
     MessageBuilder &operator<< (const Name &name);
+    MessageBuilder &operator<< (const Item *item);
     MessageBuilder &operator<< (const std::unique_ptr<Item> &item);
     MessageBuilder &operator<< (const std::shared_ptr<Character> &character);
     MessageBuilder &operator<< (const Room *r);
@@ -94,7 +96,13 @@ public:
         return *this;
     }
     template <typename Container, typename Func>
-    void appendJoin(Container &&c, Func &&f);
+    MessageBuilder &appendJoin(Container &&c, Func &&f);
+
+    template <typename Container>
+    MessageBuilder &appendJoin(Container &&c);
+
+    template <typename ITERATOR>
+    MessageBuilder &appendJoinIt(ITERATOR &&begin, ITERATOR &&end);
 private:
     static char foregroundTelnetColorCode(int style);
     static char backgroundTelnetColorCode(int style);
@@ -119,7 +127,7 @@ private:
 };
 
 template <typename Container, typename Func>
-void MessageBuilder::appendJoin(Container &&c, Func &&f)
+MessageBuilder &MessageBuilder::appendJoin(Container &&c, Func &&f)
 {
     size_t left = c.size();
     for (const auto &v : c) {
@@ -132,6 +140,38 @@ void MessageBuilder::appendJoin(Container &&c, Func &&f)
             this->append(" and ");
         }
     }
+}
+
+template <typename Container>
+MessageBuilder &MessageBuilder::appendJoin(Container &&c) {
+    size_t left = c.size();
+    for (const auto &v : c) {
+        this->append(v);
+        --left;
+        if (left > 1) {
+            this->append(", ");
+        }
+        else if (left == 1) {
+            this->append(" and ");
+        }
+    }
+}
+
+template <typename ITERATOR>
+MessageBuilder &MessageBuilder::appendJoinIt(ITERATOR &&begin, ITERATOR &&end) {
+    size_t left = end - begin;
+    for (auto it = begin; it != end; ++it) {
+        const auto &v = *it;
+        this->append(v);
+        --left;
+        if (left > 1) {
+            this->append(", ");
+        }
+        else if (left == 1) {
+            this->append(" and ");
+        }
+    }
+    return *this;
 }
 
 

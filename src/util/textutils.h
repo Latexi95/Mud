@@ -18,6 +18,8 @@ void selectClean(std::string &str);
 
 std::vector<std::string> split(const std::string &s, const std::string &sep);
 std::vector<std::string> split(const std::string &s, char sep);
+std::string parseItemBaseName(const std::string &s);
+void removePrefixes(std::string &txt, const std::initializer_list<std::string> &prefixes);
 
 template <typename Container>
 std::string join(const Container &c, const std::string &sep = ", ") {

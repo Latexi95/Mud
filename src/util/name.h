@@ -1,6 +1,7 @@
 #ifndef NAME_H
 #define NAME_H
 #include <string>
+#include "textutils.h"
 #include "util/jsonserializable.h"
 class Name {
 public:
@@ -23,6 +24,9 @@ public:
     const std::string &undefiniteArticle() const;
     const std::string &definiteArticle() const;
 
+    std::string searchFormatted() const;
+
+
     bool isLike(const std::string &name) const;
 
     std::string num(int itemQuantity, bool definite) const;
@@ -42,6 +46,13 @@ private:
     std::string mBase;
     std::string mPluralForm;
     int mFlags;
+};
+
+struct NameSearchTextGetter
+{
+    std::string operator()(const Name &n) {
+        return n.searchFormatted();
+    }
 };
 
 

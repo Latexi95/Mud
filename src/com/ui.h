@@ -3,6 +3,8 @@
 #include "messagebuilder.h"
 
 class Client;
+class Character;
+class Item;
 
 class UI
 {
@@ -15,6 +17,10 @@ public:
     void commandError(const std::string &msg);
     void commandError(const MessageBuilder &msg);
     Client *client();
+
+    const std::shared_ptr<Character> character() const;
+
+    void printDescription(Item *item);
 private:
     Client *mClient;
 };

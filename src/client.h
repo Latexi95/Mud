@@ -27,6 +27,9 @@ public:
 
     const std::shared_ptr<editor::BaseEditor> &editor() const;
     void setEditor(const std::shared_ptr<editor::BaseEditor> &e);
+
+    const std::shared_ptr<Character> &character() const;
+    void setCharacter(const std::shared_ptr<Character> &c);
 private:
     std::shared_ptr<Character> mCharacter;
     std::shared_ptr<MessageHandler> mMessageHandler;

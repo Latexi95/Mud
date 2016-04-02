@@ -30,6 +30,7 @@ Json::Value BaseItem::serialize() const {
     ret["name"] = Json::serialize(mName);
     ret["weight"] = mWeight;
     ret["size"] = Json::serialize(mSize);
+    ret["description"] = Json::serialize(mDescription);
     if (!mTraits.empty()) {
         Json::Value traits(Json::objectValue);
         for (const std::pair<const unsigned, std::unique_ptr<ItemTrait> > &t : mTraits) {
@@ -48,6 +49,7 @@ void BaseItem::deserialize(const Json::Value &val) {
 
     Json::deserialize(val["size"], mSize);
     Json::deserialize(val["weight"], mWeight);
+    Json::deserialize(val["description"], mDescription);
 
     const Json::Value &traits = val["traits"];
     for (Json::Value::const_iterator i = traits.begin(); i != traits.end(); ++i) {
@@ -119,6 +121,11 @@ std::unique_ptr<BaseItem> BaseItem::clone() const {
     std::unique_ptr<BaseItem> copy(new BaseItem());
     clone(*copy);
     return std::move(copy);
+}
+
+const std::string &BaseItem::description() const
+{
+    return mDescription;
 }
 
 Json::Value Json::Serializer<BaseItem>::serialize(const BaseItem &i)

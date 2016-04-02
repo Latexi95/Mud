@@ -6,6 +6,8 @@
 #include "events/moveevent.h"
 #include "mud.h"
 #include "maineventqueue.h"
+#include "util/textselector.h"
+#include "com/ui.h"
 
 namespace fs = boost::filesystem;
 CharacterService *CS = 0;
@@ -156,4 +158,26 @@ std::vector<Item *> CharacterService::itemsInVision(const std::shared_ptr<Charac
         }
     }
     return items;
+}
+
+Item *CharacterService::selectItemInVision(UI &ui, const std::string &itemName)
+{
+    std::vector<Item*> items = itemsInVision(ui.character());
+    TextSelector<Item*, ItemSearchTextGetter> selector(std::move(items));
+    auto selectPair = selector.selection_range(itemName);
+
+    if (selectPair.first == selectPair.second) {
+        ui.commandError("Can't find an item matching that name");
+        return nullptr;
+    }
+    else if (selectPair.second - selectPair.first > 5){
+        ui.commandError("Found multiple items starting with that sequence. Give more characters to find correct one.");
+        return nullptr;
+    }
+    else if (selectPair.second - selectPair.first > 1) {
+        ui.commandError(MessageBuilder("Found multiple items starting with that sequence: ").appendJoinIt(selectPair.first, selectPair.second));
+        return nullptr;
+    }
+
+    return *selectPair.first;
 }

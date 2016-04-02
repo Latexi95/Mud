@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_CASE( textselector_test ) {
     Selector.insert({"aaaa", "aa", "bbacad", "addee", "asdaf123", "asdfees"});
     std::string found;
     //Should not find -> throw exception
-    BOOST_CHECK_THROW(found = Selector.find_match("aa232"), TextSelectorError);
+    BOOST_CHECK_THROW(found = Selector.find_match("aa232"), SelectorError);
 
     BOOST_CHECK_NO_THROW(found = Selector.find_match("aa"));
     BOOST_CHECK(found == "aa");

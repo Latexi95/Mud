@@ -4,16 +4,12 @@
 #include <string>
 #include <utility>
 #include <boost/algorithm/string.hpp>
+#include "enums.h"
 
 struct SGetterString {
     const std::string & operator () (const std::string &s) {
         return s;
     }
-};
-
-enum class TextSelectorError {
-    MultipleMatches,
-    NoMatches
 };
 
 
@@ -33,6 +29,7 @@ public:
     TextSelector(const std::initializer_list<T> &list);
     TextSelector(const TextSelector<T, SGetter> &t) = default;
     TextSelector(TextSelector<T, SGetter> &&t) { mVector = std::move(t.mVector); }
+    TextSelector(std::vector<T> &&d, bool presorted=false);
     ~TextSelector() = default;
 
     TextSelector<T, SGetter> &operator=(const TextSelector<T, SGetter> &t);
@@ -103,6 +100,18 @@ template <typename T, typename SGetter>
 TextSelector<T, SGetter>::TextSelector(const std::initializer_list<T> &list)
 {
     insert(list);
+}
+
+template <typename T, typename SGetter>
+TextSelector<T, SGetter>::TextSelector(std::vector<T> &&d, bool presorted) :
+    mVector(std::move(d))
+{
+    if (!presorted) {
+        std::sort(mVector.begin(), mVector.end(), [](const T &a, const T &b) {
+            SGetter get;
+            return get(a) < get(b);
+        });
+    }
 }
 
 template <typename T, typename SGetter>
@@ -183,8 +192,8 @@ template <typename T, typename SGetter>
 const T &TextSelector<T, SGetter>::find_match(const std::string &text) const
 {
     auto p = selection_range(text);
-    if (p.first == p.second) throw TextSelectorError::NoMatches;
-    if (p.first + 1 != p.second) throw TextSelectorError::MultipleMatches;
+    if (p.first == p.second) throw SelectorError::NoMatches;
+    if (p.first + 1 != p.second) throw SelectorError::MultipleMatches;
     return *p.first;
 }
 

@@ -5,12 +5,12 @@
 #include "com/ui.h"
 
 LookCommand::LookCommand() :
-    Command("look", "look around/object_name")
+    Command("look", "look around/<object_name>", 1)
 {
 
 }
 
-void LookCommand::execute(const CommandContext &c, UI &messageContext) const
+void LookCommand::execute(const CommandContext &c, UI &ui) const
 {
     const auto &character = c.mCaller;
     Room *r = character->room();
@@ -33,9 +33,16 @@ void LookCommand::execute(const CommandContext &c, UI &messageContext) const
                 return p.first.num(p.second, false);
             });
         }
-        messageContext.send(msg);
+        ui.send(msg);
     }
     else {
-        messageContext.commandError("Not implemented... Just look around");
+        std::string baseName = text::lowered(c.mParameters[0]);
+        text::removePrefixes(baseName, {"at ", "for "});
+        baseName = text::parseItemBaseName(baseName);
+
+        Item *item = CS->selectItemInVision(ui, baseName);
+        if (item) {
+            ui.printDescription(item);
+        }
     }
 }

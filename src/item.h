@@ -46,8 +46,11 @@ public:
     std::unique_ptr<BaseItem> clone() const;
 
     const std::string &id() const { return mId; }
+
+    const std::string &description() const;
 protected:
     std::string mId;
+    std::string mDescription;
     Name mName;
     float mWeight;
     Box<float> mSize;
@@ -65,6 +68,7 @@ public:
     const Name &name() const { return mBase->name(); }
     double weight() const { return mBase->weight(); }
     const Box<float> &size() const { return mBase->size(); }
+    const std::string &description() const { return mBase->description(); }
 
     const ItemTrait *trait(ItemTraitType type) const { return mBase->trait(type); }
     template <typename TRAIT>
@@ -104,5 +108,12 @@ struct Serializer<Item> {
     static void deserialize(const Value &v, Item &i);
 };
 }
+
+struct ItemSearchTextGetter
+{
+    std::string operator()(const Item *item) {
+        return item->name().searchFormatted();
+    }
+};
 
 #endif // ITEM_H

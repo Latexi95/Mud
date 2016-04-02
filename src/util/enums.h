@@ -52,6 +52,12 @@ enum class ContainerState {
     Opened
 };
 
+enum class SelectorError {
+    NoError,
+    MultipleMatches,
+    NoMatches
+};
+
 
 #endif // ENUMS_H_
 

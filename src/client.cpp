@@ -46,3 +46,13 @@ void Client::setEditor(const std::shared_ptr<editor::BaseEditor> &e)
 {
     mEditor = e;
 }
+
+const std::shared_ptr<Character> &Client::character() const
+{
+    return mCharacter;
+}
+
+void Client::setCharacter(const std::shared_ptr<Character> &c)
+{
+    mCharacter = c;
+}

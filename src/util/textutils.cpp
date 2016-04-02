@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
+#include <cctype>
 
 void text::clean(std::string &str) {
     boost::algorithm::trim_if(str, [](char c){
@@ -74,4 +75,31 @@ void text::selectClean(std::string &str)
 {
     clean(str);
     boost::locale::to_lower(str);
+}
+
+std::string text::parseItemBaseName(const std::string &s)
+{
+    static std::array<std::string, 3> namePrefixes = {"a ", "the ", "an "};
+
+    std::string ret = s;
+    selectClean(ret);
+    for (const std::string &prefix : namePrefixes) {
+        if (boost::starts_with(ret, prefix)) {
+            ret.erase(ret.begin(), ret.begin() + prefix.size());
+            break;
+        }
+    }
+    if (ret.empty()) return ret;
+
+    return ret;
+}
+
+void text::removePrefixes(std::string &txt, const std::initializer_list<std::string> &prefixes)
+{
+    for (const auto &prefix : prefixes) {
+        if (boost::starts_with(txt, prefix)) {
+            txt.erase(txt.begin(), txt.begin() + prefix.size());
+            return;
+        }
+    }
 }

@@ -1,9 +1,10 @@
 {
 	"name" : "long sword",
 	"size" : {
-		"x" : 1,
+		"x" : 1.5,
 		"y" : 0.2,
 		"z" : 0.02
 	},
-	"weight" : 3
+	"weight" : 3,
+	"description": "Plain looking common long sword"
 }

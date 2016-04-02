@@ -42,7 +42,7 @@ void StartEditingCommand::execute(const CommandContext &c, UI &messageContext) c
     try {
         eTy = itemRoomLevelSelector.match(editType);
     }
-    catch (TextSelectorError e) {
+    catch (SelectorError e) {
         messageContext.commandError(MessageBuilder() << "Expecting \"item\", \"room\" or \"level\" as the first parameter");
         return;
     }
@@ -173,7 +173,7 @@ void ListCommand::execute(const CommandContext &c, UI &messageContext) const
     try {
         t = listCommandOptionsSelector.match(type);
     }
-    catch (TextSelectorError e) {
+    catch (SelectorError e) {
         messageContext.commandError("  Expecting \"properties\" or \"traits\" after the command");
         return;
     }
@@ -211,7 +211,7 @@ void AddCommand::execute(const CommandContext &c, UI &messageContext) const
     try {
         addType = addTypeSelector.match(type);
     }
-    catch (TextSelectorError e) {
+    catch (SelectorError e) {
         messageContext.commandError("  Expecting \"trait\", \"item\" or \"exit\" after the command");
         return;
     }
@@ -242,7 +242,7 @@ void RemoveCommand::execute(const CommandContext &c, UI &messageContext) const
     try {
         addType = addTypeSelector.match(type);
     }
-    catch (TextSelectorError) {
+    catch (SelectorError) {
         messageContext.commandError("  Expecting \"trait\", \"item\" or \"exit\" after the command");
         return;
     }

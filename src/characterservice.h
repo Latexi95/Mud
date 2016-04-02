@@ -5,6 +5,7 @@
 #include <boost/thread/mutex.hpp>
 #include "util/enums.h"
 
+class UI;
 class CharacterService {
 public:
     CharacterService();
@@ -27,6 +28,13 @@ public:
     std::shared_ptr<Character> loadCharacter(const std::string &fileName);
 
     std::vector<Item*> itemsInVision(const std::shared_ptr<Character> &c);
+
+    /**
+     * selectItemInVision returns an item which matches closest the given itemName.
+     *
+     * @throw SelectorError If can't find a match or finds multiple
+     */
+    Item *selectItemInVision(UI &ui, const std::string &itemName);
 private:
     boost::mutex mMutex;
     std::unordered_map<std::string, std::shared_ptr<Character> > mCharacters;

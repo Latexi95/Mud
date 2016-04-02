@@ -19,9 +19,9 @@ public:
     void handleCommand(const std::shared_ptr<Client> &client, const std::string &message);
     void handleEditorCommand(const std::shared_ptr<Client> &client, const std::string &message);
 private:
+    const std::shared_ptr<Character> &character() const;
     LevelEventQueue *levelQueue() const;
 
-    std::shared_ptr<Character> mCharacter;
     std::shared_ptr<Player> mPlayer;
     Client *mClient;
     CommandParserSelection mCommandParserSelection;
