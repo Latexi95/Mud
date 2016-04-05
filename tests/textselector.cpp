@@ -24,4 +24,8 @@ BOOST_AUTO_TEST_CASE( textselector_test ) {
 
     BOOST_CHECK_NO_THROW(found = Selector2.find_match("bb"));
     BOOST_CHECK(found == "bb");
+
+    TextSelector<std::string> Selector3 = {"test"};
+    BOOST_CHECK_NO_THROW(found = Selector3.find_match("test"));
+    BOOST_CHECK(found == "test");
 }

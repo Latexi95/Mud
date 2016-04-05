@@ -42,6 +42,7 @@ public:
     const_iterator cbegin() const { return mVector.begin(); }
     const_iterator cend() const { return mVector.end(); }
 
+    bool empty() const { return mVector.empty(); }
 
     void insert(const T &t);
     void insert(T &&t);
@@ -157,8 +158,18 @@ std::pair<typename TextSelector<T, SGetter>::const_iterator, typename TextSelect
 {
     typedef std::pair<TextSelector<T, SGetter>::const_iterator, TextSelector<T, SGetter>::const_iterator> ret_pair;
     auto c = closest(text);
-    if (c == end()) return ret_pair(end(), end());
+
     SGetter getter;
+    if (c == end()) {
+        if (empty() || !boost::starts_with(getter(*(c - 1)), text)) {
+            return ret_pair(end(), end());
+        }
+        else {
+            --c;
+        }
+
+    }
+
 
     auto rangeBegin = c;
     auto rangeEnd = c;
