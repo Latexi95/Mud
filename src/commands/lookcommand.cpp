@@ -38,6 +38,19 @@ void LookCommand::execute(const CommandContext &c, UI &ui) const
     else {
         std::string baseName = text::lowered(c.mParameters[0]);
         text::removePrefixes(baseName, {"at ", "for "});
+        try {
+            auto lookPair = r->lookMap().find_match(baseName);
+            ui.send(lookPair.second);
+            return;
+        }
+        catch (SelectorError e) {
+            if (e == SelectorError::MultipleMatches) {
+                ui.commandError("There are so many things to look at...");
+                return;
+            }
+        }
+
+
         baseName = text::parseItemBaseName(baseName);
 
         Item *item = CS->selectItemInVision(ui, baseName);

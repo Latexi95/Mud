@@ -5,6 +5,7 @@
 #include "wall.h"
 #include "traits/roomtrait.h"
 #include "util/defines.h"
+#include "util/textselector.h"
 
 #include "util/jsonserializable.h"
 
@@ -32,7 +33,7 @@ public:
     const std::vector<std::unique_ptr<RoomTrait>> &traits() const;
     void addTrait(std::unique_ptr<RoomTrait> &&r);
 
-    const std::unordered_map<std::string, std::string> &lookMap() const;
+    const TextSelectorMap<std::string> &lookMap() const;
     Level *level() const { return mLevel; }
 
     void setWall(Direction dir, const Wall &w);
@@ -55,7 +56,7 @@ protected:
     std::string mDescription;
     Level *mLevel;
 
-    std::unordered_map<std::string, std::string> mLookMap;
+    TextSelectorMap<std::string> mLookMap;
     std::array<Wall, (int)Direction::Count> mWalls;
     std::vector<std::shared_ptr<Character>> mCharacters;
 

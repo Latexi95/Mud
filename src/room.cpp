@@ -86,7 +86,7 @@ void Room::addTrait(std::unique_ptr<RoomTrait> &&r)
     mTraits.emplace_back(std::move(r));
 }
 
-const std::unordered_map<std::string, std::string> &Room::lookMap() const
+const TextSelectorMap<std::string> &Room::lookMap() const
 {
     return mLookMap;
 }
@@ -213,7 +213,9 @@ void Serializer<Room>::deserialize(const Value &v, Room &r)
     Value looks = v["looks"];
     if (looks.isObject()) {
         for (auto lookIt = looks.begin(); lookIt != looks.end(); ++lookIt) {
-            Json::deserialize(*lookIt, r.mLookMap[lookIt.name()]);
+            std::string text;
+            Json::deserialize(*lookIt, text);
+            r.mLookMap.insert(lookIt.name(), text);
         }
     }
 
