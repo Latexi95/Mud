@@ -63,6 +63,8 @@ void Mud::shutdown()
     std::cout << "Shutting down..." << std::endl;
     mRunning = false;
     mEventQueue.shutdown();
+    mCharacterService->saveAllCharacters();
+    mLevelService->saveAllLevels();
 }
 
 time_type Mud::time() const

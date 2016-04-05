@@ -36,6 +36,31 @@ std::shared_ptr<Level> LevelService::loadLevel(const std::string &levelId, bool 
     return loadLevelNoLock(levelId, directAdd);
 }
 
+void LevelService::saveAllLevels()
+{
+    boost::unique_lock<boost::mutex> lock(mMutex);
+    for (auto &levelPair : mLevels) {
+        const std::shared_ptr<Level> &level = levelPair.second;
+        std::string path = "data/levels/" + level->id() + "/";
+        try {
+            level->forEachRoom([&](Room *r) {
+                try {
+                    Json::Value val = Json::serialize(*r);
+                    RS->saveJsonFile(path + r->id() + ".room", val);
+                }
+                catch (const SerializationException &e) {
+                    std::cerr << "Failed saving room " << r->id() << ": " << e.what() << std::endl;
+                }
+            });
+            Json::Value val = Json::serialize(level);
+            RS->saveJsonFile(path + level->id() + ".level", val);
+        }
+        catch (const SerializationException &e) {
+            std::cerr << "Failed saving level " << level->id() << ": " << e.what() << std::endl;
+        }
+    }
+}
+
 std::shared_ptr<Level> LevelService::loadLevelNoLock(const std::string &levelId, bool directAdd)
 {
     Json::Value levelJson = RS->readJsonFile("data/levels/" + levelId + "/" + levelId + ".level");
@@ -56,7 +81,7 @@ std::shared_ptr<Level> LevelService::loadLevelNoLock(const std::string &levelId,
         level->addRoom(std::move(room));
         }
         catch (const SerializationException &e) {
-            std::cerr << "Loading room " << roomId << " failed" << std::endl;
+            std::cerr << "Loading room " << roomId << " failed: " << e.what() << std::endl;
             throw;
         }
     }

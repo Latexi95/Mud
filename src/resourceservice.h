@@ -18,7 +18,7 @@ public:
     static ResourceService *instance();
 
     Json::Value readJsonFile(const std::string &path) const;
-    bool saveJsonFile(const std::string &path, const Json::Value &val) const;
+    void saveJsonFile(const std::string &path, const Json::Value &val) const;
 
     std::unique_ptr<Item> createItem(const std::string &id);
     std::shared_ptr<BaseItem> baseItem(const std::string &id);

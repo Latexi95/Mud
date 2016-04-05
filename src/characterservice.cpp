@@ -181,3 +181,19 @@ Item *CharacterService::selectItemInVision(UI &ui, const std::string &itemName)
 
     return *selectPair.first;
 }
+
+void CharacterService::saveAllCharacters()
+{
+    UNIQUE_LOCK(mMutex);
+    std::string path = "data/characters/";
+    for (auto characterPair : mCharacters) {
+        const std::shared_ptr<Character> &character = characterPair.second;
+        try {
+            Json::Value val = Json::serialize(character);
+            RS->saveJsonFile(path + character->id() + ".json", val);
+        }
+        catch (const SerializationException &e){
+            std::cerr << "Saving character " << character->id() << " failed: " << e.what() << std::endl;
+        }
+    }
+}

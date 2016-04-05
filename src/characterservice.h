@@ -35,6 +35,8 @@ public:
      * @throw SelectorError If can't find a match or finds multiple
      */
     Item *selectItemInVision(UI &ui, const std::string &itemName);
+
+    void saveAllCharacters();
 private:
     boost::mutex mMutex;
     std::unordered_map<std::string, std::shared_ptr<Character> > mCharacters;

@@ -14,6 +14,8 @@ public:
 
     bool loadAllLevels();
     std::shared_ptr<Level> loadLevel(const std::string &levelId, bool directAdd = false);
+
+    void saveAllLevels();
 private:
     std::shared_ptr<Level> loadLevelNoLock(const std::string &levelId, bool directAdd = false);
     boost::mutex mMutex;

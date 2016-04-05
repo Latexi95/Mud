@@ -45,16 +45,14 @@ Json::Value ResourceService::readJsonFile(const std::string &path) const {
     return ret;
 }
 
-bool ResourceService::saveJsonFile(const std::string &path, const Json::Value &val) const {
+void ResourceService::saveJsonFile(const std::string &path, const Json::Value &val) const {
     std::ofstream file(path);
     if (!file) {
         throw SerializationException("Failed to write file " + path);
-        return false;
     }
 
     Json::StyledStreamWriter writer;
     writer.write(file, val);
-    return true;
 }
 
 std::unique_ptr<Item> ResourceService::createItem(const std::string &id) {

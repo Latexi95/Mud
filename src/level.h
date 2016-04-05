@@ -47,6 +47,8 @@ public:
 
     template <typename FUNC>
     void forEachCharacter(FUNC &&f);
+    template <typename FUNC>
+    void forEachRoom(FUNC &&f);
 
     /**
       * Returns true if Level can be modified and accessed freely without locking.
@@ -76,6 +78,14 @@ void Level::forEachCharacter(FUNC &&f)
         for (auto &characterPtr : rPair.second->characters()) {
             f(*characterPtr);
         }
+    }
+}
+
+template <typename FUNC>
+void Level::forEachRoom(FUNC &&f)
+{
+    for (auto &rPair : mRooms) {
+        f(rPair.second.get());
     }
 }
 
