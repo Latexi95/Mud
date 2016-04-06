@@ -52,7 +52,7 @@ void BaseEditor::setupEditors()
 {
     ADD_ITEM_PROPERTY("name", Name, name, setName);
     ADD_ITEM_PROPERTY("weight", double, weight, setWeight);
-    ADD_ITEM_PROPERTY("size", Box<float>, size, setSize);
+    ADD_ITEM_PROPERTY("size", Box<int>, size, setSize);
 
     ADD_ITEM_TRAIT_PROPERTY("eatable.energy", EatableTrait, int, energy, setEnergy);
 }

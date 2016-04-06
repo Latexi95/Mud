@@ -24,8 +24,8 @@ public:
 
     double weight() const { return mWeight; }
     void setWeight(double t) { mWeight = t; }
-    const Box<float> &size() const { return mSize; }
-    void setSize(const Box<float> &b) { mSize = b; }
+    const Box<int> &size() const { return mSize; }
+    void setSize(const Box<int> &b) { mSize = b; }
 
     Json::Value serialize() const;
     void deserialize(const Json::Value &val);
@@ -52,8 +52,8 @@ protected:
     std::string mId;
     std::string mDescription;
     Name mName;
-    float mWeight;
-    Box<float> mSize;
+    int mWeight; // grams
+    Box<int> mSize; // mm
     std::unordered_map<unsigned, std::unique_ptr<ItemTrait> > mTraits;
 };
 
@@ -67,7 +67,7 @@ public:
 
     const Name &name() const { return mBase->name(); }
     double weight() const { return mBase->weight(); }
-    const Box<float> &size() const { return mBase->size(); }
+    const Box<int> &size() const { return mBase->size(); }
     const std::string &description() const { return mBase->description(); }
 
     const ItemTrait *trait(ItemTraitType type) const { return mBase->trait(type); }
